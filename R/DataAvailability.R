@@ -13,8 +13,8 @@ DataAvailability <- function(input){
 #
 	cont_date <- seq(from=as.Date("1900-01-01"), to=as.Date(Sys.Date()), by="day")
 	cont_date <- cont_date[!(format(cont_date, format="%m-%d")=="02-29")]
-	date_column_location <- which(names(input)=="Date")
-	dates_present <- as.numeric(cont_date %in% input[[date_column_location]])
+	date_column_location <- which(names(input$raw)=="Date")
+	dates_present <- as.numeric(cont_date %in% input$raw[[date_column_location]])
 	available <- list(date=cont_date, present=dates_present)
 	cont_year <- format(seq(from=as.Date("1900-01-01"),
 					to=as.Date(Sys.Date()),by="year"), format="%Y")
