@@ -32,7 +32,9 @@ SplitHydroYear <- function(input){
 		stats[[i]] <- list()
 		stats[[i]][["Values"]] <-list()
 		stats[[i]][["Quantiles"]] <-list()
-		stats[[i]][["Values"]]["Total_Q_acfte6"] <- sum(by_year[[i]][["Discharge_acfte6_day"]], na.rm=TRUE)
+		if (length(which(is.na(by_year[[i]][["Discharge_acfte6_day"]])))>60){
+			stats[[i]][["Values"]]["Total_Q_acfte6"] <- NA
+	}else{stats[[i]][["Values"]]["Total_Q_acfte6"] <- sum(by_year[[i]][["Discharge_acfte6_day"]], na.rm=TRUE)}
 		stats[[i]][["Quantiles"]][["Quantiles_acfte6"]] <-quantile(by_year[[i]][["Discharge_acfte6_day"]], probs=c(0.05,0.1,0.2,0.25,0.5,0.75,0.9,0.95), na.rm=TRUE )
 		stats[[i]][["Values"]]["Mean_acfte6"] <- mean(by_year[[i]][["Discharge_acfte6_day"]], na.rm=TRUE)
 		stats[[i]][["Values"]]["Median_acfte6"] <- median(by_year[[i]][["Discharge_acfte6_day"]], na.rm=TRUE)
@@ -42,12 +44,15 @@ SplitHydroYear <- function(input){
 	}
 
 	summary <- list()
-	summary[["total_Q_yearly"]] <- numeric(length(stats))
+	summary[["total_Q_yearly"]] <- rep(NA,length(stats))
 	for (i in 1: length(stats)){
 		summary$total_Q_yearly[i] <- stats[[i]][["Values"]][["Total_Q_acfte6"]]
 	}
 	summary$mean_Q <- mean(summary$total_Q_yearly, na.rm=TRUE)
 	summary$std_dev_mean_Q <- sd(summary$total_Q_yearly, na.rm=TRUE)
+	summary$median_Q<-median(summary$total_Q_yearly, na.rm=TRUE)
+	summary$max_Q <- max(summary$total_Q_yearly, na.rm=TRUE)
+	summary$min_Q <- min(summary$total_Q_yearly, na.rm=TRUE)
 
 	total <- list(Data=by_year, Stats=stats, Summary=summary)
 	return(total)

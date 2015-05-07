@@ -11,6 +11,7 @@ library(dataRetrieval)
 
 gauges <- read.table("D:\\eclipse_workspace\\R_workspace\\gauge.txt",
 		header=FALSE, sep="", stringsAsFactors=FALSE)
+
 gauges <- gauges$V1
 
 for (i in 2080:length(gauges)){
