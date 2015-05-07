@@ -10,29 +10,35 @@
 # g3 USGS 11418000
 # g4 USGS 11446500
 
-Index_gauges <- list()
-Index_gauges$g1$raw <- read.csv("D:\\GB_Project\\Streamflow_Analysis\\TXT\\g11377100.csv")
-Index_gauges$g1$raw$Date <- as.Date(Index_gauges$g1$raw$Date)
-Index_gauges$g2$raw <- read.csv("D:\\GB_Project\\Streamflow_Analysis\\TXT\\g11407000.csv")
-Index_gauges$g2$raw$Date <- as.Date(Index_gauges$g2$raw$Date)
-Index_gauges$g3$raw <- read.csv("D:\\GB_Project\\Streamflow_Analysis\\TXT\\g11418000.csv")
-Index_gauges$g3$raw$Date <- as.Date(Index_gauges$g3$raw$Date)
-Index_gauges$g4$raw <- read.csv("D:\\GB_Project\\Streamflow_Analysis\\TXT\\g11446500.csv")
-Index_gauges$g4$raw$Date <- as.Date(Index_gauges$g4$raw$Date)
+gauges_yeartype <- read.csv("//Users//tiffnk//eclipse_workspace//list_for_yeartype.csv")
+yeartype <- list()
+for (i in 1:length(gauges_yeartype$SiteNumber)){
+	yeartype[[i]] <- list()
+}
+	names(yeartype) <- gauges_yeartype$SiteNumber
 
-for (i in 1:length(Index_gauges)){
-	Index_gauges[[i]]$raw <- RemoveLeapDays(Index_gauges[[i]])
+for (i in 1:length(yeartype)){
+		yeartype[[i]]$raw <- readNWISdv(paste(gauges_yeartype$SiteNumber[[i]]),"00060", startDate="1900-01-01",
+				endDate=Sys.Date(), statCd="00003")
+	}
+for (i in 1:length(yeartype)){	
+		yeartype[[i]]$raw <- RemoveLeapDays(yeartype[[i]]$raw)
+	}
+for (i in 1:length(yeartype)){	
+		yeartype[[i]]$prep <- prepdata(yeartype[[i]]$raw)
+	}
+for (i in 1:length(yeartype)){	
+		yeartype[[i]]$Yearly <- SplitHydroYear(yeartype[[i]]$prep)
 }
 
 
-for (i in 1:length(Index_gauges)){
-	Index_gauges[[i]]$raw$Discharge_cfs <- Index_gauges[[i]]$raw$X_00060_00003
-	Index_gauges[[i]]$raw$X_00060_00003 <- NULL
-}
 
-for (i in 1:length(Index_gauges)){
-	Index_gauges[[i]]$by_year <- SplitHydroYear(Index_gauges[[i]])
-}
+	USGS11519500$raw  <- readNWISdv(11519500,"00060", startDate="1900-01-01",
+			endDate=Sys.Date(), statCd="00003")
+	USGS11519500$raw <- RemoveLeapDays(USGS11519500)
+	USGS11519500$prep <- prepdata(USGS11519500$raw)
+	USGS11519500$Availability <- DataAvailability(USGS11519500$prep)
+	USGS11519500$Winter_Nov_Apr_6mon <- Split6Winter(USGS11519500$prep)
+	USGS11519500$Winter_DEC_FEB_3mon <- Split3Winter(USGS11519500$prep)
+	USGS11519500$Winter_Monthly <- SplitWinterMonthly(USGS11519500$prep)
 
-
-b <- DataAvailability(Index_gauges[[3]])

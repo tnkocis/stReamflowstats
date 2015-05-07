@@ -13,10 +13,10 @@ RemoveLeapDays <- function(input){
 #
 		if (missing(input))
 			stop("Input data is required.")
-			year <- as.numeric(format(input$raw$Date,"%Y"))
-			month <- as.numeric(format(input$raw$Date,"%m"))
-			day <- as.numeric(format(input$raw$Date,"%d"))
-			filtered <- filter(input$raw, !(day==29 & month==2))
+			year <- as.numeric(format(input$Date,"%Y"))
+			month <- as.numeric(format(input$Date,"%m"))
+			day <- as.numeric(format(input$Date,"%d"))
+			filtered <- filter(input, !(day==29 & month==2))
 		return(filtered)
 }
 
