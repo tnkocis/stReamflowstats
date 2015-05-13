@@ -10,7 +10,7 @@
 # g3 USGS 11418000
 # g4 USGS 11446500
 
-gauges_yeartype <- read.csv("C:\\Users\\tiffn_000\\Documents\\workspaces\\eclipse_workspace\\yeartype_gauges.csv")
+gauges_yeartype <- read.csv("C:\\Users\\tiffn_000\\Documents\\workspaces\\eclipse_workspace\\yeartype_gauges_edited.csv")
 yeartype <- list()
 for (i in 1:length(gauges_yeartype$SiteNumber)){
 	yeartype[[i]] <- list()
@@ -55,7 +55,7 @@ dev.new()
 pdf(file=paste("C:\\Users\\tiffn_000\\Documents\\workspaces\\eclipse_workspace\\streamflow_yeartype_figs\\",
 				"all_density_std",".pdf", sep=""))
 plot(density(scale(yeartype[[1]]$Yearly$Summary$total_Q_yearly, center=TRUE, scale=TRUE), na.rm=TRUE),
-		xlab="Total Q HydroYearly (maf)",ylab="Density",main="All Gauges >100 Years Data (standardized)",xlim=c(-6,6),ylim=c(0,2))
+		xlab="Total Q HydroYearly (maf)",ylab="Density",main="All Gauges >100 Years Data (standardized)",xlim=c(-6,6),ylim=c(0,1))
 for(i in 2:length(yeartype)){
 lines(density(scale(yeartype[[i]]$Yearly$Summary$total_Q_yearly, center=TRUE, scale=TRUE),na.rm=TRUE))
 }
@@ -66,16 +66,85 @@ plot(density(yeartype[[1]]$Yearly$Summary$total_Q_yearly, na.rm=TRUE),
 		xlab="Total Q HydroYearly (maf)",ylab="Density",main="All Gauges >100 Years Data (standardized)")
 
 ##make summary table and write to csv
-yeartype_summary <- data.frame(gauge=rep(NA,32),mean_Q=rep(NA,32), median_Q=rep(NA,32), std_dev_Q=rep(NA,32),
-		max=rep(NA,32), min=rep(NA,32))
+yeartype_summary <- vector("list",length=(length(yeartype)+1))
+names(yeartype_summary)[1] <- "all"
+yeartype_summary$all <- data.frame(gauge=rep(NA,18),mean_Q=rep(NA,18), median_Q=rep(NA,18), std_dev_Q=rep(NA,18),
+		max=rep(NA,18), min=rep(NA,18))
 for(i in 1:length(yeartype)){
-	yeartype_summary$gauge[[i]] <- names(yeartype[i])
-	yeartype_summary$mean_Q[[i]] <- yeartype[[i]]$Yearly$Summary$mean_Q[[1]]
-	yeartype_summary$median_Q[[i]] <- yeartype[[i]]$Yearly$Summary$median_Q[[1]]
-	yeartype_summary$std_dev_Q[[i]] <- yeartype[[i]]$Yearly$Summary$std_dev_mean_Q[[1]]
-	yeartype_summary$max[[i]] <- yeartype[[i]]$Yearly$Summary$max_Q[[1]]
-	yeartype_summary$min[[i]] <- yeartype[[i]]$Yearly$Summary$min_Q[[1]]
+	yeartype_summary$all$gauge[[i]] <- names(yeartype[i])
+	yeartype_summary$all$mean_Q[[i]] <- yeartype[[i]]$Yearly$Summary$mean_Q[[1]]
+	yeartype_summary$all$median_Q[[i]] <- yeartype[[i]]$Yearly$Summary$median_Q[[1]]
+	yeartype_summary$all$std_dev_Q[[i]] <- yeartype[[i]]$Yearly$Summary$std_dev_mean_Q[[1]]
+	yeartype_summary$all$max[[i]] <- yeartype[[i]]$Yearly$Summary$max_Q[[1]]
+	yeartype_summary$all$min[[i]] <- yeartype[[i]]$Yearly$Summary$min_Q[[1]]
 }
 
-write.csv(yeartype_summary,
-		file="C:\\Users\\tiffn_000\\Documents\\workspaces\\eclipse_workspace\\streamflow_yeartype_tables\\yeartype.csv")
+for(i in 2:length(yeartype_summary)){
+	names(yeartype_summary)[i] <- names(yeartype)[i-1]
+	yeartype_summary[[i]]$Year <- names(yeartype[[i-1]]$Yearly$Data)
+	yeartype_summary[[i]]$Q_maf_yearly <- yeartype[[i-1]]$Yearly$Summary$total_Q_yearly
+	yeartype_summary[[i]]$Year_Type <- rep(NA,length(yeartype_summary[[i]]$Year))
+	yeartype_summary[[i]]$Stats <- yeartype[[i-1]]$Yearly$Summary[2:6]
+	for(n in 1:length(yeartype_summary[[i]]$Year_Type)){
+		if(is.na(yeartype_summary[[i]]$Q_maf_yearly[[n]])){
+			yeartype_summary[[i]]$Year_Type[[n]] <- NA
+			yeartype_summary[[i]]$Year_Type_num[[n]] <- NA
+		} else if(yeartype_summary[[i]]$Q_maf_yearly[[n]]>=yeartype_summary[[i]]$Stats[[1]] & yeartype_summary[[i]]$Q_maf_yearly[[n]]<(yeartype_summary[[i]]$Stats[[1]]+yeartype_summary[[i]]$Stats[[2]])){
+			yeartype_summary[[i]]$Year_Type[[n]] <- "W"	
+			yeartype_summary[[i]]$Year_Type_num[[n]] <- 4
+		} else if(yeartype_summary[[i]]$Q_maf_yearly[[n]]>=(yeartype_summary[[i]]$Stats[[1]]+yeartype_summary[[i]]$Stats[[2]]) & yeartype_summary[[i]]$Q_maf_yearly[[n]]<(yeartype_summary[[i]]$Stats[[1]]+(2*yeartype_summary[[i]]$Stats[[2]]))){
+			yeartype_summary[[i]]$Year_Type[[n]] <- "VW"
+			yeartype_summary[[i]]$Year_Type_num[[n]] <- 5
+		} else if(yeartype_summary[[i]]$Q_maf_yearly[[n]]>=(yeartype_summary[[i]]$Stats[[1]]+(2*yeartype_summary[[i]]$Stats[[2]]))){
+			yeartype_summary[[i]]$Year_Type[[n]] <- "EW"
+			yeartype_summary[[i]]$Year_Type_num[[n]] <- 6
+		} else if(yeartype_summary[[i]]$Q_maf_yearly[[n]]<yeartype_summary[[i]]$Stats[[1]] & yeartype_summary[[i]]$Q_maf_yearly[[n]]>=(yeartype_summary[[i]]$Stats[[1]]-yeartype_summary[[i]]$Stats[[2]])){
+			yeartype_summary[[i]]$Year_Type[[n]] <- "D"
+			yeartype_summary[[i]]$Year_Type_num[[n]] <- 3
+		} else if(yeartype_summary[[i]]$Q_maf_yearly[[n]]<(yeartype_summary[[i]]$Stats[[1]]-yeartype_summary[[i]]$Stats[[2]]) & yeartype_summary[[i]]$Q_maf_yearly[[n]]>=(yeartype_summary[[i]]$Stats[[1]]-(2*yeartype_summary[[i]]$Stats[[2]]))){
+			yeartype_summary[[i]]$Year_Type[[n]] <- "VD"
+			yeartype_summary[[i]]$Year_Type_num[[n]] <- 2
+		} else if(yeartype_summary[[i]]$Q_maf_yearly[[n]]<(yeartype_summary[[i]]$Stats[[1]]-(2*yeartype_summary[[i]]$Stats[[2]]))){
+			yeartype_summary[[i]]$Year_Type[[n]] <- "CD"
+			yeartype_summary[[i]]$Year_Type_num[[n]] <- 1
+		} else {
+			yeartype_summary[[i]]$Year_Type[[n]] <- "ERROR"
+		}
+	}
+}
+
+YEARTYPE <- vector("list",length=length(yeartype_summary))
+length_yeartype <- rep(NA,length(yeartype_summary))
+for(i in 1:length(yeartype_summary)){
+	length_yeartype[[i]] <- length(yeartype_summary[[i]][[1]])
+}
+names(YEARTYPE)[1] <- "Year"
+names(YEARTYPE)[2:length(YEARTYPE)] <- names(yeartype_summary)[2:length(yeartype_summary)]
+YEARTYPE$Year <- yeartype_summary[[which(length_yeartype==max(length_yeartype))]]$Year
+
+pos_year <- vector("list", length=(length(YEARTYPE)))
+for(i in 2:length(YEARTYPE)){
+	for(n in 1:length(YEARTYPE$Year)){
+		if(length(which(yeartype_summary[[i]]$Year==YEARTYPE$Year[[n]]))<1){
+			pos_year[[i]][[n]] <- NA
+		} else {
+			pos_year[[i]][[n]] <- which(yeartype_summary[[i]]$Year==YEARTYPE$Year[[n]])
+		}
+	}
+}
+for(i in 2:length(YEARTYPE)){
+	for(n in 1: length(YEARTYPE$Year)){
+		if(is.na(pos_year[[i]][[n]])){
+			YEARTYPE[[i]][[n]] <- NA
+		} else {
+			YEARTYPE[[i]][[n]] <- yeartype_summary[[i]]$Year_Type_num[[pos_year[[i]][[n]]]]
+		}
+	}
+}
+
+YEARTYPEdf <- as.data.frame(YEARTYPE)
+YEARTYPEdf$Averages <- rowMeans(YEARTYPEdf[,2:19], na.rm=TRUE)
+YEARTYPEdf$roundavg <- round(YEARTYPEdf$Averages)
+		
+write.csv(YEARTYPEdf,
+		file="C:\\Users\\tiffn_000\\Documents\\workspaces\\eclipse_workspace\\streamflow_yeartype_tables\\yeartype_edited_classified.csv")
