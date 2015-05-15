@@ -79,12 +79,24 @@ for(i in 1:length(yeartype)){
 	yeartype_summary$all$min[[i]] <- yeartype[[i]]$Yearly$Summary$min_Q[[1]]
 }
 
+
 for(i in 2:length(yeartype_summary)){
 	names(yeartype_summary)[i] <- names(yeartype)[i-1]
 	yeartype_summary[[i]]$Year <- names(yeartype[[i-1]]$Yearly$Data)
 	yeartype_summary[[i]]$Q_maf_yearly <- yeartype[[i-1]]$Yearly$Summary$total_Q_yearly
+	yeartype_summary[[i]]$Q_maf_yearly_std <- scale(yeartype_summary[[i]]$Q_maf_yearly, center=TRUE, scale=TRUE)
 	yeartype_summary[[i]]$Year_Type <- rep(NA,length(yeartype_summary[[i]]$Year))
 	yeartype_summary[[i]]$Stats <- yeartype[[i-1]]$Yearly$Summary[2:6]
+	yeartype_summary[[i]]$Stats$Quantiles <- quantile(yeartype_summary[[i]]$Q_maf_yearly, probs=c(0.05,0.1,0.2,0.25,0.5,0.75,0.9,0.95), na.rm=TRUE )
+	yeartype_summary[[i]]$Stats_std <- list()
+	yeartype_summary[[i]]$Stats_std$mean_Q <- mean(yeartype_summary[[i]]$Q_maf_yearly_std, na.rm=TRUE)
+	yeartype_summary[[i]]$Stats_std$std_dev_mean_Q <- sd(yeartype_summary[[i]]$Q_maf_yearly_std, na.rm=TRUE)
+	yeartype_summary[[i]]$Stats_std$median_Q <- median(yeartype_summary[[i]]$Q_maf_yearly_std, na.rm=TRUE)
+	yeartype_summary[[i]]$Stats_std$min_Q <- min(yeartype_summary[[i]]$Q_maf_yearly_std, na.rm=TRUE)
+	yeartype_summary[[i]]$Stats_std$max_Q <- max(yeartype_summary[[i]]$Q_maf_yearly_std, na.rm=TRUE)
+	yeartype_summary[[i]]$Stats_std$Quantiles <- mean(yeartype_summary[[i]]$Q_maf_yearly_std,probs=c(0.05,0.1,0.2,0.25,0.5,0.75,0.9,0.95), na.rm=TRUE)
+	yeartype_summary[[i]]$Year_Type_std <- rep(NA,length(yeartype_summary[[i]]$Year))
+	
 	for(n in 1:length(yeartype_summary[[i]]$Year_Type)){
 		if(is.na(yeartype_summary[[i]]$Q_maf_yearly[[n]])){
 			yeartype_summary[[i]]$Year_Type[[n]] <- NA
@@ -109,6 +121,33 @@ for(i in 2:length(yeartype_summary)){
 			yeartype_summary[[i]]$Year_Type_num[[n]] <- 1
 		} else {
 			yeartype_summary[[i]]$Year_Type[[n]] <- "ERROR"
+		}
+	}
+	
+	for(n in 1:length(yeartype_summary[[i]]$Year_Type_std)){
+		if(is.na(yeartype_summary[[i]]$Q_maf_yearly_std[[n]])){
+			yeartype_summary[[i]]$Year_Type_std[[n]] <- NA
+			yeartype_summary[[i]]$Year_Type_std_num[[n]] <- NA
+		} else if(yeartype_summary[[i]]$Q_maf_yearly_std[[n]]>=yeartype_summary[[i]]$Stats_std[[1]] & yeartype_summary[[i]]$Q_maf_yearly_std[[n]]<(yeartype_summary[[i]]$Stats_std[[1]]+yeartype_summary[[i]]$Stats_std[[2]])){
+			yeartype_summary[[i]]$Year_Type_std[[n]] <- "W"	
+			yeartype_summary[[i]]$Year_Type_std_num[[n]] <- 4
+		} else if(yeartype_summary[[i]]$Q_maf_yearly_std[[n]]>=(yeartype_summary[[i]]$Stats_std[[1]]+yeartype_summary[[i]]$Stats_std[[2]]) & yeartype_summary[[i]]$Q_maf_yearly_std[[n]]<(yeartype_summary[[i]]$Stats_std[[1]]+(2*yeartype_summary[[i]]$Stats_std[[2]]))){
+			yeartype_summary[[i]]$Year_Type_std[[n]] <- "VW"
+			yeartype_summary[[i]]$Year_Type_std_num[[n]] <- 5
+		} else if(yeartype_summary[[i]]$Q_maf_yearly_std[[n]]>=(yeartype_summary[[i]]$Stats_std[[1]]+(2*yeartype_summary[[i]]$Stats_std[[2]]))){
+			yeartype_summary[[i]]$Year_Type_std[[n]] <- "EW"
+			yeartype_summary[[i]]$Year_Type_std_num[[n]] <- 6
+		} else if(yeartype_summary[[i]]$Q_maf_yearly_std[[n]]<yeartype_summary[[i]]$Stats_std[[1]] & yeartype_summary[[i]]$Q_maf_yearly_std[[n]]>=(yeartype_summary[[i]]$Stats_std[[1]]-yeartype_summary[[i]]$Stats_std[[2]])){
+			yeartype_summary[[i]]$Year_Type_std[[n]] <- "D"
+			yeartype_summary[[i]]$Year_Type_std_num[[n]] <- 3
+		} else if(yeartype_summary[[i]]$Q_maf_yearly_std[[n]]<(yeartype_summary[[i]]$Stats_std[[1]]-yeartype_summary[[i]]$Stats_std[[2]]) & yeartype_summary[[i]]$Q_maf_yearly_std[[n]]>=(yeartype_summary[[i]]$Stats_std[[1]]-(2*yeartype_summary[[i]]$Stats_std[[2]]))){
+			yeartype_summary[[i]]$Year_Type_std[[n]] <- "VD"
+			yeartype_summary[[i]]$Year_Type_std_num[[n]] <- 2
+		} else if(yeartype_summary[[i]]$Q_maf_yearly_std[[n]]<(yeartype_summary[[i]]$Stats_std[[1]]-(2*yeartype_summary[[i]]$Stats_std[[2]]))){
+			yeartype_summary[[i]]$Year_Type_std[[n]] <- "CD"
+			yeartype_summary[[i]]$Year_Type_std_num[[n]] <- 1
+		} else {
+			yeartype_summary[[i]]$Year_Type_std[[n]] <- "ERROR"
 		}
 	}
 }
@@ -145,6 +184,23 @@ for(i in 2:length(YEARTYPE)){
 YEARTYPEdf <- as.data.frame(YEARTYPE)
 YEARTYPEdf$Averages <- rowMeans(YEARTYPEdf[,2:19], na.rm=TRUE)
 YEARTYPEdf$roundavg <- round(YEARTYPEdf$Averages)
-		
+
+total_Q <-vector("list", length=(length(yeartype_summary)))
+total_Q[[1]] <- yeartype_summary[[which(length_yeartype==max(length_yeartype))]]$Year
+names(total_Q)[[1]] <- "Year"
+for (i in 2:length(yeartype_summary)){
+	for(n in 1: length(total_Q$Year)){
+		if(is.na(pos_year[[i]][[n]])){
+			total_Q[[i]][[n]] <- NA
+		} else {
+			total_Q[[i]][[n]] <- yeartype_summary[[i]]$Q_maf_yearly[[pos_year[[i]][[n]]]]
+		}
+	}
+	names(total_Q)[[i]] <- names(yeartype_summary)[[i]]
+}
+total_Q_df <- as.data.frame(total_Q)
+
+write.csv(total_Q_df,
+		file="C:\\Users\\tiffn_000\\Documents\\workspaces\\eclipse_workspace\\streamflow_yeartype_tables\\total_Q_edited.csv")
 write.csv(YEARTYPEdf,
 		file="C:\\Users\\tiffn_000\\Documents\\workspaces\\eclipse_workspace\\streamflow_yeartype_tables\\yeartype_edited_classified.csv")
