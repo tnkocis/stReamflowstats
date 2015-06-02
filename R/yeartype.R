@@ -221,8 +221,73 @@ for(i in 2:length(YEARTYPE)){
 }
 
 YEARTYPEdf <- as.data.frame(YEARTYPE)
-YEARTYPEdf$Averages <- rowMeans(YEARTYPEdf[,2:length(YEARTYPE)], na.rm=TRUE)
-YEARTYPEdf$roundavg <- round(YEARTYPEdf$Averages)
+YEARTYPEdf$SJV_Averages <- rowMeans(YEARTYPEdf[,2:9], na.rm=TRUE)
+YEARTYPEdf$SacV_Averages <- rowMeans(YEARTYPEdf[,10:length(YEARTYPE)], na.rm=TRUE)
+YEARTYPEdf$SJV_Round <- rep(NA, length(YEARTYPEdf$SJV_Averages))
+YEARTYPEdf$SacV_Round <- rep(NA, length(YEARTYPEdf$SacV_Averages))
+for(i in 1:length(YEARTYPEdf$SJV_Averages)){
+	if(YEARTYPEdf$SJV_Averages[[i]]>=1 & YEARTYPEdf$SJV_Averages[[i]]<1.5){
+		YEARTYPEdf$SJV_Round[[i]] <- 1
+	} else if(YEARTYPEdf$SJV_Averages[[i]]>1.5 & YEARTYPEdf$SJV_Averages[[i]]<2.5){
+		YEARTYPEdf$SJV_Round[[i]] <- 2
+	} else if(YEARTYPEdf$SJV_Averages[[i]]>2.5 & YEARTYPEdf$SJV_Averages[[i]]<3.5){
+		YEARTYPEdf$SJV_Round[[i]] <- 3
+	} else if(YEARTYPEdf$SJV_Averages[[i]]>3.5 & YEARTYPEdf$SJV_Averages[[i]]<4.5){
+		YEARTYPEdf$SJV_Round[[i]] <- 4
+	} else if(YEARTYPEdf$SJV_Averages[[i]]>4.5){
+		YEARTYPEdf$SJV_Round[[i]] <- 5
+	} else if(YEARTYPEdf$SJV_Averages[[i]]==1.5 & YEARTYPEdf$SJV_Round[[i-1]]==1){
+		YEARTYPEdf$SJV_Round[[i]] <- 1
+	} else if(YEARTYPEdf$SJV_Averages[[i]]==1.5 & YEARTYPEdf$SJV_Round[[i-1]]>1){
+		YEARTYPEdf$SJV_Round[[i]] <- 2
+	} else if(YEARTYPEdf$SJV_Averages[[i]]==2.5 & YEARTYPEdf$SJV_Round[[i-1]]<=2){
+		YEARTYPEdf$SJV_Round[[i]] <- 2
+	} else if(YEARTYPEdf$SJV_Averages[[i]]==2.5 & YEARTYPEdf$SJV_Round[[i-1]]>2){
+		YEARTYPEdf$SJV_Round[[i]] <- 3
+	} else if(YEARTYPEdf$SJV_Averages[[i]]==3.5 & YEARTYPEdf$SJV_Round[[i-1]]<=3){
+		YEARTYPEdf$SJV_Round[[i]] <- 3 
+	} else if(YEARTYPEdf$SJV_Averages[[i]]==3.5 & YEARTYPEdf$SJV_Round[[i-1]]>3){
+		YEARTYPEdf$SJV_Round[[i]] <- 4
+	} else if(YEARTYPEdf$SJV_Averages[[i]]==4.5 & YEARTYPEdf$SJV_Round[[i-1]]<=4){
+		YEARTYPEdf$SJV_Round[[i]] <- 4
+	} else if(YEARTYPEdf$SJV_Averages[[i]]==4.5 & YEARTYPEdf$SJV_Round[[i-1]]>4){
+		YEARTYPEdf$SJV_Round[[i]] <- 5
+	} else { 
+		YEARTYPEdf$SJV_Round[[i]] <- NA 
+	}
+}
+for(i in 1:length(YEARTYPEdf$SacV_Averages)){
+	if(YEARTYPEdf$SacV_Averages[[i]]>=1 & YEARTYPEdf$SacV_Averages[[i]]<1.5){
+		YEARTYPEdf$SacV_Round[[i]] <- 1
+	} else if(YEARTYPEdf$SacV_Averages[[i]]>1.5 & YEARTYPEdf$SacV_Averages[[i]]<2.5){
+		YEARTYPEdf$SacV_Round[[i]] <- 2
+	} else if(YEARTYPEdf$SacV_Averages[[i]]>2.5 & YEARTYPEdf$SacV_Averages[[i]]<3.5){
+		YEARTYPEdf$SacV_Round[[i]] <- 3
+	} else if(YEARTYPEdf$SacV_Averages[[i]]>3.5 & YEARTYPEdf$SacV_Averages[[i]]<4.5){
+		YEARTYPEdf$SacV_Round[[i]] <- 4
+	} else if(YEARTYPEdf$SacV_Averages[[i]]>4.5){
+		YEARTYPEdf$SacV_Round[[i]] <- 5
+	} else if(YEARTYPEdf$SacV_Averages[[i]]==1.5 & YEARTYPEdf$SacV_Round[[i-1]]==1){
+		YEARTYPEdf$SacV_Round[[i]] <- 1
+	} else if(YEARTYPEdf$SacV_Averages[[i]]==1.5 & YEARTYPEdf$SacV_Round[[i-1]]>1){
+		YEARTYPEdf$SacV_Round[[i]] <- 2
+	} else if(YEARTYPEdf$SacV_Averages[[i]]==2.5 & YEARTYPEdf$SacV_Round[[i-1]]<=2){
+		YEARTYPEdf$SacV_Round[[i]] <- 2
+	} else if(YEARTYPEdf$SacV_Averages[[i]]==2.5 & YEARTYPEdf$SacV_Round[[i-1]]>2){
+		YEARTYPEdf$SacV_Round[[i]] <- 3
+	} else if(YEARTYPEdf$SacV_Averages[[i]]==3.5 & YEARTYPEdf$SacV_Round[[i-1]]<=3){
+		YEARTYPEdf$SacV_Round[[i]] <- 3 
+	} else if(YEARTYPEdf$SacV_Averages[[i]]==3.5 & YEARTYPEdf$SacV_Round[[i-1]]>3){
+		YEARTYPEdf$SacV_Round[[i]] <- 4
+	} else if(YEARTYPEdf$SacV_Averages[[i]]==4.5 & YEARTYPEdf$SacV_Round[[i-1]]<=4){
+		YEARTYPEdf$SacV_Round[[i]] <- 4
+	} else if(YEARTYPEdf$SacV_Averages[[i]]==4.5 & YEARTYPEdf$SacV_Round[[i-1]]>4){
+		YEARTYPEdf$SacV_Round[[i]] <- 5
+	} else { 
+		YEARTYPEdf$SacV_Round[[i]] <- NA 
+	}
+}
+
 
 total_Q <-vector("list", length=(length(yeartype_summary)))
 total_Q[[1]] <- yeartype_summary[[which(length_yeartype==max(length_yeartype))]]$Year
@@ -242,4 +307,4 @@ total_Q_df <- as.data.frame(total_Q)
 write.csv(total_Q_df,
 		file="C:\\Users\\tiffn_000\\Documents\\workspaces\\eclipse_workspace\\streamflow_yeartype_tables\\total_Q_edited.csv")
 write.csv(YEARTYPEdf,
-		file="C:\\Users\\tiffn_000\\Documents\\workspaces\\eclipse_workspace\\streamflow_yeartype_tables\\yeartype_edited_classified_20per_pass3.csv")
+		file="C:\\Users\\tiffn_000\\Documents\\workspaces\\eclipse_workspace\\streamflow_yeartype_tables\\yeartype_edited_classified_20per_final.csv")
