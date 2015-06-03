@@ -39,9 +39,28 @@ Split6Winter <- function(input){
 		stats[[i]][["Values"]]["Median_acfte6"] <- median(wint_by_year[[i]][["Discharge_acfte6_day"]], na.rm=TRUE)
 		stats[[i]][["Values"]]["min_acfte6"] <- min(wint_by_year[[i]][["Discharge_acfte6_day"]], na.rm=TRUE)
 		stats[[i]][["Values"]]["max_acfte6"] <- max(wint_by_year[[i]][["Discharge_acfte6_day"]], na.rm=TRUE)
+		stats[[i]][["Values"]][["max_date"]] <- wint_by_year[[i]][["Date"]][which(wint_by_year[[i]][["Discharge_acfte6_day"]]==stats[[i]][["Values"]]["max_acfte6"])]
+		stats[[i]][["Values"]][["min_date"]] <- wint_by_year[[i]][["Date"]][which(wint_by_year[[i]][["Discharge_acfte6_day"]]==stats[[i]][["Values"]]["min_acfte6"])]
 		names(stats)[i] <- names(wint_by_year)[i]
 	}
-	total <- list(Data=wint_by_year, Stats=stats)
+	
+	all <- list()
+	all[["Data"]]["Discharge_acfte6_day"] <- wint_by_year[[1]]["Discharge_acfte6_day"]
+	all[["Data"]]["Date"] <- wint_by_year[[1]]["Date"]
+	for (i in 2:length(wint_by_year)){
+		all[["Data"]][["Discharge_acfte6_day"]] <- append(all[["Data"]][["Discharge_acfte6_day"]], wint_by_year[[i]][["Discharge_acfte6_day"]], after=length(all[["Data"]][["Discharge_acfte6_day"]]))
+		all[["Data"]][["Date"]] <- append(all[["Data"]][["Date"]], wint_by_year[[i]][["Date"]], after=length(all[["Data"]][["Date"]]))
+	}
+	all[["Stats"]] <-list()
+	all[["Stats"]]["Mean_acfte6"] <- mean(all[["Data"]][["Discharge_acfte6_day"]], na.rm=TRUE)
+	all[["Stats"]]["Median_acfte6"] <- median(all[["Data"]][["Discharge_acfte6_day"]], na.rm=TRUE)
+	all[["Stats"]]["min_acfte6"] <- min(all[["Data"]][["Discharge_acfte6_day"]], na.rm=TRUE)
+	all[["Stats"]]["max_acfte6"] <- max(all[["Data"]][["Discharge_acfte6_day"]], na.rm=TRUE)
+	all[["Stats"]][["min_date"]] <- all[["Data"]][["Date"]][which(all[["Data"]][["Discharge_acfte6_day"]]==all[["Stats"]]["min_acfte6"])]
+	all[["Stats"]][["max_date"]] <- all[["Data"]][["Date"]][which(all[["Data"]][["Discharge_acfte6_day"]]==all[["Stats"]]["max_acfte6"])]
+	all[["Stats"]][["Quantiles_acfte6"]] <- quantile(all[["Data"]][["Discharge_acfte6_day"]], probs=c(0.05,0.1,0.2,0.25,0.5,0.75,0.9,0.95),na.rm=TRUE)
+	
+	total <- list(Data=wint_by_year, Stats=stats, All=all)
 	return(total)
 }
 
