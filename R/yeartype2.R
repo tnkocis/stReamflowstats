@@ -43,27 +43,27 @@ for (i in 1:length(yeartype)){
 	yeartype[[i]]$Availability <- DataAvailability(yeartype[[i]]$prep)
 }
 
-for (i in 1:length(yeartype)){	
-pdf(file= paste("C:\\Users\\tiffn_000\\Documents\\workspaces\\eclipse_workspace\\streamflow_yeartype_figs\\std\\",
-				names(yeartype[i]),".pdf", sep=""))
-plot(density(scale(yeartype[[i]]$Yearly$Summary$total_Q_yearly, center=TRUE, scale=TRUE), na.rm=TRUE),col=heat.colors(60),
-		xlab="Total Q HydroYearly (maf)",ylab="Count",main=names(yeartype[i]))
-dev.off()
-}
-
-dev.new()
-pdf(file=paste("C:\\Users\\tiffn_000\\Documents\\workspaces\\eclipse_workspace\\streamflow_yeartype_figs\\",
-				"all_density_std",".pdf", sep=""))
-plot(density(scale(yeartype[[1]]$Yearly$Summary$total_Q_yearly, center=TRUE, scale=TRUE), na.rm=TRUE),
-		xlab="Total Q HydroYearly (maf)",ylab="Density",main="All Gauges >100 Years Data (standardized)",xlim=c(-6,6),ylim=c(0,1))
-for(i in 2:length(yeartype)){
-lines(density(scale(yeartype[[i]]$Yearly$Summary$total_Q_yearly, center=TRUE, scale=TRUE),na.rm=TRUE))
-}
-dev.off()
-
-
-plot(density(yeartype[[1]]$Yearly$Summary$total_Q_yearly, na.rm=TRUE),
-		xlab="Total Q HydroYearly (maf)",ylab="Density",main="All Gauges >100 Years Data (standardized)")
+#for (i in 1:length(yeartype)){	
+#pdf(file= paste("C:\\Users\\tiffn_000\\Documents\\workspaces\\eclipse_workspace\\streamflow_yeartype_figs\\std\\",
+#				names(yeartype[i]),".pdf", sep=""))
+#plot(density(scale(yeartype[[i]]$Yearly$Summary$total_Q_yearly, center=TRUE, scale=TRUE), na.rm=TRUE),col=heat.colors(60),
+#		xlab="Total Q HydroYearly (maf)",ylab="Count",main=names(yeartype[i]))
+#dev.off()
+#}
+#
+#dev.new()
+#pdf(file=paste("C:\\Users\\tiffn_000\\Documents\\workspaces\\eclipse_workspace\\streamflow_yeartype_figs\\",
+#				"all_density_std",".pdf", sep=""))
+#plot(density(scale(yeartype[[1]]$Yearly$Summary$total_Q_yearly, center=TRUE, scale=TRUE), na.rm=TRUE),
+#		xlab="Total Q HydroYearly (maf)",ylab="Density",main="All Gauges >100 Years Data (standardized)",xlim=c(-6,6),ylim=c(0,1))
+#for(i in 2:length(yeartype)){
+#lines(density(scale(yeartype[[i]]$Yearly$Summary$total_Q_yearly, center=TRUE, scale=TRUE),na.rm=TRUE))
+#}
+#dev.off()
+#
+#
+#plot(density(yeartype[[1]]$Yearly$Summary$total_Q_yearly, na.rm=TRUE),
+#		xlab="Total Q HydroYearly (maf)",ylab="Density",main="All Gauges >100 Years Data (standardized)")
 
 ##make summary table and write to csv
 yeartype_summary <- vector("list",length=(length(yeartype)+1))
@@ -220,91 +220,91 @@ for(i in 2:length(YEARTYPE)){
 	}
 }
 
-#YEARTYPEdf <- as.data.frame(YEARTYPE)
-#YEARTYPEdf$SJV_Averages <- rowMeans(YEARTYPEdf[,2:9], na.rm=TRUE)
-#YEARTYPEdf$SacV_Averages <- rowMeans(YEARTYPEdf[,10:length(YEARTYPE)], na.rm=TRUE)
-#YEARTYPEdf$SJV_Round <- rep(NA, length(YEARTYPEdf$SJV_Averages))
-#YEARTYPEdf$SacV_Round <- rep(NA, length(YEARTYPEdf$SacV_Averages))
-#for(i in 1:length(YEARTYPEdf$SJV_Averages)){
-#	if(YEARTYPEdf$SJV_Averages[[i]]>=1 & YEARTYPEdf$SJV_Averages[[i]]<1.5){
-#		YEARTYPEdf$SJV_Round[[i]] <- 1
-#	} else if(YEARTYPEdf$SJV_Averages[[i]]>1.5 & YEARTYPEdf$SJV_Averages[[i]]<2.5){
-#		YEARTYPEdf$SJV_Round[[i]] <- 2
-#	} else if(YEARTYPEdf$SJV_Averages[[i]]>2.5 & YEARTYPEdf$SJV_Averages[[i]]<3.5){
-#		YEARTYPEdf$SJV_Round[[i]] <- 3
-#	} else if(YEARTYPEdf$SJV_Averages[[i]]>3.5 & YEARTYPEdf$SJV_Averages[[i]]<4.5){
-#		YEARTYPEdf$SJV_Round[[i]] <- 4
-#	} else if(YEARTYPEdf$SJV_Averages[[i]]>4.5){
-#		YEARTYPEdf$SJV_Round[[i]] <- 5
-#	} else if(YEARTYPEdf$SJV_Averages[[i]]==1.5 & YEARTYPEdf$SJV_Round[[i-1]]==1){
-#		YEARTYPEdf$SJV_Round[[i]] <- 1
-#	} else if(YEARTYPEdf$SJV_Averages[[i]]==1.5 & YEARTYPEdf$SJV_Round[[i-1]]>1){
-#		YEARTYPEdf$SJV_Round[[i]] <- 2
-#	} else if(YEARTYPEdf$SJV_Averages[[i]]==2.5 & YEARTYPEdf$SJV_Round[[i-1]]<=2){
-#		YEARTYPEdf$SJV_Round[[i]] <- 2
-#	} else if(YEARTYPEdf$SJV_Averages[[i]]==2.5 & YEARTYPEdf$SJV_Round[[i-1]]>2){
-#		YEARTYPEdf$SJV_Round[[i]] <- 3
-#	} else if(YEARTYPEdf$SJV_Averages[[i]]==3.5 & YEARTYPEdf$SJV_Round[[i-1]]<=3){
-#		YEARTYPEdf$SJV_Round[[i]] <- 3 
-#	} else if(YEARTYPEdf$SJV_Averages[[i]]==3.5 & YEARTYPEdf$SJV_Round[[i-1]]>3){
-#		YEARTYPEdf$SJV_Round[[i]] <- 4
-#	} else if(YEARTYPEdf$SJV_Averages[[i]]==4.5 & YEARTYPEdf$SJV_Round[[i-1]]<=4){
-#		YEARTYPEdf$SJV_Round[[i]] <- 4
-#	} else if(YEARTYPEdf$SJV_Averages[[i]]==4.5 & YEARTYPEdf$SJV_Round[[i-1]]>4){
-#		YEARTYPEdf$SJV_Round[[i]] <- 5
-#	} else { 
-#		YEARTYPEdf$SJV_Round[[i]] <- NA 
-#	}
-#}
-#for(i in 1:length(YEARTYPEdf$SacV_Averages)){
-#	if(YEARTYPEdf$SacV_Averages[[i]]>=1 & YEARTYPEdf$SacV_Averages[[i]]<1.5){
-#		YEARTYPEdf$SacV_Round[[i]] <- 1
-#	} else if(YEARTYPEdf$SacV_Averages[[i]]>1.5 & YEARTYPEdf$SacV_Averages[[i]]<2.5){
-#		YEARTYPEdf$SacV_Round[[i]] <- 2
-#	} else if(YEARTYPEdf$SacV_Averages[[i]]>2.5 & YEARTYPEdf$SacV_Averages[[i]]<3.5){
-#		YEARTYPEdf$SacV_Round[[i]] <- 3
-#	} else if(YEARTYPEdf$SacV_Averages[[i]]>3.5 & YEARTYPEdf$SacV_Averages[[i]]<4.5){
-#		YEARTYPEdf$SacV_Round[[i]] <- 4
-#	} else if(YEARTYPEdf$SacV_Averages[[i]]>4.5){
-#		YEARTYPEdf$SacV_Round[[i]] <- 5
-#	} else if(YEARTYPEdf$SacV_Averages[[i]]==1.5 & YEARTYPEdf$SacV_Round[[i-1]]==1){
-#		YEARTYPEdf$SacV_Round[[i]] <- 1
-#	} else if(YEARTYPEdf$SacV_Averages[[i]]==1.5 & YEARTYPEdf$SacV_Round[[i-1]]>1){
-#		YEARTYPEdf$SacV_Round[[i]] <- 2
-#	} else if(YEARTYPEdf$SacV_Averages[[i]]==2.5 & YEARTYPEdf$SacV_Round[[i-1]]<=2){
-#		YEARTYPEdf$SacV_Round[[i]] <- 2
-#	} else if(YEARTYPEdf$SacV_Averages[[i]]==2.5 & YEARTYPEdf$SacV_Round[[i-1]]>2){
-#		YEARTYPEdf$SacV_Round[[i]] <- 3
-#	} else if(YEARTYPEdf$SacV_Averages[[i]]==3.5 & YEARTYPEdf$SacV_Round[[i-1]]<=3){
-#		YEARTYPEdf$SacV_Round[[i]] <- 3 
-#	} else if(YEARTYPEdf$SacV_Averages[[i]]==3.5 & YEARTYPEdf$SacV_Round[[i-1]]>3){
-#		YEARTYPEdf$SacV_Round[[i]] <- 4
-#	} else if(YEARTYPEdf$SacV_Averages[[i]]==4.5 & YEARTYPEdf$SacV_Round[[i-1]]<=4){
-#		YEARTYPEdf$SacV_Round[[i]] <- 4
-#	} else if(YEARTYPEdf$SacV_Averages[[i]]==4.5 & YEARTYPEdf$SacV_Round[[i-1]]>4){
-#		YEARTYPEdf$SacV_Round[[i]] <- 5
-#	} else { 
-#		YEARTYPEdf$SacV_Round[[i]] <- NA 
-#	}
-#}
-
-
-total_Q <-vector("list", length=(length(yeartype_summary)))
-total_Q[[1]] <- yeartype_summary[[which(length_yeartype==max(length_yeartype))]]$Year
-names(total_Q)[[1]] <- "Year"
-for (i in 2:length(yeartype_summary)){
-	for(n in 1: length(total_Q$Year)){
-		if(is.na(pos_year[[i]][[n]])){
-			total_Q[[i]][[n]] <- NA
-		} else {
-			total_Q[[i]][[n]] <- yeartype_summary[[i]]$Q_maf_yearly[[pos_year[[i]][[n]]]]
-		}
+YEARTYPEdf <- as.data.frame(YEARTYPE)
+YEARTYPEdf$SJV_Averages <- rowMeans(YEARTYPEdf[,2:9], na.rm=TRUE)
+YEARTYPEdf$SacV_Averages <- rowMeans(YEARTYPEdf[,10:length(YEARTYPE)], na.rm=TRUE)
+YEARTYPEdf$SJV_Round <- rep(NA, length(YEARTYPEdf$SJV_Averages))
+YEARTYPEdf$SacV_Round <- rep(NA, length(YEARTYPEdf$SacV_Averages))
+for(i in 1:length(YEARTYPEdf$SJV_Averages)){
+	if(YEARTYPEdf$SJV_Averages[[i]]>=1 & YEARTYPEdf$SJV_Averages[[i]]<1.5){
+		YEARTYPEdf$SJV_Round[[i]] <- 1
+	} else if(YEARTYPEdf$SJV_Averages[[i]]>1.5 & YEARTYPEdf$SJV_Averages[[i]]<2.5){
+		YEARTYPEdf$SJV_Round[[i]] <- 2
+	} else if(YEARTYPEdf$SJV_Averages[[i]]>2.5 & YEARTYPEdf$SJV_Averages[[i]]<3.5){
+		YEARTYPEdf$SJV_Round[[i]] <- 3
+	} else if(YEARTYPEdf$SJV_Averages[[i]]>3.5 & YEARTYPEdf$SJV_Averages[[i]]<4.5){
+		YEARTYPEdf$SJV_Round[[i]] <- 4
+	} else if(YEARTYPEdf$SJV_Averages[[i]]>4.5){
+		YEARTYPEdf$SJV_Round[[i]] <- 5
+	} else if(YEARTYPEdf$SJV_Averages[[i]]==1.5 & YEARTYPEdf$SJV_Round[[i-1]]!=2){
+		YEARTYPEdf$SJV_Round[[i]] <- 2
+	} else if(YEARTYPEdf$SJV_Averages[[i]]==1.5 & YEARTYPEdf$SJV_Round[[i-1]]==2){
+		YEARTYPEdf$SJV_Round[[i]] <- 1
+	} else if(YEARTYPEdf$SJV_Averages[[i]]==2.5 & YEARTYPEdf$SJV_Round[[i-1]]!=3){
+		YEARTYPEdf$SJV_Round[[i]] <- 3
+	} else if(YEARTYPEdf$SJV_Averages[[i]]==2.5 & YEARTYPEdf$SJV_Round[[i-1]]==3){
+		YEARTYPEdf$SJV_Round[[i]] <- 2
+	} else if(YEARTYPEdf$SJV_Averages[[i]]==3.5 & YEARTYPEdf$SJV_Round[[i-1]]!=4){
+		YEARTYPEdf$SJV_Round[[i]] <- 4
+	} else if(YEARTYPEdf$SJV_Averages[[i]]==3.5 & YEARTYPEdf$SJV_Round[[i-1]]==4){
+		YEARTYPEdf$SJV_Round[[i]] <- 3
+	} else if(YEARTYPEdf$SJV_Averages[[i]]==4.5 & YEARTYPEdf$SJV_Round[[i-1]]!=5){
+		YEARTYPEdf$SJV_Round[[i]] <- 5
+	} else if(YEARTYPEdf$SJV_Averages[[i]]==4.5 & YEARTYPEdf$SJV_Round[[i-1]]==5){
+		YEARTYPEdf$SJV_Round[[i]] <- 4
+	} else { 
+		YEARTYPEdf$SJV_Round[[i]] <- NA 
 	}
-	names(total_Q)[[i]] <- names(yeartype_summary)[[i]]
 }
-total_Q_df <- as.data.frame(total_Q)
+for(i in 1:length(YEARTYPEdf$SacV_Averages)){
+	if(YEARTYPEdf$SacV_Averages[[i]]>=1 & YEARTYPEdf$SacV_Averages[[i]]<1.5){
+		YEARTYPEdf$SacV_Round[[i]] <- 1
+	} else if(YEARTYPEdf$SacV_Averages[[i]]>1.5 & YEARTYPEdf$SacV_Averages[[i]]<2.5){
+		YEARTYPEdf$SacV_Round[[i]] <- 2
+	} else if(YEARTYPEdf$SacV_Averages[[i]]>2.5 & YEARTYPEdf$SacV_Averages[[i]]<3.5){
+		YEARTYPEdf$SacV_Round[[i]] <- 3
+	} else if(YEARTYPEdf$SacV_Averages[[i]]>3.5 & YEARTYPEdf$SacV_Averages[[i]]<4.5){
+		YEARTYPEdf$SacV_Round[[i]] <- 4
+	} else if(YEARTYPEdf$SacV_Averages[[i]]>4.5){
+		YEARTYPEdf$SacV_Round[[i]] <- 5
+	} else if(YEARTYPEdf$SacV_Averages[[i]]==1.5 & YEARTYPEdf$SacV_Round[[i-1]]!=2){
+		YEARTYPEdf$SacV_Round[[i]] <- 2
+	} else if(YEARTYPEdf$SacV_Averages[[i]]==1.5 & YEARTYPEdf$SacV_Round[[i-1]]==2){
+		YEARTYPEdf$SacV_Round[[i]] <- 1
+	} else if(YEARTYPEdf$SacV_Averages[[i]]==2.5 & YEARTYPEdf$SacV_Round[[i-1]]!=3){
+		YEARTYPEdf$SacV_Round[[i]] <- 3
+	} else if(YEARTYPEdf$SacV_Averages[[i]]==2.5 & YEARTYPEdf$SacV_Round[[i-1]]==3){
+		YEARTYPEdf$SacV_Round[[i]] <- 2
+	} else if(YEARTYPEdf$SacV_Averages[[i]]==3.5 & YEARTYPEdf$SacV_Round[[i-1]]!=4){
+		YEARTYPEdf$SacV_Round[[i]] <- 4
+	} else if(YEARTYPEdf$SacV_Averages[[i]]==3.5 & YEARTYPEdf$SacV_Round[[i-1]]==4){
+		YEARTYPEdf$SacV_Round[[i]] <- 3
+	} else if(YEARTYPEdf$SacV_Averages[[i]]==4.5 & YEARTYPEdf$SacV_Round[[i-1]]!=5){
+		YEARTYPEdf$SacV_Round[[i]] <- 5
+	} else if(YEARTYPEdf$SacV_Averages[[i]]==4.5 & YEARTYPEdf$SacV_Round[[i-1]]==5){
+		YEARTYPEdf$SacV_Round[[i]] <- 4
+	} else { 
+		YEARTYPEdf$SacV_Round[[i]] <- NA 
+	}
+}
 
-write.csv(total_Q_df,
-		file="C:\\Users\\tiffn_000\\Documents\\workspaces\\eclipse_workspace\\streamflow_yeartype_tables\\total_Q_edited.csv")
+
+#total_Q <-vector("list", length=(length(yeartype_summary)))
+#total_Q[[1]] <- yeartype_summary[[which(length_yeartype==max(length_yeartype))]]$Year
+#names(total_Q)[[1]] <- "Year"
+#for (i in 2:length(yeartype_summary)){
+#	for(n in 1: length(total_Q$Year)){
+#		if(is.na(pos_year[[i]][[n]])){
+#			total_Q[[i]][[n]] <- NA
+#		} else {
+#			total_Q[[i]][[n]] <- yeartype_summary[[i]]$Q_maf_yearly[[pos_year[[i]][[n]]]]
+#		}
+#	}
+#	names(total_Q)[[i]] <- names(yeartype_summary)[[i]]
+#}
+#total_Q_df <- as.data.frame(total_Q)
+#
+#write.csv(total_Q_df,
+#		file="C:\\Users\\tiffn_000\\Documents\\workspaces\\eclipse_workspace\\streamflow_yeartype_tables\\total_Q_edited.csv")
 write.csv(YEARTYPEdf,
-		file="C:\\Users\\tiffn_000\\Documents\\workspaces\\eclipse_workspace\\streamflow_yeartype_tables\\yeartype_edited_classified_20per_final.csv")
+		file="C:\\Users\\tiffn_000\\Documents\\workspaces\\eclipse_workspace\\streamflow_yeartype_tables\\yeartype_edited_classified_20per_finaltest.csv")

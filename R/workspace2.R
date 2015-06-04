@@ -29,7 +29,8 @@ if(as.numeric(USGS11377100$raw$site_no[[1]]) %in% SacV_gauges$site_no){
 USGS11377100$prep <- prepdata(USGS11377100$raw)
 USGS11377100$Availability <- DataAvailability(USGS11377100$prep)
 USGS11377100$Winter_NOV_APR_6mon <- Split6Winter(USGS11377100$prep, USGS11377100$Index)
-USGS11377100$Winter_DEC_FEB_3mon <- Split3Winter(USGS11377100$prep)
-USGS11377100$Winter_Monthly <- SplitWinterMonthly(USGS11377100$prep)
+USGS11377100$Winter_DEC_FEB_3mon <- Split3Winter(USGS11377100$prep, USGS11377100$Index)
+USGS11377100$Winter_Monthly <- SplitWinterMonthly(USGS11377100$prep, USGS11377100$Index)
 
 
+C:\Users\tiffn_000\Documents\workspaces\eclipse_workspace\TXT\TXT
