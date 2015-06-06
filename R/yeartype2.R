@@ -191,6 +191,16 @@ for(i in 2:length(yeartype_summary)){
 	}
 }
 
+xecdf <-list()
+for(i in 2:length(yeartype_summary)){
+	xecdf[[i-1]] <- ecdf(yeartype_summary[[i]][["Q_maf_yearly"]])
+	names(xecdf)[i-1] <- names(yeartype_summary)[i]
+	for(n in 1:length(yeartype_summary[[i]][["Q_maf_yearly"]]))
+	yeartype_summary[[i]][["Q_maf_yearly_quantile"]][[n]] <- xecdf[[i-1]](yeartype_summary[[i]][["Q_maf_yearly"]][[n]]) 
+}
+
+
+
 YEARTYPE <- vector("list",length=length(yeartype_summary))
 length_yeartype <- rep(NA,length(yeartype_summary))
 for(i in 1:length(yeartype_summary)){
@@ -219,6 +229,87 @@ for(i in 2:length(YEARTYPE)){
 		}
 	}
 }
+
+
+YEARTYPEq <- vector("list",length=length(yeartype_summary))
+length_yeartype <- rep(NA,length(yeartype_summary))
+for(i in 1:length(yeartype_summary)){
+	length_yeartype[[i]] <- length(yeartype_summary[[i]][[1]])
+}
+names(YEARTYPEq)[1] <- "Year"
+names(YEARTYPEq)[2:length(YEARTYPEq)] <- names(yeartype_summary)[2:length(yeartype_summary)]
+YEARTYPEq$Year <- yeartype_summary[[which(length_yeartype==max(length_yeartype))[[1]]]]$Year
+
+pos_year <- vector("list", length=(length(YEARTYPEq)))
+for(i in 2:length(YEARTYPEq)){
+	for(n in 1:length(YEARTYPEq$Year)){
+		if(length(which(yeartype_summary[[i]]$Year==YEARTYPEq$Year[[n]]))<1){
+			pos_year[[i]][[n]] <- NA
+		} else {
+			pos_year[[i]][[n]] <- which(yeartype_summary[[i]]$Year==YEARTYPEq$Year[[n]])
+		}
+	}
+}
+for(i in 2:length(YEARTYPEq)){
+	for(n in 1: length(YEARTYPEq$Year)){
+		if(is.na(pos_year[[i]][[n]])){
+			YEARTYPEq[[i]][[n]] <- NA
+		} else {
+			YEARTYPEq[[i]][[n]] <- yeartype_summary[[i]]$Q_maf_yearly_quantile[[pos_year[[i]][[n]]]]
+		}
+	}
+}
+
+YEARTYPEqdf <- as.data.frame(YEARTYPEq)
+YEARTYPEqdf$SJV_Averages <- rowMeans(YEARTYPEqdf[,2:9], na.rm=TRUE)
+YEARTYPEqdf$SacV_Averages <- rowMeans(YEARTYPEqdf[,10:length(YEARTYPEq)], na.rm=TRUE)
+YEARTYPEqdf$SJV_num <- rep(NA, length(YEARTYPEqdf$SJV_Averages))
+YEARTYPEqdf$SacV_num <- rep(NA, length(YEARTYPEqdf$SacV_Averages))
+YEARTYPEqdf$SJV_let <- rep(NA, length(YEARTYPEqdf$SJV_Averages))
+YEARTYPEqdf$SacV_let <- rep(NA, length(YEARTYPEqdf$SacV_Averages))
+for(n in 1:length(YEARTYPEqdf$SJV_Averages)){
+	if(is.na(YEARTYPEqdf$SJV_Averages[[n]])){
+		YEARTYPEqdf$SJV_num[[n]] <- NA
+		YEARTYPEqdf$SJV_let[[n]] <- NA
+	} else if(YEARTYPEqdf$SJV_Averages[[n]]<0.2){
+		YEARTYPEqdf$SJV_num[[n]] <- 1
+		YEARTYPEqdf$SJV_let[[n]] <- "C"
+	} else if(YEARTYPEqdf$SJV_Averages[[n]]>=0.2 & YEARTYPEqdf$SJV_Averages[[n]]<0.4){
+		YEARTYPEqdf$SJV_num[[n]] <- 2
+		YEARTYPEqdf$SJV_let[[n]] <- "D"
+	} else if(YEARTYPEqdf$SJV_Averages[[n]]>=0.4 & YEARTYPEqdf$SJV_Averages[[n]]<0.6){
+		YEARTYPEqdf$SJV_num[[n]] <- 3
+		YEARTYPEqdf$SJV_let[[n]] <- "BN"
+	} else if(YEARTYPEqdf$SJV_Averages[[n]]>=0.6 & YEARTYPEqdf$SJV_Averages[[n]]<0.8){
+		YEARTYPEqdf$SJV_num[[n]] <- 4
+		YEARTYPEqdf$SJV_let[[n]] <- "AN"
+	} else if(YEARTYPEqdf$SJV_Averages[[n]]>=0.8){
+		YEARTYPEqdf$SJV_num[[n]] <- 5
+		YEARTYPEqdf$SJV_let[[n]] <- "W"
+	}
+}
+for(n in 1:length(YEARTYPEqdf$SacV_Averages)){
+	if(is.na(YEARTYPEqdf$SacV_Averages[[n]])){
+		YEARTYPEqdf$SacV_num[[n]] <- NA
+		YEARTYPEqdf$SacV_let[[n]] <- NA
+	} else if(YEARTYPEqdf$SacV_Averages[[n]]<0.2){
+		YEARTYPEqdf$SacV_num[[n]] <- 1
+		YEARTYPEqdf$SacV_let[[n]] <- "C"
+	} else if(YEARTYPEqdf$SacV_Averages[[n]]>=0.2 & YEARTYPEqdf$SacV_Averages[[n]]<0.4){
+		YEARTYPEqdf$SacV_num[[n]] <- 2
+		YEARTYPEqdf$SacV_let[[n]] <- "D"
+	} else if(YEARTYPEqdf$SacV_Averages[[n]]>=0.4 & YEARTYPEqdf$SacV_Averages[[n]]<0.6){
+		YEARTYPEqdf$SacV_num[[n]] <- 3
+		YEARTYPEqdf$SacV_let[[n]] <- "BN"
+	} else if(YEARTYPEqdf$SacV_Averages[[n]]>=0.6 & YEARTYPEqdf$SacV_Averages[[n]]<0.8){
+		YEARTYPEqdf$SacV_num[[n]] <- 4
+		YEARTYPEqdf$SacV_let[[n]] <- "AN"
+	} else if(YEARTYPEqdf$SacV_Averages[[n]]>=0.8){
+		YEARTYPEqdf$SacV_num[[n]] <- 5
+		YEARTYPEqdf$SacV_let[[n]] <- "W"
+	}
+}
+
 
 YEARTYPEdf <- as.data.frame(YEARTYPE)
 YEARTYPEdf$SJV_Averages <- rowMeans(YEARTYPEdf[,2:9], na.rm=TRUE)
@@ -306,5 +397,5 @@ for(i in 1:length(YEARTYPEdf$SacV_Averages)){
 #
 #write.csv(total_Q_df,
 #		file="C:\\Users\\tiffn_000\\Documents\\workspaces\\eclipse_workspace\\streamflow_yeartype_tables\\total_Q_edited.csv")
-write.csv(YEARTYPEdf,
-		file="C:\\Users\\tiffn_000\\Documents\\workspaces\\eclipse_workspace\\streamflow_yeartype_tables\\yeartype_edited_classified_20per_finaltest.csv")
+write.csv(YEARTYPEqdf,
+		file="C:\\Users\\tiffn_000\\Documents\\workspaces\\eclipse_workspace\\streamflow_yeartype_tables\\yeartype_edited_classified_20per_finalq.csv")
