@@ -361,6 +361,6 @@ SplitWinterMonthly <- function(input, index){
 		names(XW)[k] <- month_names[k]
 	}
 	
-	total <- list(Data=wint_by_year, Stats=stats, all=all, C=XC, D=XD, BN=XBN, AN=XAN, W=XW)
+	total <- list(Data=wint_by_year, Stats=stats, All=all, C=XC, D=XD, BN=XBN, AN=XAN, W=XW)
 	return(total)
 }
