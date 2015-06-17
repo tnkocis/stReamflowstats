@@ -8,6 +8,17 @@ library(dataRetrieval)
 
 SacV_gauges <- read.csv("C:\\Users\\tiffn_000\\Documents\\workspaces\\eclipse_workspace\\Stream_Gauges_Raw_Data\\Sites_list_huc\\sites_for_svi.txt")
 SJV_gauges <- read.csv("C:\\Users\\tiffn_000\\Documents\\workspaces\\eclipse_workspace\\Stream_Gauges_Raw_Data\\Sites_list_huc\\sites_for_sji.txt")
+unimpaired_g <- read.csv("C:\\Users\\tiffn_000\\Documents\\workspaces\\eclipse_workspace\\unimpaired_gauges.csv")
+unimpaired_g <- as.numeric(unimpaired_g$Unimpaired)
+
+unimpaired <- vector("list", length=length(unimpaired_g))
+names(unimpaired) <- unimpaired_g
+for(i in 1:length(unimpaired_g)){
+	unimpaired[[i]]$raw <- readNWISdv(unimpaired_g[[i]],"00060", startDate="1900-01-01",
+			endDate=Sys.Date(), statCd="00003")
+}
+
+
 
 USGS11377100 <- list()
 USGS11377100$raw  <- readNWISdv(11377100,"00060", startDate="1900-01-01",
