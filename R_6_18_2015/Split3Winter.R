@@ -5,7 +5,7 @@
 
 
 #split into years of 3 month winter data
-Split3Winter <- function(input, index, percentiles){
+Split3Winter <- function(input, index){
 #remove if package
 	if(!require(dplyr)){
 		install.packages("dplyr")
@@ -16,8 +16,6 @@ Split3Winter <- function(input, index, percentiles){
 		stop("Input data is required.")
 	if (missing(index))
 		stop("Index data required.")
-	if (missing(percentiles))
-		stop("Percentile data required.")
 	year <- as.numeric(format(input$Date,"%Y"))
 	month <- as.numeric(format(input$Date,"%m"))
 	day <- as.numeric(format(input$Date,"%d"))

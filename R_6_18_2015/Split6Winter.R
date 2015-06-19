@@ -4,8 +4,8 @@
 ###############################################################################
 
 
-#split into years of 3 month winter data
-Split3Winter <- function(input, index, percentiles){
+#split into years of 6 month winter data
+Split6Winter <- function(input, index){
 #remove if package
 	if(!require(dplyr)){
 		install.packages("dplyr")
@@ -16,16 +16,14 @@ Split3Winter <- function(input, index, percentiles){
 		stop("Input data is required.")
 	if (missing(index))
 		stop("Index data required.")
-	if (missing(percentiles))
-		stop("Percentile data required.")
 	year <- as.numeric(format(input$Date,"%Y"))
 	month <- as.numeric(format(input$Date,"%m"))
 	day <- as.numeric(format(input$Date,"%d"))
 	years <- seq(min(year), max(year), by=1)
-	
+
 	wint_by_year <- list()
 	for (i in seq(1,length(years)-1,1)){
-		wint_by_year[[i]] <- filter(input, (month >11 & year == years[i])| (month <3 & year == years[i]+1))
+		wint_by_year[[i]] <- filter(input, (month >10 & year == years[i])| (month <5 & year == years[i]+1))
 		names(wint_by_year)[i] <- paste(years[i],"-",years[i]+1)
 		wint_by_year[[i]]["Discharge_ft3_day"] <- as.numeric(wint_by_year[[i]]$Discharge_cfs)*86400
 		wint_by_year[[i]]["Discharge_acft_day"] <- wint_by_year[[i]]$Discharge_ft3_day*(2.29568411e-5)
@@ -69,7 +67,6 @@ Split3Winter <- function(input, index, percentiles){
 		stats[[i]][["Thresholds"]][["Totals"]] <- as.data.frame(stats[[i]][["Thresholds"]][["Totals"]])
 		names(stats)[i] <- names(wint_by_year)[i]
 	}
-
 	
 	all <- list()
 	all[["Data"]]["Discharge_acfte6_day"] <- wint_by_year[[1]]["Discharge_acfte6_day"]
@@ -325,3 +322,4 @@ Split3Winter <- function(input, index, percentiles){
 	total <- list(Data=wint_by_year, Stats=stats, All=all, C=XC, D=XD, BN=XBN, AN=XAN, W=XW)
 	return(total)
 }
+
