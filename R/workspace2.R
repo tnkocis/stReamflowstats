@@ -40,9 +40,12 @@ if(as.numeric(USGS11377100$raw$site_no[[1]]) %in% SacV_gauges$site_no){
 
 ###DATA PROCESSING
 USGS11377100$prep <- prepdata(USGS11377100$raw)
+USGS11377100$thresholds_maf <- thresholds(USGS11377100$prep)
+USGS11377100$record_stats <- record_stats(USGS11377100$prep, USGS11377100$thresholds_maf)
 USGS11377100$Availability <- DataAvailability(USGS11377100$prep)
+USGS11377100$Winter_3mon <- Split3Winter(USGS11377100$prep, USGS11377100$Index, USGS11377100$thresholds_maf)
+
 USGS11377100$Winter_6mon <- Split6Winter(USGS11377100$prep, USGS11377100$Index)
-USGS11377100$Winter_3mon <- Split3Winter(USGS11377100$prep, USGS11377100$Index)
 USGS11377100$Winter_monthly <- SplitWinterMonthly(USGS11377100$prep, USGS11377100$Index)
 
 for(n in 1:length(USGS11377100$Winter_3mon$Data)){

@@ -32,7 +32,7 @@ prepdata <- function(raw){
 	merge_zoo <- merge(cont_date_zoo,raw_zoo)
 	merge_zoo_df <- as.data.frame(merge_zoo)
 	first_date <- which(dates_present==1)[[1]]
-	prep <- data.frame(Date=cont_date,Discharge_cfs=merge_zoo_df[[2]],Available=dates_present)
+	prep <- data.frame(Date=cont_date,Discharge_cfs=merge_zoo_df[[2]],Available=dates_present, Discharge_maf=(merge_zoo_df[[2]]*86400*2.29568411e-5*1e-6))
 	prep <- prep[first_date:nrow(prep),]
 	return(prep)
 }

@@ -43,26 +43,46 @@ Split3Winter <- function(input, index, percentiles){
 		stats[[i]][["Values"]]["max_acfte6"] <- max(wint_by_year[[i]][["Discharge_acfte6_day"]], na.rm=TRUE)
 		stats[[i]][["Values"]][["max_date"]] <- wint_by_year[[i]][["Date"]][which(wint_by_year[[i]][["Discharge_acfte6_day"]]==stats[[i]][["Values"]]["max_acfte6"])]
 		stats[[i]][["Values"]][["min_date"]] <- wint_by_year[[i]][["Date"]][which(wint_by_year[[i]][["Discharge_acfte6_day"]]==stats[[i]][["Values"]]["min_acfte6"])]
+
 		stats[[i]][["Thresholds"]] <- list()
 		stats[[i]][["Thresholds"]][["coded"]] <- list()
-		stats[[i]][["Thresholds"]][["Quantiles_acfte6"]] <- quantile(wint_by_year[[i]][["Discharge_acfte6_day"]], probs=c(0.05,0.1,0.2,0.25,0.5,0.75,0.9,0.95),na.rm=TRUE)
-		for (k in 1:length(stats[[i]][["Thresholds"]][["Quantiles_acfte6"]])){
+		#stats[[i]][["Thresholds"]][["Quantiles_acfte6"]] <- quantile(wint_by_year[[i]][["Discharge_acfte6_day"]], probs=c(0.05,0.1,0.2,0.25,0.5,0.75,0.9,0.95),na.rm=TRUE)
+		for (k in 1:length(percentiles)){
 			for (n in 1:length(wint_by_year[[i]][["Discharge_acfte6_day"]])){
-				if(wint_by_year[[i]][["Discharge_acfte6_day"]][[n]] >= stats[[i]][["Thresholds"]][["Quantiles_acfte6"]][[k]]){
-					stats[[i]][["Thresholds"]][["coded"]][[paste0("P",names(stats[[i]][["Thresholds"]][["Quantiles_acfte6"]][k]))]][[n]] <- 1
-				} else if (wint_by_year[[i]][["Discharge_acfte6_day"]][[n]] < stats[[i]][["Thresholds"]][["Quantiles_acfte6"]][[k]]){
-					stats[[i]][["Thresholds"]][["coded"]][[paste0("P",names(stats[[i]][["Thresholds"]][["Quantiles_acfte6"]][k]))]][[n]] <- 0	
+				if(is.na(wint_by_year[[i]][["Discharge_acfte6_day"]][[n]])){
+					stats[[i]][["Thresholds"]][["coded"]][[names(percentiles)[k]]][[n]] <- NA
+				} else if (wint_by_year[[i]][["Discharge_acfte6_day"]][[n]] >= percentiles[[k]]){
+					stats[[i]][["Thresholds"]][["coded"]][[names(percentiles)[k]]][[n]] <- 1
+				} else if (wint_by_year[[i]][["Discharge_acfte6_day"]][[n]] < percentiles[[k]]){
+					stats[[i]][["Thresholds"]][["coded"]][[names(percentiles)[k]]][[n]] <- 0	
 				} else {
-					stats[[i]][["Thresholds"]][["coded"]][[paste0("P",names(stats[[i]][["Thresholds"]][["Quantiles_acfte6"]][k]))]][[n]] <- NA
+					stats[[i]][["Thresholds"]][["coded"]][[names(percentiles)[k]]][[n]] <- NA
 				}
 			}
 		}
+		
+#		stats[[i]][["Thresholds"]] <- list()
+#		stats[[i]][["Thresholds"]][["coded"]] <- list()
+#		stats[[i]][["Thresholds"]][["Quantiles_acfte6"]] <- quantile(wint_by_year[[i]][["Discharge_acfte6_day"]], probs=c(0.05,0.1,0.2,0.25,0.5,0.75,0.9,0.95),na.rm=TRUE)
+#		for (k in 1:length(stats[[i]][["Thresholds"]][["Quantiles_acfte6"]])){
+#			for (n in 1:length(wint_by_year[[i]][["Discharge_acfte6_day"]])){
+#				if(wint_by_year[[i]][["Discharge_acfte6_day"]][[n]] >= stats[[i]][["Thresholds"]][["Quantiles_acfte6"]][[k]]){
+#					stats[[i]][["Thresholds"]][["coded"]][[paste0("P",names(stats[[i]][["Thresholds"]][["Quantiles_acfte6"]][k]))]][[n]] <- 1
+#				} else if (wint_by_year[[i]][["Discharge_acfte6_day"]][[n]] < stats[[i]][["Thresholds"]][["Quantiles_acfte6"]][[k]]){
+#					stats[[i]][["Thresholds"]][["coded"]][[paste0("P",names(stats[[i]][["Thresholds"]][["Quantiles_acfte6"]][k]))]][[n]] <- 0	
+#				} else {
+#					stats[[i]][["Thresholds"]][["coded"]][[paste0("P",names(stats[[i]][["Thresholds"]][["Quantiles_acfte6"]][k]))]][[n]] <- NA
+#				}
+#			}
+#		}
+	
+	
 		stats[[i]][["Thresholds"]][["Totals"]] <- list()
 		stats[[i]][["Thresholds"]][["Totals"]][["Thresholds"]] <- c(0.05,0.1,0.2,0.25,0.5,0.75,0.9,0.95)
 		for (k in 1:length(stats[[i]][["Thresholds"]][["Totals"]][["Thresholds"]])){
-			stats[[i]][["Thresholds"]][["Totals"]][["DaysAbove"]][[k]] <- sum(stats[[i]][["Thresholds"]][["coded"]][[k]])
-			stats[[i]][["Thresholds"]][["Totals"]][["FracDaysAbove"]][[k]] <- sum(stats[[i]][["Thresholds"]][["coded"]][[k]])/length(stats[[i]][["Thresholds"]][["coded"]][[k]])
-			stats[[i]][["Thresholds"]][["Totals"]][["Volume_Abv_acfte6"]][[k]] <- sum(wint_by_year[[i]][["Discharge_acfte6_day"]][which(stats[[i]][["Thresholds"]][["coded"]][[k]]==1)])
+			stats[[i]][["Thresholds"]][["Totals"]][["DaysAbove"]][[k]] <- sum(stats[[i]][["Thresholds"]][["coded"]][[k]], na.rm=TRUE)
+			stats[[i]][["Thresholds"]][["Totals"]][["FracDaysAbove"]][[k]] <- sum(stats[[i]][["Thresholds"]][["coded"]][[k]], na.rm=TRUE)/length(stats[[i]][["Thresholds"]][["coded"]][[k]])
+			stats[[i]][["Thresholds"]][["Totals"]][["Volume_Abv_acfte6"]][[k]] <- sum(wint_by_year[[i]][["Discharge_acfte6_day"]][which(stats[[i]][["Thresholds"]][["coded"]][[k]]==1)], na.rm=TRUE)
 			stats[[i]][["Thresholds"]][["Totals"]][["Total_Q_acfte6"]][[k]] <- stats[[i]][["Values"]][["Total_Q_acfte6"]]
 			stats[[i]][["Thresholds"]][["Totals"]][["Frac_Abv"]][[k]] <- stats[[i]][["Thresholds"]][["Totals"]][["Volume_Abv_acfte6"]][[k]]/stats[[i]][["Values"]][["Total_Q_acfte6"]]
 		}
@@ -88,24 +108,38 @@ Split3Winter <- function(input, index, percentiles){
 	all[["Stats"]][["Total_Q_acfte6"]] <- sum(all[["Data"]][["Discharge_acfte6_day"]], na.rm=TRUE)
 	all[["Stats"]][["Thresholds"]] <- list()
 	all[["Stats"]][["Thresholds"]][["coded"]] <- list()
-	all[["Stats"]][["Thresholds"]][["Quantiles_acfte6"]] <- quantile(all[["Data"]][["Discharge_acfte6_day"]], probs=c(0.05,0.1,0.2,0.25,0.5,0.75,0.9,0.95),na.rm=TRUE)
-	for (i in 1:length(all[["Stats"]][["Thresholds"]][["Quantiles_acfte6"]])){
+#	all[["Stats"]][["Thresholds"]][["Quantiles_acfte6"]] <- quantile(all[["Data"]][["Discharge_acfte6_day"]], probs=c(0.05,0.1,0.2,0.25,0.5,0.75,0.9,0.95),na.rm=TRUE)
+#	for (i in 1:length(all[["Stats"]][["Thresholds"]][["Quantiles_acfte6"]])){
+#		for (n in 1:length(all[["Data"]][["Discharge_acfte6_day"]])){
+#			if(all[["Data"]][["Discharge_acfte6_day"]][[n]] >= all[["Stats"]][["Thresholds"]][["Quantiles_acfte6"]][[i]]){
+#				all[["Stats"]][["Thresholds"]][["coded"]][[paste0("P",names(all[["Stats"]][["Thresholds"]][["Quantiles_acfte6"]][i]))]][[n]] <- 1
+#			} else if (all[["Data"]][["Discharge_acfte6_day"]][[n]] < all[["Stats"]][["Thresholds"]][["Quantiles_acfte6"]][[i]]){
+#				all[["Stats"]][["Thresholds"]][["coded"]][[paste0("P",names(all[["Stats"]][["Thresholds"]][["Quantiles_acfte6"]][i]))]][[n]] <- 0	
+#			} else {
+#				all[["Stats"]][["Thresholds"]][["coded"]][[paste0("P",names(all[["Stats"]][["Thresholds"]][["Quantiles_acfte6"]][i]))]][[n]] <- NA
+#			}
+#		}
+#	}
+
+	for (k in 1:length(percentiles)){
 		for (n in 1:length(all[["Data"]][["Discharge_acfte6_day"]])){
-			if(all[["Data"]][["Discharge_acfte6_day"]][[n]] >= all[["Stats"]][["Thresholds"]][["Quantiles_acfte6"]][[i]]){
-				all[["Stats"]][["Thresholds"]][["coded"]][[paste0("P",names(all[["Stats"]][["Thresholds"]][["Quantiles_acfte6"]][i]))]][[n]] <- 1
-			} else if (all[["Data"]][["Discharge_acfte6_day"]][[n]] < all[["Stats"]][["Thresholds"]][["Quantiles_acfte6"]][[i]]){
-				all[["Stats"]][["Thresholds"]][["coded"]][[paste0("P",names(all[["Stats"]][["Thresholds"]][["Quantiles_acfte6"]][i]))]][[n]] <- 0	
+			if(is.na(all[["Data"]][["Discharge_acfte6_day"]][[n]])){
+				all[["Stats"]][["Thresholds"]][["coded"]][[names(percentiles)[k]]][[n]] <- NA
+			} else if (all[["Data"]][["Discharge_acfte6_day"]][[n]] >= percentiles[[k]]){
+				all[["Stats"]][["Thresholds"]][["coded"]][[names(percentiles)[k]]][[n]] <- 1
+			} else if (all[["Data"]][["Discharge_acfte6_day"]][[n]] < percentiles[[k]]){
+				all[["Stats"]][["Thresholds"]][["coded"]][[names(percentiles)[k]]][[n]] <- 0	
 			} else {
-				all[["Stats"]][["Thresholds"]][["coded"]][[paste0("P",names(all[["Stats"]][["Thresholds"]][["Quantiles_acfte6"]][i]))]][[n]] <- NA
+				all[["Stats"]][["Thresholds"]][["coded"]][[names(percentiles)[k]]][[n]] <- NA
 			}
 		}
 	}
 	all[["Stats"]][["Thresholds"]][["Totals"]] <- list()
 	all[["Stats"]][["Thresholds"]][["Totals"]][["Thresholds"]] <- c(0.05,0.1,0.2,0.25,0.5,0.75,0.9,0.95)
 	for (i in 1:length(all[["Stats"]][["Thresholds"]][["Totals"]][["Thresholds"]])){
-		all[["Stats"]][["Thresholds"]][["Totals"]][["DaysAbove"]][[i]] <- sum(all[["Stats"]][["Thresholds"]][["coded"]][[i]])
-		all[["Stats"]][["Thresholds"]][["Totals"]][["FracDaysAbove"]][[i]] <- sum(all[["Stats"]][["Thresholds"]][["coded"]][[i]])/length(all[["Stats"]][["Thresholds"]][["coded"]][[i]])
-		all[["Stats"]][["Thresholds"]][["Totals"]][["Volume_Abv_acfte6"]][[i]] <- sum(all[["Data"]][["Discharge_acfte6_day"]][which(all[["Stats"]][["Thresholds"]][["coded"]][[i]]==1)])
+		all[["Stats"]][["Thresholds"]][["Totals"]][["DaysAbove"]][[i]] <- sum(all[["Stats"]][["Thresholds"]][["coded"]][[i]], na.rm=TRUE)
+		all[["Stats"]][["Thresholds"]][["Totals"]][["FracDaysAbove"]][[i]] <- sum(all[["Stats"]][["Thresholds"]][["coded"]][[i]], na.rm=TRUE)/length(all[["Stats"]][["Thresholds"]][["coded"]][[i]])
+		all[["Stats"]][["Thresholds"]][["Totals"]][["Volume_Abv_acfte6"]][[i]] <- sum(all[["Data"]][["Discharge_acfte6_day"]][which(all[["Stats"]][["Thresholds"]][["coded"]][[i]]==1)], na.rm=TRUE)
 		all[["Stats"]][["Thresholds"]][["Totals"]][["Total_Q_acfte6"]][[i]] <-all[["Stats"]][["Total_Q_acfte6"]]
 		all[["Stats"]][["Thresholds"]][["Totals"]][["Frac_Abv"]][[i]] <- all[["Stats"]][["Thresholds"]][["Totals"]][["Volume_Abv_acfte6"]][[i]]/all[["Stats"]][["Total_Q_acfte6"]]
 	}
@@ -130,24 +164,38 @@ Split3Winter <- function(input, index, percentiles){
 	XC[["Stats"]][["Total_Q_acfte6"]] <- sum(XC[["Data"]][["Discharge_acfte6_day"]], na.rm=TRUE)
 	XC[["Stats"]][["Thresholds"]] <- list()
 	XC[["Stats"]][["Thresholds"]][["coded"]] <- list()
-	XC[["Stats"]][["Thresholds"]][["Quantiles_acfte6"]] <- quantile(XC[["Data"]][["Discharge_acfte6_day"]], probs=c(0.05,0.1,0.2,0.25,0.5,0.75,0.9,0.95),na.rm=TRUE)
-	for (i in 1:length(XC[["Stats"]][["Thresholds"]][["Quantiles_acfte6"]])){
+#	XC[["Stats"]][["Thresholds"]][["Quantiles_acfte6"]] <- quantile(XC[["Data"]][["Discharge_acfte6_day"]], probs=c(0.05,0.1,0.2,0.25,0.5,0.75,0.9,0.95),na.rm=TRUE)
+#	for (i in 1:length(XC[["Stats"]][["Thresholds"]][["Quantiles_acfte6"]])){
+#		for (n in 1:length(XC[["Data"]][["Discharge_acfte6_day"]])){
+#			if(XC[["Data"]][["Discharge_acfte6_day"]][[n]] >= XC[["Stats"]][["Thresholds"]][["Quantiles_acfte6"]][[i]]){
+#				XC[["Stats"]][["Thresholds"]][["coded"]][[paste0("P",names(XC[["Stats"]][["Thresholds"]][["Quantiles_acfte6"]][i]))]][[n]] <- 1
+#			} else if (XC[["Data"]][["Discharge_acfte6_day"]][[n]] < XC[["Stats"]][["Thresholds"]][["Quantiles_acfte6"]][[i]]){
+#				XC[["Stats"]][["Thresholds"]][["coded"]][[paste0("P",names(XC[["Stats"]][["Thresholds"]][["Quantiles_acfte6"]][i]))]][[n]] <- 0	
+#			} else {
+#				XC[["Stats"]][["Thresholds"]][["coded"]][[paste0("P",names(XC[["Stats"]][["Thresholds"]][["Quantiles_acfte6"]][i]))]][[n]] <- NA
+#			}
+#		}
+#	}
+
+	for (k in 1:length(percentiles)){
 		for (n in 1:length(XC[["Data"]][["Discharge_acfte6_day"]])){
-			if(XC[["Data"]][["Discharge_acfte6_day"]][[n]] >= XC[["Stats"]][["Thresholds"]][["Quantiles_acfte6"]][[i]]){
-				XC[["Stats"]][["Thresholds"]][["coded"]][[paste0("P",names(XC[["Stats"]][["Thresholds"]][["Quantiles_acfte6"]][i]))]][[n]] <- 1
-			} else if (XC[["Data"]][["Discharge_acfte6_day"]][[n]] < XC[["Stats"]][["Thresholds"]][["Quantiles_acfte6"]][[i]]){
-				XC[["Stats"]][["Thresholds"]][["coded"]][[paste0("P",names(XC[["Stats"]][["Thresholds"]][["Quantiles_acfte6"]][i]))]][[n]] <- 0	
+			if(is.na(XC[["Data"]][["Discharge_acfte6_day"]][[n]])){
+				XC[["Stats"]][["Thresholds"]][["coded"]][[names(percentiles)[k]]][[n]] <- NA
+			} else if (XC[["Data"]][["Discharge_acfte6_day"]][[n]] >= percentiles[[k]]){
+				XC[["Stats"]][["Thresholds"]][["coded"]][[names(percentiles)[k]]][[n]] <- 1
+			} else if (XC[["Data"]][["Discharge_acfte6_day"]][[n]] < percentiles[[k]]){
+				XC[["Stats"]][["Thresholds"]][["coded"]][[names(percentiles)[k]]][[n]] <- 0	
 			} else {
-				XC[["Stats"]][["Thresholds"]][["coded"]][[paste0("P",names(XC[["Stats"]][["Thresholds"]][["Quantiles_acfte6"]][i]))]][[n]] <- NA
+				XC[["Stats"]][["Thresholds"]][["coded"]][[names(percentiles)[k]]][[n]] <- NA
 			}
 		}
 	}
 	XC[["Stats"]][["Thresholds"]][["Totals"]] <- list()
 	XC[["Stats"]][["Thresholds"]][["Totals"]][["Thresholds"]] <- c(0.05,0.1,0.2,0.25,0.5,0.75,0.9,0.95)
 	for (i in 1:length(XC[["Stats"]][["Thresholds"]][["Totals"]][["Thresholds"]])){
-		XC[["Stats"]][["Thresholds"]][["Totals"]][["DaysAbove"]][[i]] <- sum(XC[["Stats"]][["Thresholds"]][["coded"]][[i]])
-		XC[["Stats"]][["Thresholds"]][["Totals"]][["FracDaysAbove"]][[i]] <- sum(XC[["Stats"]][["Thresholds"]][["coded"]][[i]])/length(XC[["Stats"]][["Thresholds"]][["coded"]][[i]])
-		XC[["Stats"]][["Thresholds"]][["Totals"]][["Volume_Abv_acfte6"]][[i]] <- sum(XC[["Data"]][["Discharge_acfte6_day"]][which(XC[["Stats"]][["Thresholds"]][["coded"]][[i]]==1)])
+		XC[["Stats"]][["Thresholds"]][["Totals"]][["DaysAbove"]][[i]] <- sum(XC[["Stats"]][["Thresholds"]][["coded"]][[i]], na.rm=TRUE)
+		XC[["Stats"]][["Thresholds"]][["Totals"]][["FracDaysAbove"]][[i]] <- sum(XC[["Stats"]][["Thresholds"]][["coded"]][[i]], na.rm=TRUE)/length(XC[["Stats"]][["Thresholds"]][["coded"]][[i]])
+		XC[["Stats"]][["Thresholds"]][["Totals"]][["Volume_Abv_acfte6"]][[i]] <- sum(XC[["Data"]][["Discharge_acfte6_day"]][which(XC[["Stats"]][["Thresholds"]][["coded"]][[i]]==1)], na.rm=TRUE)
 		XC[["Stats"]][["Thresholds"]][["Totals"]][["Total_Q_acfte6"]][[i]] <-XC[["Stats"]][["Total_Q_acfte6"]]
 		XC[["Stats"]][["Thresholds"]][["Totals"]][["Frac_Abv"]][[i]] <- XC[["Stats"]][["Thresholds"]][["Totals"]][["Volume_Abv_acfte6"]][[i]]/XC[["Stats"]][["Total_Q_acfte6"]]
 	}
@@ -172,24 +220,38 @@ Split3Winter <- function(input, index, percentiles){
 	XD[["Stats"]][["Total_Q_acfte6"]] <- sum(XD[["Data"]][["Discharge_acfte6_day"]], na.rm=TRUE)
 	XD[["Stats"]][["Thresholds"]] <- list()
 	XD[["Stats"]][["Thresholds"]][["coded"]] <- list()
-	XD[["Stats"]][["Thresholds"]][["Quantiles_acfte6"]] <- quantile(XD[["Data"]][["Discharge_acfte6_day"]], probs=c(0.05,0.1,0.2,0.25,0.5,0.75,0.9,0.95),na.rm=TRUE)
-	for (i in 1:length(XD[["Stats"]][["Thresholds"]][["Quantiles_acfte6"]])){
+#	XD[["Stats"]][["Thresholds"]][["Quantiles_acfte6"]] <- quantile(XD[["Data"]][["Discharge_acfte6_day"]], probs=c(0.05,0.1,0.2,0.25,0.5,0.75,0.9,0.95),na.rm=TRUE)
+#	for (i in 1:length(XD[["Stats"]][["Thresholds"]][["Quantiles_acfte6"]])){
+#		for (n in 1:length(XD[["Data"]][["Discharge_acfte6_day"]])){
+#			if(XD[["Data"]][["Discharge_acfte6_day"]][[n]] >= XD[["Stats"]][["Thresholds"]][["Quantiles_acfte6"]][[i]]){
+#				XD[["Stats"]][["Thresholds"]][["coded"]][[paste0("P",names(XD[["Stats"]][["Thresholds"]][["Quantiles_acfte6"]][i]))]][[n]] <- 1
+#			} else if (XD[["Data"]][["Discharge_acfte6_day"]][[n]] < XD[["Stats"]][["Thresholds"]][["Quantiles_acfte6"]][[i]]){
+#				XD[["Stats"]][["Thresholds"]][["coded"]][[paste0("P",names(XD[["Stats"]][["Thresholds"]][["Quantiles_acfte6"]][i]))]][[n]] <- 0	
+#			} else {
+#				XD[["Stats"]][["Thresholds"]][["coded"]][[paste0("P",names(XD[["Stats"]][["Thresholds"]][["Quantiles_acfte6"]][i]))]][[n]] <- NA
+#			}
+#		}
+#	}
+
+	for (k in 1:length(percentiles)){
 		for (n in 1:length(XD[["Data"]][["Discharge_acfte6_day"]])){
-			if(XD[["Data"]][["Discharge_acfte6_day"]][[n]] >= XD[["Stats"]][["Thresholds"]][["Quantiles_acfte6"]][[i]]){
-				XD[["Stats"]][["Thresholds"]][["coded"]][[paste0("P",names(XD[["Stats"]][["Thresholds"]][["Quantiles_acfte6"]][i]))]][[n]] <- 1
-			} else if (XD[["Data"]][["Discharge_acfte6_day"]][[n]] < XD[["Stats"]][["Thresholds"]][["Quantiles_acfte6"]][[i]]){
-				XD[["Stats"]][["Thresholds"]][["coded"]][[paste0("P",names(XD[["Stats"]][["Thresholds"]][["Quantiles_acfte6"]][i]))]][[n]] <- 0	
+			if(is.na(XD[["Data"]][["Discharge_acfte6_day"]][[n]])){
+				XD[["Stats"]][["Thresholds"]][["coded"]][[names(percentiles)[k]]][[n]] <- NA
+			} else if (XD[["Data"]][["Discharge_acfte6_day"]][[n]] >= percentiles[[k]]){
+				XD[["Stats"]][["Thresholds"]][["coded"]][[names(percentiles)[k]]][[n]] <- 1
+			} else if (XD[["Data"]][["Discharge_acfte6_day"]][[n]] < percentiles[[k]]){
+				XD[["Stats"]][["Thresholds"]][["coded"]][[names(percentiles)[k]]][[n]] <- 0	
 			} else {
-				XD[["Stats"]][["Thresholds"]][["coded"]][[paste0("P",names(XD[["Stats"]][["Thresholds"]][["Quantiles_acfte6"]][i]))]][[n]] <- NA
+				XD[["Stats"]][["Thresholds"]][["coded"]][[names(percentiles)[k]]][[n]] <- NA
 			}
 		}
 	}
 	XD[["Stats"]][["Thresholds"]][["Totals"]] <- list()
 	XD[["Stats"]][["Thresholds"]][["Totals"]][["Thresholds"]] <- c(0.05,0.1,0.2,0.25,0.5,0.75,0.9,0.95)
 	for (i in 1:length(XD[["Stats"]][["Thresholds"]][["Totals"]][["Thresholds"]])){
-		XD[["Stats"]][["Thresholds"]][["Totals"]][["DaysAbove"]][[i]] <- sum(XD[["Stats"]][["Thresholds"]][["coded"]][[i]])
-		XD[["Stats"]][["Thresholds"]][["Totals"]][["FracDaysAbove"]][[i]] <- sum(XD[["Stats"]][["Thresholds"]][["coded"]][[i]])/length(XD[["Stats"]][["Thresholds"]][["coded"]][[i]])
-		XD[["Stats"]][["Thresholds"]][["Totals"]][["Volume_Abv_acfte6"]][[i]] <- sum(XD[["Data"]][["Discharge_acfte6_day"]][which(XD[["Stats"]][["Thresholds"]][["coded"]][[i]]==1)])
+		XD[["Stats"]][["Thresholds"]][["Totals"]][["DaysAbove"]][[i]] <- sum(XD[["Stats"]][["Thresholds"]][["coded"]][[i]], na.rm=TRUE)
+		XD[["Stats"]][["Thresholds"]][["Totals"]][["FracDaysAbove"]][[i]] <- sum(XD[["Stats"]][["Thresholds"]][["coded"]][[i]], na.rm=TRUE)/length(XD[["Stats"]][["Thresholds"]][["coded"]][[i]])
+		XD[["Stats"]][["Thresholds"]][["Totals"]][["Volume_Abv_acfte6"]][[i]] <- sum(XD[["Data"]][["Discharge_acfte6_day"]][which(XD[["Stats"]][["Thresholds"]][["coded"]][[i]]==1)], na.rm=TRUE)
 		XD[["Stats"]][["Thresholds"]][["Totals"]][["Total_Q_acfte6"]][[i]] <-XD[["Stats"]][["Total_Q_acfte6"]]
 		XD[["Stats"]][["Thresholds"]][["Totals"]][["Frac_Abv"]][[i]] <- XD[["Stats"]][["Thresholds"]][["Totals"]][["Volume_Abv_acfte6"]][[i]]/XD[["Stats"]][["Total_Q_acfte6"]]
 	}
@@ -214,24 +276,38 @@ Split3Winter <- function(input, index, percentiles){
 	XBN[["Stats"]][["Total_Q_acfte6"]] <- sum(XBN[["Data"]][["Discharge_acfte6_day"]], na.rm=TRUE)
 	XBN[["Stats"]][["Thresholds"]] <- list()
 	XBN[["Stats"]][["Thresholds"]][["coded"]] <- list()
-	XBN[["Stats"]][["Thresholds"]][["Quantiles_acfte6"]] <- quantile(XBN[["Data"]][["Discharge_acfte6_day"]], probs=c(0.05,0.1,0.2,0.25,0.5,0.75,0.9,0.95),na.rm=TRUE)
-	for (i in 1:length(XBN[["Stats"]][["Thresholds"]][["Quantiles_acfte6"]])){
+#	XBN[["Stats"]][["Thresholds"]][["Quantiles_acfte6"]] <- quantile(XBN[["Data"]][["Discharge_acfte6_day"]], probs=c(0.05,0.1,0.2,0.25,0.5,0.75,0.9,0.95),na.rm=TRUE)
+#	for (i in 1:length(XBN[["Stats"]][["Thresholds"]][["Quantiles_acfte6"]])){
+#		for (n in 1:length(XBN[["Data"]][["Discharge_acfte6_day"]])){
+#			if(XBN[["Data"]][["Discharge_acfte6_day"]][[n]] >= XBN[["Stats"]][["Thresholds"]][["Quantiles_acfte6"]][[i]]){
+#				XBN[["Stats"]][["Thresholds"]][["coded"]][[paste0("P",names(XBN[["Stats"]][["Thresholds"]][["Quantiles_acfte6"]][i]))]][[n]] <- 1
+#			} else if (XBN[["Data"]][["Discharge_acfte6_day"]][[n]] < XBN[["Stats"]][["Thresholds"]][["Quantiles_acfte6"]][[i]]){
+#				XBN[["Stats"]][["Thresholds"]][["coded"]][[paste0("P",names(XBN[["Stats"]][["Thresholds"]][["Quantiles_acfte6"]][i]))]][[n]] <- 0	
+#			} else {
+#				XBN[["Stats"]][["Thresholds"]][["coded"]][[paste0("P",names(XBN[["Stats"]][["Thresholds"]][["Quantiles_acfte6"]][i]))]][[n]] <- NA
+#			}
+#		}
+#	}
+
+	for (k in 1:length(percentiles)){
 		for (n in 1:length(XBN[["Data"]][["Discharge_acfte6_day"]])){
-			if(XBN[["Data"]][["Discharge_acfte6_day"]][[n]] >= XBN[["Stats"]][["Thresholds"]][["Quantiles_acfte6"]][[i]]){
-				XBN[["Stats"]][["Thresholds"]][["coded"]][[paste0("P",names(XBN[["Stats"]][["Thresholds"]][["Quantiles_acfte6"]][i]))]][[n]] <- 1
-			} else if (XBN[["Data"]][["Discharge_acfte6_day"]][[n]] < XBN[["Stats"]][["Thresholds"]][["Quantiles_acfte6"]][[i]]){
-				XBN[["Stats"]][["Thresholds"]][["coded"]][[paste0("P",names(XBN[["Stats"]][["Thresholds"]][["Quantiles_acfte6"]][i]))]][[n]] <- 0	
+			if(is.na(XBN[["Data"]][["Discharge_acfte6_day"]][[n]])){
+				XBN[["Stats"]][["Thresholds"]][["coded"]][[names(percentiles)[k]]][[n]] <- NA
+			} else if (XBN[["Data"]][["Discharge_acfte6_day"]][[n]] >= percentiles[[k]]){
+				XBN[["Stats"]][["Thresholds"]][["coded"]][[names(percentiles)[k]]][[n]] <- 1
+			} else if (XBN[["Data"]][["Discharge_acfte6_day"]][[n]] < percentiles[[k]]){
+				XBN[["Stats"]][["Thresholds"]][["coded"]][[names(percentiles)[k]]][[n]] <- 0	
 			} else {
-				XBN[["Stats"]][["Thresholds"]][["coded"]][[paste0("P",names(XBN[["Stats"]][["Thresholds"]][["Quantiles_acfte6"]][i]))]][[n]] <- NA
+				XBN[["Stats"]][["Thresholds"]][["coded"]][[names(percentiles)[k]]][[n]] <- NA
 			}
 		}
 	}
 	XBN[["Stats"]][["Thresholds"]][["Totals"]] <- list()
 	XBN[["Stats"]][["Thresholds"]][["Totals"]][["Thresholds"]] <- c(0.05,0.1,0.2,0.25,0.5,0.75,0.9,0.95)
 	for (i in 1:length(XBN[["Stats"]][["Thresholds"]][["Totals"]][["Thresholds"]])){
-		XBN[["Stats"]][["Thresholds"]][["Totals"]][["DaysAbove"]][[i]] <- sum(XBN[["Stats"]][["Thresholds"]][["coded"]][[i]])
-		XBN[["Stats"]][["Thresholds"]][["Totals"]][["FracDaysAbove"]][[i]] <- sum(XBN[["Stats"]][["Thresholds"]][["coded"]][[i]])/length(XBN[["Stats"]][["Thresholds"]][["coded"]][[i]])
-		XBN[["Stats"]][["Thresholds"]][["Totals"]][["Volume_Abv_acfte6"]][[i]] <- sum(XBN[["Data"]][["Discharge_acfte6_day"]][which(XBN[["Stats"]][["Thresholds"]][["coded"]][[i]]==1)])
+		XBN[["Stats"]][["Thresholds"]][["Totals"]][["DaysAbove"]][[i]] <- sum(XBN[["Stats"]][["Thresholds"]][["coded"]][[i]], na.rm=TRUE)
+		XBN[["Stats"]][["Thresholds"]][["Totals"]][["FracDaysAbove"]][[i]] <- sum(XBN[["Stats"]][["Thresholds"]][["coded"]][[i]], na.rm=TRUE)/length(XBN[["Stats"]][["Thresholds"]][["coded"]][[i]])
+		XBN[["Stats"]][["Thresholds"]][["Totals"]][["Volume_Abv_acfte6"]][[i]] <- sum(XBN[["Data"]][["Discharge_acfte6_day"]][which(XBN[["Stats"]][["Thresholds"]][["coded"]][[i]]==1)], na.rm=TRUE)
 		XBN[["Stats"]][["Thresholds"]][["Totals"]][["Total_Q_acfte6"]][[i]] <-XBN[["Stats"]][["Total_Q_acfte6"]]
 		XBN[["Stats"]][["Thresholds"]][["Totals"]][["Frac_Abv"]][[i]] <- XBN[["Stats"]][["Thresholds"]][["Totals"]][["Volume_Abv_acfte6"]][[i]]/XBN[["Stats"]][["Total_Q_acfte6"]]
 	}
@@ -256,24 +332,38 @@ Split3Winter <- function(input, index, percentiles){
 	XAN[["Stats"]][["Total_Q_acfte6"]] <- sum(XAN[["Data"]][["Discharge_acfte6_day"]], na.rm=TRUE)
 	XAN[["Stats"]][["Thresholds"]] <- list()
 	XAN[["Stats"]][["Thresholds"]][["coded"]] <- list()
-	XAN[["Stats"]][["Thresholds"]][["Quantiles_acfte6"]] <- quantile(XAN[["Data"]][["Discharge_acfte6_day"]], probs=c(0.05,0.1,0.2,0.25,0.5,0.75,0.9,0.95),na.rm=TRUE)
-	for (i in 1:length(XAN[["Stats"]][["Thresholds"]][["Quantiles_acfte6"]])){
+#	XAN[["Stats"]][["Thresholds"]][["Quantiles_acfte6"]] <- quantile(XAN[["Data"]][["Discharge_acfte6_day"]], probs=c(0.05,0.1,0.2,0.25,0.5,0.75,0.9,0.95),na.rm=TRUE)
+#	for (i in 1:length(XAN[["Stats"]][["Thresholds"]][["Quantiles_acfte6"]])){
+#		for (n in 1:length(XAN[["Data"]][["Discharge_acfte6_day"]])){
+#			if(XAN[["Data"]][["Discharge_acfte6_day"]][[n]] >= XAN[["Stats"]][["Thresholds"]][["Quantiles_acfte6"]][[i]]){
+#				XAN[["Stats"]][["Thresholds"]][["coded"]][[paste0("P",names(XAN[["Stats"]][["Thresholds"]][["Quantiles_acfte6"]][i]))]][[n]] <- 1
+#			} else if (XAN[["Data"]][["Discharge_acfte6_day"]][[n]] < XAN[["Stats"]][["Thresholds"]][["Quantiles_acfte6"]][[i]]){
+#				XAN[["Stats"]][["Thresholds"]][["coded"]][[paste0("P",names(XAN[["Stats"]][["Thresholds"]][["Quantiles_acfte6"]][i]))]][[n]] <- 0	
+#			} else {
+#				XAN[["Stats"]][["Thresholds"]][["coded"]][[paste0("P",names(XAN[["Stats"]][["Thresholds"]][["Quantiles_acfte6"]][i]))]][[n]] <- NA
+#			}
+#		}
+#	}
+
+	for (k in 1:length(percentiles)){
 		for (n in 1:length(XAN[["Data"]][["Discharge_acfte6_day"]])){
-			if(XAN[["Data"]][["Discharge_acfte6_day"]][[n]] >= XAN[["Stats"]][["Thresholds"]][["Quantiles_acfte6"]][[i]]){
-				XAN[["Stats"]][["Thresholds"]][["coded"]][[paste0("P",names(XAN[["Stats"]][["Thresholds"]][["Quantiles_acfte6"]][i]))]][[n]] <- 1
-			} else if (XAN[["Data"]][["Discharge_acfte6_day"]][[n]] < XAN[["Stats"]][["Thresholds"]][["Quantiles_acfte6"]][[i]]){
-				XAN[["Stats"]][["Thresholds"]][["coded"]][[paste0("P",names(XAN[["Stats"]][["Thresholds"]][["Quantiles_acfte6"]][i]))]][[n]] <- 0	
+			if(is.na(XAN[["Data"]][["Discharge_acfte6_day"]][[n]])){
+				XAN[["Stats"]][["Thresholds"]][["coded"]][[names(percentiles)[k]]][[n]] <- NA
+			} else if (XAN[["Data"]][["Discharge_acfte6_day"]][[n]] >= percentiles[[k]]){
+				XAN[["Stats"]][["Thresholds"]][["coded"]][[names(percentiles)[k]]][[n]] <- 1
+			} else if (XAN[["Data"]][["Discharge_acfte6_day"]][[n]] < percentiles[[k]]){
+				XAN[["Stats"]][["Thresholds"]][["coded"]][[names(percentiles)[k]]][[n]] <- 0	
 			} else {
-				XAN[["Stats"]][["Thresholds"]][["coded"]][[paste0("P",names(XAN[["Stats"]][["Thresholds"]][["Quantiles_acfte6"]][i]))]][[n]] <- NA
+				XAN[["Stats"]][["Thresholds"]][["coded"]][[names(percentiles)[k]]][[n]] <- NA
 			}
 		}
 	}
 	XAN[["Stats"]][["Thresholds"]][["Totals"]] <- list()
 	XAN[["Stats"]][["Thresholds"]][["Totals"]][["Thresholds"]] <- c(0.05,0.1,0.2,0.25,0.5,0.75,0.9,0.95)
 	for (i in 1:length(XAN[["Stats"]][["Thresholds"]][["Totals"]][["Thresholds"]])){
-		XAN[["Stats"]][["Thresholds"]][["Totals"]][["DaysAbove"]][[i]] <- sum(XAN[["Stats"]][["Thresholds"]][["coded"]][[i]])
-		XAN[["Stats"]][["Thresholds"]][["Totals"]][["FracDaysAbove"]][[i]] <- sum(XAN[["Stats"]][["Thresholds"]][["coded"]][[i]])/length(XAN[["Stats"]][["Thresholds"]][["coded"]][[i]])
-		XAN[["Stats"]][["Thresholds"]][["Totals"]][["Volume_Abv_acfte6"]][[i]] <- sum(XAN[["Data"]][["Discharge_acfte6_day"]][which(XAN[["Stats"]][["Thresholds"]][["coded"]][[i]]==1)])
+		XAN[["Stats"]][["Thresholds"]][["Totals"]][["DaysAbove"]][[i]] <- sum(XAN[["Stats"]][["Thresholds"]][["coded"]][[i]], na.rm=TRUE)
+		XAN[["Stats"]][["Thresholds"]][["Totals"]][["FracDaysAbove"]][[i]] <- sum(XAN[["Stats"]][["Thresholds"]][["coded"]][[i]], na.rm=TRUE)/length(XAN[["Stats"]][["Thresholds"]][["coded"]][[i]])
+		XAN[["Stats"]][["Thresholds"]][["Totals"]][["Volume_Abv_acfte6"]][[i]] <- sum(XAN[["Data"]][["Discharge_acfte6_day"]][which(XAN[["Stats"]][["Thresholds"]][["coded"]][[i]]==1)], na.rm=TRUE)
 		XAN[["Stats"]][["Thresholds"]][["Totals"]][["Total_Q_acfte6"]][[i]] <-XAN[["Stats"]][["Total_Q_acfte6"]]
 		XAN[["Stats"]][["Thresholds"]][["Totals"]][["Frac_Abv"]][[i]] <- XAN[["Stats"]][["Thresholds"]][["Totals"]][["Volume_Abv_acfte6"]][[i]]/XAN[["Stats"]][["Total_Q_acfte6"]]
 	}
@@ -298,24 +388,38 @@ Split3Winter <- function(input, index, percentiles){
 	XW[["Stats"]][["Total_Q_acfte6"]] <- sum(XW[["Data"]][["Discharge_acfte6_day"]], na.rm=TRUE)
 	XW[["Stats"]][["Thresholds"]] <- list()
 	XW[["Stats"]][["Thresholds"]][["coded"]] <- list()
-	XW[["Stats"]][["Thresholds"]][["Quantiles_acfte6"]] <- quantile(XW[["Data"]][["Discharge_acfte6_day"]], probs=c(0.05,0.1,0.2,0.25,0.5,0.75,0.9,0.95),na.rm=TRUE)
-	for (i in 1:length(XW[["Stats"]][["Thresholds"]][["Quantiles_acfte6"]])){
+#	XW[["Stats"]][["Thresholds"]][["Quantiles_acfte6"]] <- quantile(XW[["Data"]][["Discharge_acfte6_day"]], probs=c(0.05,0.1,0.2,0.25,0.5,0.75,0.9,0.95),na.rm=TRUE)
+#	for (i in 1:length(XW[["Stats"]][["Thresholds"]][["Quantiles_acfte6"]])){
+#		for (n in 1:length(XW[["Data"]][["Discharge_acfte6_day"]])){
+#			if(XW[["Data"]][["Discharge_acfte6_day"]][[n]] >= XW[["Stats"]][["Thresholds"]][["Quantiles_acfte6"]][[i]]){
+#				XW[["Stats"]][["Thresholds"]][["coded"]][[paste0("P",names(XW[["Stats"]][["Thresholds"]][["Quantiles_acfte6"]][i]))]][[n]] <- 1
+#			} else if (XW[["Data"]][["Discharge_acfte6_day"]][[n]] < XW[["Stats"]][["Thresholds"]][["Quantiles_acfte6"]][[i]]){
+#				XW[["Stats"]][["Thresholds"]][["coded"]][[paste0("P",names(XW[["Stats"]][["Thresholds"]][["Quantiles_acfte6"]][i]))]][[n]] <- 0	
+#			} else {
+#				XW[["Stats"]][["Thresholds"]][["coded"]][[paste0("P",names(XW[["Stats"]][["Thresholds"]][["Quantiles_acfte6"]][i]))]][[n]] <- NA
+#			}
+#		}
+#	}
+
+	for (k in 1:length(percentiles)){
 		for (n in 1:length(XW[["Data"]][["Discharge_acfte6_day"]])){
-			if(XW[["Data"]][["Discharge_acfte6_day"]][[n]] >= XW[["Stats"]][["Thresholds"]][["Quantiles_acfte6"]][[i]]){
-				XW[["Stats"]][["Thresholds"]][["coded"]][[paste0("P",names(XW[["Stats"]][["Thresholds"]][["Quantiles_acfte6"]][i]))]][[n]] <- 1
-			} else if (XW[["Data"]][["Discharge_acfte6_day"]][[n]] < XW[["Stats"]][["Thresholds"]][["Quantiles_acfte6"]][[i]]){
-				XW[["Stats"]][["Thresholds"]][["coded"]][[paste0("P",names(XW[["Stats"]][["Thresholds"]][["Quantiles_acfte6"]][i]))]][[n]] <- 0	
+			if(is.na(XW[["Data"]][["Discharge_acfte6_day"]][[n]])){
+				XW[["Stats"]][["Thresholds"]][["coded"]][[names(percentiles)[k]]][[n]] <- NA
+			} else if (XW[["Data"]][["Discharge_acfte6_day"]][[n]] >= percentiles[[k]]){
+				XW[["Stats"]][["Thresholds"]][["coded"]][[names(percentiles)[k]]][[n]] <- 1
+			} else if (XW[["Data"]][["Discharge_acfte6_day"]][[n]] < percentiles[[k]]){
+				XW[["Stats"]][["Thresholds"]][["coded"]][[names(percentiles)[k]]][[n]] <- 0	
 			} else {
-				XW[["Stats"]][["Thresholds"]][["coded"]][[paste0("P",names(XW[["Stats"]][["Thresholds"]][["Quantiles_acfte6"]][i]))]][[n]] <- NA
+				XW[["Stats"]][["Thresholds"]][["coded"]][[names(percentiles)[k]]][[n]] <- NA
 			}
 		}
 	}
 	XW[["Stats"]][["Thresholds"]][["Totals"]] <- list()
 	XW[["Stats"]][["Thresholds"]][["Totals"]][["Thresholds"]] <- c(0.05,0.1,0.2,0.25,0.5,0.75,0.9,0.95)
 	for (i in 1:length(XW[["Stats"]][["Thresholds"]][["Totals"]][["Thresholds"]])){
-		XW[["Stats"]][["Thresholds"]][["Totals"]][["DaysAbove"]][[i]] <- sum(XW[["Stats"]][["Thresholds"]][["coded"]][[i]])
-		XW[["Stats"]][["Thresholds"]][["Totals"]][["FracDaysAbove"]][[i]] <- sum(XW[["Stats"]][["Thresholds"]][["coded"]][[i]])/length(XW[["Stats"]][["Thresholds"]][["coded"]][[i]])
-		XW[["Stats"]][["Thresholds"]][["Totals"]][["Volume_Abv_acfte6"]][[i]] <- sum(XW[["Data"]][["Discharge_acfte6_day"]][which(XW[["Stats"]][["Thresholds"]][["coded"]][[i]]==1)])
+		XW[["Stats"]][["Thresholds"]][["Totals"]][["DaysAbove"]][[i]] <- sum(XW[["Stats"]][["Thresholds"]][["coded"]][[i]], na.rm=TRUE)
+		XW[["Stats"]][["Thresholds"]][["Totals"]][["FracDaysAbove"]][[i]] <- sum(XW[["Stats"]][["Thresholds"]][["coded"]][[i]], na.rm=TRUE)/length(XW[["Stats"]][["Thresholds"]][["coded"]][[i]])
+		XW[["Stats"]][["Thresholds"]][["Totals"]][["Volume_Abv_acfte6"]][[i]] <- sum(XW[["Data"]][["Discharge_acfte6_day"]][which(XW[["Stats"]][["Thresholds"]][["coded"]][[i]]==1)], na.rm=TRUE)
 		XW[["Stats"]][["Thresholds"]][["Totals"]][["Total_Q_acfte6"]][[i]] <-XW[["Stats"]][["Total_Q_acfte6"]]
 		XW[["Stats"]][["Thresholds"]][["Totals"]][["Frac_Abv"]][[i]] <- XW[["Stats"]][["Thresholds"]][["Totals"]][["Volume_Abv_acfte6"]][[i]]/XW[["Stats"]][["Total_Q_acfte6"]]
 	}
