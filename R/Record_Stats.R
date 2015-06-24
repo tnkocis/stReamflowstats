@@ -33,7 +33,7 @@ record_stats <- function(input, percentiles){
 	stats[["Thresholds"]][["Totals"]][["Thresholds"]] <- c(0.05,0.1,0.2,0.25,0.5,0.75,0.9,0.95)
 	for (i in 1:length(stats[["Thresholds"]][["Totals"]][["Thresholds"]])){
 		stats[["Thresholds"]][["Totals"]][["DaysAbove"]][[i]] <- sum(stats[["Thresholds"]][["coded"]][[i]], na.rm=TRUE)
-		stats[["Thresholds"]][["Totals"]][["FracDaysAbove"]][[i]] <- sum(stats[["Thresholds"]][["coded"]][[i]], na.rm=TRUE)/length(stats[["Thresholds"]][["coded"]][[i]])
+		stats[["Thresholds"]][["Totals"]][["FracDaysAbove"]][[i]] <- sum(stats[["Thresholds"]][["coded"]][[i]], na.rm=TRUE)/(length(stats[["Thresholds"]][["coded"]][[i]])-sum(is.na(stats[["Thresholds"]][["coded"]][[i]])))
 		stats[["Thresholds"]][["Totals"]][["Volume_Abv_acfte6"]][[i]] <- sum(discharge_acfte6[which(stats[["Thresholds"]][["coded"]][[i]]==1)], na.rm=TRUE)
 		stats[["Thresholds"]][["Totals"]][["Total_Q_acfte6"]][[i]] <-stats[["Total_Q_acfte6"]]
 		stats[["Thresholds"]][["Totals"]][["Frac_Abv"]][[i]] <- stats[["Thresholds"]][["Totals"]][["Volume_Abv_acfte6"]][[i]]/stats[["Total_Q_acfte6"]]

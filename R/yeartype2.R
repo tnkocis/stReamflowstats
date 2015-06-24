@@ -260,6 +260,7 @@ for(i in 2:length(YEARTYPEq)){
 	}
 }
 
+###USED IN FINAL 
 YEARTYPEqdf <- as.data.frame(YEARTYPEq)
 YEARTYPEqdf$SJV_Averages <- rowMeans(YEARTYPEqdf[,2:9], na.rm=TRUE)
 YEARTYPEqdf$SacV_Averages <- rowMeans(YEARTYPEqdf[,10:length(YEARTYPEq)], na.rm=TRUE)
@@ -311,6 +312,7 @@ for(n in 1:length(YEARTYPEqdf$SacV_Averages)){
 }
 
 
+## NOT USED IN FINAL 
 YEARTYPEdf <- as.data.frame(YEARTYPE)
 YEARTYPEdf$SJV_Averages <- rowMeans(YEARTYPEdf[,2:9], na.rm=TRUE)
 YEARTYPEdf$SacV_Averages <- rowMeans(YEARTYPEdf[,10:length(YEARTYPE)], na.rm=TRUE)
