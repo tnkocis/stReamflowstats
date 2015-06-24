@@ -116,7 +116,7 @@ for(z in 1:5){
 			write.csv(as.data.frame(unimpaired$Winter_3mon[[n+1]]$Stats$Thresholds$coded), 
 					file=file.path(maindir,gaugedir,threemondir, sub1dir[[n]], paste(names(unimpaired$Winter_monthly)[[n+1]],"_","threshold_coded_",as.character(unimpaired$raw$site_no[[1]]),".csv",sep="")))
 		} else {
-			unlink(file.path(maindir, gaugedir, threemondir,sub1dir[[n]]))
+			unlink(file.path(maindir, gaugedir, threemondir,sub1dir[[n]]), recursive=TRUE)
 			dir.create(file.path(maindir, gaugedir, threemondir,paste("No",sub1dir[[n]],"Years_In_Input_Dataset",sep="_")))
 		}
 		}
@@ -168,7 +168,7 @@ for(z in 1:5){
 			write.csv(as.data.frame(unimpaired$Winter_6mon[[n+1]]$Stats$Thresholds$coded), 
 					file=file.path(maindir,gaugedir,sixmondir, sub1dir[[n]], paste(names(unimpaired$Winter_monthly)[[n+1]],"_","threshold_coded_",as.character(unimpaired$raw$site_no[[1]]),".csv",sep="")))
 		} else {
-			unlink(file.path(maindir, gaugedir, sixmondir,sub1dir[[n]]))
+			unlink(file.path(maindir, gaugedir, sixmondir,sub1dir[[n]]), recursive=TRUE)
 			dir.create(file.path(maindir, gaugedir, sixmondir,paste("No",sub1dir[[n]],"Years_In_Input_Dataset",sep="_")))
 		}
 	}
@@ -230,7 +230,7 @@ for(z in 1:5){
 				write.csv(as.data.frame(unimpaired$Winter_monthly[[n+1]][[m]]$Stats$Thresholds$coded), 
 						file=file.path(maindir,gaugedir,mondir, sub1dir[[n]],monthlywinter[[m]], paste(names(unimpaired$Winter_monthly)[[n+1]],"_",monthlywinter[[m]],"_","threshold_coded_",as.character(unimpaired$raw$site_no[[1]]),".csv",sep="")))
 			} else {
-				unlink(file.path(maindir, gaugedir, mondir,sub1dir[[n]]))
+				unlink(file.path(maindir, gaugedir, mondir,sub1dir[[n]]), recursive=TRUE)
 				dir.create(file.path(maindir, gaugedir, mondir, paste("No",sub1dir[[n]],"Years_In_Input_Dataset",sep="_")))
 			}
 		}
@@ -281,7 +281,7 @@ for(z in 1:5){
 			write.csv(as.data.frame(unimpaired$HydroYear[[n+1]]$Stats$Thresholds$coded), 
 					file=file.path(maindir,gaugedir,hydroyeardir, sub1dir[[n]], paste(names(unimpaired$Winter_monthly)[[n+1]],"_","threshold_coded_",as.character(unimpaired$raw$site_no[[1]]),".csv",sep="")))
 		} else {
-			unlink(file.path(maindir, gaugedir, hydroyeardir,sub1dir[[n]]))
+			unlink(file.path(maindir, gaugedir, hydroyeardir,sub1dir[[n]]), recursive=TRUE)
 			dir.create(file.path(maindir, gaugedir, hydroyeardir,paste("No",sub1dir[[n]],"Years_In_Input_Dataset",sep="_")))
 		}
 	}
