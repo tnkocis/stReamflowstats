@@ -1,0 +1,372 @@
+# TODO: Add comment
+# 
+# Author: tiffn_000
+###############################################################################
+
+
+MeanHydrographs <- function(input, num_months){
+#remove if package
+	if(!require(dplyr)){
+		install.packages("dplyr")
+		library(dplyr)
+	}
+#
+	if (missing(input))
+		stop("Input data is required.")
+	if (missing(num_months))
+		stop("Input number of months  is required.")
+
+	
+	data_loc <- which(names(input)=="Data")
+	all_loc <- which(names(input)=="All")
+	XC_loc <- which(names(input)=="C")
+	XD_loc  <- which(names(input)=="D")
+	XBN_loc <- which(names(input)=="BN")
+	XAN_loc <- which(names(input)=="AN")
+	XW_loc <- which(names(input)=="W")
+	
+	if(num_months==6){
+		cont <- seq(from=as.Date("0001-11-01"), to=as.Date("0002-04-30"), by="day")
+	} else if(num_months==3){
+		cont <- seq(from=as.Date("0001-12-01"), to=as.Date("0002-02-28"), by="day")
+	} else if(num_months==2){
+		cont <- list()
+	}
+	cont_mon <- as.numeric(format(cont,"%m"))
+	cont_day <- as.numeric(format(cont,"%d"))
+	
+	
+	
+	all_mon <- as.numeric(format(input[[all_loc]]$Data$Date,"%m"))
+	all_day <- as.numeric(format(input[[all_loc]]$Data$Date,"%d"))
+	all_year <- as.numeric(format(input[[all_loc]]$Data$Date,"%Y"))
+	
+
+	disch_avg_all <- NA
+	disch_avg_all_1900 <- NA
+	disch_avg_all_1910 <- NA
+	disch_avg_all_1920 <- NA
+	disch_avg_all_1930 <- NA
+	disch_avg_all_1940 <- NA
+	disch_avg_all_1950 <- NA
+	disch_avg_all_1960 <- NA
+	disch_avg_all_1970 <- NA
+	disch_avg_all_1980 <- NA
+	disch_avg_all_1990 <- NA
+	disch_avg_all_2000 <- NA
+	disch_avg_all_2010 <- NA
+	
+	for(i in 1:length(cont)){
+	 disch_avg_all[[i]]<- mean(filter(input[[all_loc]]$Data, (all_mon == cont_mon[[i]] & all_day == cont_day[[i]]))$Discharge_acfte6_day, na.rm=TRUE)
+	 disch_avg_all_1900[[i]] <- mean(filter(input[[all_loc]]$Data, (all_mon == cont_mon[[i]] & all_day == cont_day[[i]] & all_year >= 1900 & all_year < 1910))$Discharge_acfte6_day, na.rm=TRUE)
+	 disch_avg_all_1910[[i]] <- mean(filter(input[[all_loc]]$Data, (all_mon == cont_mon[[i]] & all_day == cont_day[[i]] & all_year >= 1910 & all_year < 1920))$Discharge_acfte6_day, na.rm=TRUE)
+	 disch_avg_all_1920[[i]] <- mean(filter(input[[all_loc]]$Data, (all_mon == cont_mon[[i]] & all_day == cont_day[[i]] & all_year >= 1920 & all_year < 1930))$Discharge_acfte6_day, na.rm=TRUE)
+	 disch_avg_all_1930[[i]] <- mean(filter(input[[all_loc]]$Data, (all_mon == cont_mon[[i]] & all_day == cont_day[[i]] & all_year >= 1930 & all_year < 1940))$Discharge_acfte6_day, na.rm=TRUE)
+	 disch_avg_all_1940[[i]] <- mean(filter(input[[all_loc]]$Data, (all_mon == cont_mon[[i]] & all_day == cont_day[[i]] & all_year >= 1940 & all_year < 1950))$Discharge_acfte6_day, na.rm=TRUE)
+	 disch_avg_all_1950[[i]] <- mean(filter(input[[all_loc]]$Data, (all_mon == cont_mon[[i]] & all_day == cont_day[[i]] & all_year >= 1950 & all_year < 1960))$Discharge_acfte6_day, na.rm=TRUE)
+	 disch_avg_all_1960[[i]] <- mean(filter(input[[all_loc]]$Data, (all_mon == cont_mon[[i]] & all_day == cont_day[[i]] & all_year >= 1960 & all_year < 1970))$Discharge_acfte6_day, na.rm=TRUE)
+	 disch_avg_all_1970[[i]] <- mean(filter(input[[all_loc]]$Data, (all_mon == cont_mon[[i]] & all_day == cont_day[[i]] & all_year >= 1970 & all_year < 1980))$Discharge_acfte6_day, na.rm=TRUE)
+	 disch_avg_all_1980[[i]] <- mean(filter(input[[all_loc]]$Data, (all_mon == cont_mon[[i]] & all_day == cont_day[[i]] & all_year >= 1980 & all_year < 1990))$Discharge_acfte6_day, na.rm=TRUE)
+	 disch_avg_all_1990[[i]] <- mean(filter(input[[all_loc]]$Data, (all_mon == cont_mon[[i]] & all_day == cont_day[[i]] & all_year >= 1990 & all_year < 2000))$Discharge_acfte6_day, na.rm=TRUE)
+	 disch_avg_all_2000[[i]] <- mean(filter(input[[all_loc]]$Data, (all_mon == cont_mon[[i]] & all_day == cont_day[[i]] & all_year >= 2000 & all_year < 2010))$Discharge_acfte6_day, na.rm=TRUE)
+	 disch_avg_all_2010[[i]] <- mean(filter(input[[all_loc]]$Data, (all_mon == cont_mon[[i]] & all_day == cont_day[[i]] & all_year >= 2010 & all_year < 2020))$Discharge_acfte6_day, na.rm=TRUE)	 
+ }
+	 
+	result_all <- list(Continuous=data.frame(Date=cont,Discharge_maf_avg=disch_avg_all), "1900s"=data.frame(Date=cont,Discharge_maf_avg_1900s=disch_avg_all_1900),
+			"1910s"=data.frame(Date=cont,Discharge_maf_avg_1910s=disch_avg_all_1910),
+			"1920s"=data.frame(Date=cont,Discharge_maf_avg_1900s=disch_avg_all_1920),
+			"1930s"=data.frame(Date=cont,Discharge_maf_avg_1900s=disch_avg_all_1930),
+			"1940s"=data.frame(Date=cont,Discharge_maf_avg_1900s=disch_avg_all_1940),
+			"1950s"=data.frame(Date=cont,Discharge_maf_avg_1900s=disch_avg_all_1950),
+			"1960s"=data.frame(Date=cont,Discharge_maf_avg_1900s=disch_avg_all_1960),
+			"1970s"=data.frame(Date=cont,Discharge_maf_avg_1900s=disch_avg_all_1970),
+			"1980s"=data.frame(Date=cont,Discharge_maf_avg_1900s=disch_avg_all_1980),
+			"1990s"=data.frame(Date=cont,Discharge_maf_avg_1900s=disch_avg_all_1990),
+			"2000s"=data.frame(Date=cont,Discharge_maf_avg_1900s=disch_avg_all_2000),
+			"2010s"=data.frame(Date=cont,Discharge_maf_avg_1900s=disch_avg_all_2010))
+	for(j in length(result_all):1){
+		if(all(is.na(result_all[[j]][[2]]))){
+			result_all[[j]] <- NULL
+		}
+	}
+	
+	if(class(input[[XC_loc]])=="list"){ 
+	XC_mon <- as.numeric(format(input[[XC_loc]]$Data$Date,"%m"))
+	XC_day <- as.numeric(format(input[[XC_loc]]$Data$Date,"%d"))
+	XC_year <- as.numeric(format(input[[XC_loc]]$Data$Date,"%Y"))
+	
+	disch_avg_XC <- NA
+	disch_avg_XC_1900 <- NA
+	disch_avg_XC_1910 <- NA
+	disch_avg_XC_1920 <- NA
+	disch_avg_XC_1930 <- NA
+	disch_avg_XC_1940 <- NA
+	disch_avg_XC_1950 <- NA
+	disch_avg_XC_1960 <- NA
+	disch_avg_XC_1970 <- NA
+	disch_avg_XC_1980 <- NA
+	disch_avg_XC_1990 <- NA
+	disch_avg_XC_2000 <- NA
+	disch_avg_XC_2010 <- NA
+	
+	for(i in 1:length(cont)){
+		disch_avg_XC[[i]]<- mean(filter(input[[XC_loc]]$Data, (XC_mon == cont_mon[[i]] & XC_day == cont_day[[i]]))$Discharge_acfte6_day, na.rm=TRUE)
+		disch_avg_XC_1900[[i]] <- mean(filter(input[[XC_loc]]$Data, (XC_mon == cont_mon[[i]] & XC_day == cont_day[[i]] & XC_year >= 1900 & XC_year < 1910))$Discharge_acfte6_day, na.rm=TRUE)
+		disch_avg_XC_1910[[i]] <- mean(filter(input[[XC_loc]]$Data, (XC_mon == cont_mon[[i]] & XC_day == cont_day[[i]] & XC_year >= 1910 & XC_year < 1920))$Discharge_acfte6_day, na.rm=TRUE)
+		disch_avg_XC_1920[[i]] <- mean(filter(input[[XC_loc]]$Data, (XC_mon == cont_mon[[i]] & XC_day == cont_day[[i]] & XC_year >= 1920 & XC_year < 1930))$Discharge_acfte6_day, na.rm=TRUE)
+		disch_avg_XC_1930[[i]] <- mean(filter(input[[XC_loc]]$Data, (XC_mon == cont_mon[[i]] & XC_day == cont_day[[i]] & XC_year >= 1930 & XC_year < 1940))$Discharge_acfte6_day, na.rm=TRUE)
+		disch_avg_XC_1940[[i]] <- mean(filter(input[[XC_loc]]$Data, (XC_mon == cont_mon[[i]] & XC_day == cont_day[[i]] & XC_year >= 1940 & XC_year < 1950))$Discharge_acfte6_day, na.rm=TRUE)
+		disch_avg_XC_1950[[i]] <- mean(filter(input[[XC_loc]]$Data, (XC_mon == cont_mon[[i]] & XC_day == cont_day[[i]] & XC_year >= 1950 & XC_year < 1960))$Discharge_acfte6_day, na.rm=TRUE)
+		disch_avg_XC_1960[[i]] <- mean(filter(input[[XC_loc]]$Data, (XC_mon == cont_mon[[i]] & XC_day == cont_day[[i]] & XC_year >= 1960 & XC_year < 1970))$Discharge_acfte6_day, na.rm=TRUE)
+		disch_avg_XC_1970[[i]] <- mean(filter(input[[XC_loc]]$Data, (XC_mon == cont_mon[[i]] & XC_day == cont_day[[i]] & XC_year >= 1970 & XC_year < 1980))$Discharge_acfte6_day, na.rm=TRUE)
+		disch_avg_XC_1980[[i]] <- mean(filter(input[[XC_loc]]$Data, (XC_mon == cont_mon[[i]] & XC_day == cont_day[[i]] & XC_year >= 1980 & XC_year < 1990))$Discharge_acfte6_day, na.rm=TRUE)
+		disch_avg_XC_1990[[i]] <- mean(filter(input[[XC_loc]]$Data, (XC_mon == cont_mon[[i]] & XC_day == cont_day[[i]] & XC_year >= 1990 & XC_year < 2000))$Discharge_acfte6_day, na.rm=TRUE)
+		disch_avg_XC_2000[[i]] <- mean(filter(input[[XC_loc]]$Data, (XC_mon == cont_mon[[i]] & XC_day == cont_day[[i]] & XC_year >= 2000 & XC_year < 2010))$Discharge_acfte6_day, na.rm=TRUE)
+		disch_avg_XC_2010[[i]] <- mean(filter(input[[XC_loc]]$Data, (XC_mon == cont_mon[[i]] & XC_day == cont_day[[i]] & XC_year >= 2010 & XC_year < 2020))$Discharge_acfte6_day, na.rm=TRUE)	 
+	}
+	
+	result_XC <- list(Continuous=data.frame(Date=cont,Discharge_maf_avg=disch_avg_XC), "1900s"=data.frame(Date=cont,Discharge_maf_avg_1900s=disch_avg_XC_1900),
+			"1910s"=data.frame(Date=cont,Discharge_maf_avg_1910s=disch_avg_XC_1910),
+			"1920s"=data.frame(Date=cont,Discharge_maf_avg_1900s=disch_avg_XC_1920),
+			"1930s"=data.frame(Date=cont,Discharge_maf_avg_1900s=disch_avg_XC_1930),
+			"1940s"=data.frame(Date=cont,Discharge_maf_avg_1900s=disch_avg_XC_1940),
+			"1950s"=data.frame(Date=cont,Discharge_maf_avg_1900s=disch_avg_XC_1950),
+			"1960s"=data.frame(Date=cont,Discharge_maf_avg_1900s=disch_avg_XC_1960),
+			"1970s"=data.frame(Date=cont,Discharge_maf_avg_1900s=disch_avg_XC_1970),
+			"1980s"=data.frame(Date=cont,Discharge_maf_avg_1900s=disch_avg_XC_1980),
+			"1990s"=data.frame(Date=cont,Discharge_maf_avg_1900s=disch_avg_XC_1990),
+			"2000s"=data.frame(Date=cont,Discharge_maf_avg_1900s=disch_avg_XC_2000),
+			"2010s"=data.frame(Date=cont,Discharge_maf_avg_1900s=disch_avg_XC_2010))
+	
+	for(j in length(result_XC):1){
+		if(all(is.na(result_XC[[j]][[2]]))){
+			result_XC[[j]] <- NULL
+		}
+	}
+	} else {result_XC <- input[[XC_loc]]}
+
+	if(class(input[[XD_loc]])=="list"){ 
+	XD_mon <- as.numeric(format(input[[XD_loc]]$Data$Date,"%m"))
+	XD_day <- as.numeric(format(input[[XD_loc]]$Data$Date,"%d"))
+	XD_year <- as.numeric(format(input[[XD_loc]]$Data$Date,"%Y"))
+	
+	disch_avg_XD <- NA
+	disch_avg_XD_1900 <- NA
+	disch_avg_XD_1910 <- NA
+	disch_avg_XD_1920 <- NA
+	disch_avg_XD_1930 <- NA
+	disch_avg_XD_1940 <- NA
+	disch_avg_XD_1950 <- NA
+	disch_avg_XD_1960 <- NA
+	disch_avg_XD_1970 <- NA
+	disch_avg_XD_1980 <- NA
+	disch_avg_XD_1990 <- NA
+	disch_avg_XD_2000 <- NA
+	disch_avg_XD_2010 <- NA
+	
+	for(i in 1:length(cont)){
+		disch_avg_XD[[i]]<- mean(filter(input[[XD_loc]]$Data, (XD_mon == cont_mon[[i]] & XD_day == cont_day[[i]]))$Discharge_acfte6_day, na.rm=TRUE)
+		disch_avg_XD_1900[[i]] <- mean(filter(input[[XD_loc]]$Data, (XD_mon == cont_mon[[i]] & XD_day == cont_day[[i]] & XD_year >= 1900 & XD_year < 1910))$Discharge_acfte6_day, na.rm=TRUE)
+		disch_avg_XD_1910[[i]] <- mean(filter(input[[XD_loc]]$Data, (XD_mon == cont_mon[[i]] & XD_day == cont_day[[i]] & XD_year >= 1910 & XD_year < 1920))$Discharge_acfte6_day, na.rm=TRUE)
+		disch_avg_XD_1920[[i]] <- mean(filter(input[[XD_loc]]$Data, (XD_mon == cont_mon[[i]] & XD_day == cont_day[[i]] & XD_year >= 1920 & XD_year < 1930))$Discharge_acfte6_day, na.rm=TRUE)
+		disch_avg_XD_1930[[i]] <- mean(filter(input[[XD_loc]]$Data, (XD_mon == cont_mon[[i]] & XD_day == cont_day[[i]] & XD_year >= 1930 & XD_year < 1940))$Discharge_acfte6_day, na.rm=TRUE)
+		disch_avg_XD_1940[[i]] <- mean(filter(input[[XD_loc]]$Data, (XD_mon == cont_mon[[i]] & XD_day == cont_day[[i]] & XD_year >= 1940 & XD_year < 1950))$Discharge_acfte6_day, na.rm=TRUE)
+		disch_avg_XD_1950[[i]] <- mean(filter(input[[XD_loc]]$Data, (XD_mon == cont_mon[[i]] & XD_day == cont_day[[i]] & XD_year >= 1950 & XD_year < 1960))$Discharge_acfte6_day, na.rm=TRUE)
+		disch_avg_XD_1960[[i]] <- mean(filter(input[[XD_loc]]$Data, (XD_mon == cont_mon[[i]] & XD_day == cont_day[[i]] & XD_year >= 1960 & XD_year < 1970))$Discharge_acfte6_day, na.rm=TRUE)
+		disch_avg_XD_1970[[i]] <- mean(filter(input[[XD_loc]]$Data, (XD_mon == cont_mon[[i]] & XD_day == cont_day[[i]] & XD_year >= 1970 & XD_year < 1980))$Discharge_acfte6_day, na.rm=TRUE)
+		disch_avg_XD_1980[[i]] <- mean(filter(input[[XD_loc]]$Data, (XD_mon == cont_mon[[i]] & XD_day == cont_day[[i]] & XD_year >= 1980 & XD_year < 1990))$Discharge_acfte6_day, na.rm=TRUE)
+		disch_avg_XD_1990[[i]] <- mean(filter(input[[XD_loc]]$Data, (XD_mon == cont_mon[[i]] & XD_day == cont_day[[i]] & XD_year >= 1990 & XD_year < 2000))$Discharge_acfte6_day, na.rm=TRUE)
+		disch_avg_XD_2000[[i]] <- mean(filter(input[[XD_loc]]$Data, (XD_mon == cont_mon[[i]] & XD_day == cont_day[[i]] & XD_year >= 2000 & XD_year < 2010))$Discharge_acfte6_day, na.rm=TRUE)
+		disch_avg_XD_2010[[i]] <- mean(filter(input[[XD_loc]]$Data, (XD_mon == cont_mon[[i]] & XD_day == cont_day[[i]] & XD_year >= 2010 & XD_year < 2020))$Discharge_acfte6_day, na.rm=TRUE)	 
+	}
+	
+	result_XD <- list(Continuous=data.frame(Date=cont,Discharge_maf_avg=disch_avg_XD), "1900s"=data.frame(Date=cont,Discharge_maf_avg_1900s=disch_avg_XD_1900),
+			"1910s"=data.frame(Date=cont,Discharge_maf_avg_1910s=disch_avg_XD_1910),
+			"1920s"=data.frame(Date=cont,Discharge_maf_avg_1900s=disch_avg_XD_1920),
+			"1930s"=data.frame(Date=cont,Discharge_maf_avg_1900s=disch_avg_XD_1930),
+			"1940s"=data.frame(Date=cont,Discharge_maf_avg_1900s=disch_avg_XD_1940),
+			"1950s"=data.frame(Date=cont,Discharge_maf_avg_1900s=disch_avg_XD_1950),
+			"1960s"=data.frame(Date=cont,Discharge_maf_avg_1900s=disch_avg_XD_1960),
+			"1970s"=data.frame(Date=cont,Discharge_maf_avg_1900s=disch_avg_XD_1970),
+			"1980s"=data.frame(Date=cont,Discharge_maf_avg_1900s=disch_avg_XD_1980),
+			"1990s"=data.frame(Date=cont,Discharge_maf_avg_1900s=disch_avg_XD_1990),
+			"2000s"=data.frame(Date=cont,Discharge_maf_avg_1900s=disch_avg_XD_2000),
+			"2010s"=data.frame(Date=cont,Discharge_maf_avg_1900s=disch_avg_XD_2010))
+	
+	for(j in length(result_XD):1){
+		if(all(is.na(result_XD[[j]][[2]]))){
+			result_XD[[j]] <- NULL
+		}
+	}
+	} else {result_XD <- input[[XD_loc]]}
+	
+	if(class(input[[XBN_loc]])=="list"){
+	XBN_mon <- as.numeric(format(input[[XBN_loc]]$Data$Date,"%m"))
+	XBN_day <- as.numeric(format(input[[XBN_loc]]$Data$Date,"%d"))
+	XBN_year <- as.numeric(format(input[[XBN_loc]]$Data$Date,"%Y"))
+	
+	disch_avg_XBN <- NA
+	disch_avg_XBN_1900 <- NA
+	disch_avg_XBN_1910 <- NA
+	disch_avg_XBN_1920 <- NA
+	disch_avg_XBN_1930 <- NA
+	disch_avg_XBN_1940 <- NA
+	disch_avg_XBN_1950 <- NA
+	disch_avg_XBN_1960 <- NA
+	disch_avg_XBN_1970 <- NA
+	disch_avg_XBN_1980 <- NA
+	disch_avg_XBN_1990 <- NA
+	disch_avg_XBN_2000 <- NA
+	disch_avg_XBN_2010 <- NA
+	
+	for(i in 1:length(cont)){
+		disch_avg_XBN[[i]]<- mean(filter(input[[XBN_loc]]$Data, (XBN_mon == cont_mon[[i]] & XBN_day == cont_day[[i]]))$Discharge_acfte6_day, na.rm=TRUE)
+		disch_avg_XBN_1900[[i]] <- mean(filter(input[[XBN_loc]]$Data, (XBN_mon == cont_mon[[i]] & XBN_day == cont_day[[i]] & XBN_year >= 1900 & XBN_year < 1910))$Discharge_acfte6_day, na.rm=TRUE)
+		disch_avg_XBN_1910[[i]] <- mean(filter(input[[XBN_loc]]$Data, (XBN_mon == cont_mon[[i]] & XBN_day == cont_day[[i]] & XBN_year >= 1910 & XBN_year < 1920))$Discharge_acfte6_day, na.rm=TRUE)
+		disch_avg_XBN_1920[[i]] <- mean(filter(input[[XBN_loc]]$Data, (XBN_mon == cont_mon[[i]] & XBN_day == cont_day[[i]] & XBN_year >= 1920 & XBN_year < 1930))$Discharge_acfte6_day, na.rm=TRUE)
+		disch_avg_XBN_1930[[i]] <- mean(filter(input[[XBN_loc]]$Data, (XBN_mon == cont_mon[[i]] & XBN_day == cont_day[[i]] & XBN_year >= 1930 & XBN_year < 1940))$Discharge_acfte6_day, na.rm=TRUE)
+		disch_avg_XBN_1940[[i]] <- mean(filter(input[[XBN_loc]]$Data, (XBN_mon == cont_mon[[i]] & XBN_day == cont_day[[i]] & XBN_year >= 1940 & XBN_year < 1950))$Discharge_acfte6_day, na.rm=TRUE)
+		disch_avg_XBN_1950[[i]] <- mean(filter(input[[XBN_loc]]$Data, (XBN_mon == cont_mon[[i]] & XBN_day == cont_day[[i]] & XBN_year >= 1950 & XBN_year < 1960))$Discharge_acfte6_day, na.rm=TRUE)
+		disch_avg_XBN_1960[[i]] <- mean(filter(input[[XBN_loc]]$Data, (XBN_mon == cont_mon[[i]] & XBN_day == cont_day[[i]] & XBN_year >= 1960 & XBN_year < 1970))$Discharge_acfte6_day, na.rm=TRUE)
+		disch_avg_XBN_1970[[i]] <- mean(filter(input[[XBN_loc]]$Data, (XBN_mon == cont_mon[[i]] & XBN_day == cont_day[[i]] & XBN_year >= 1970 & XBN_year < 1980))$Discharge_acfte6_day, na.rm=TRUE)
+		disch_avg_XBN_1980[[i]] <- mean(filter(input[[XBN_loc]]$Data, (XBN_mon == cont_mon[[i]] & XBN_day == cont_day[[i]] & XBN_year >= 1980 & XBN_year < 1990))$Discharge_acfte6_day, na.rm=TRUE)
+		disch_avg_XBN_1990[[i]] <- mean(filter(input[[XBN_loc]]$Data, (XBN_mon == cont_mon[[i]] & XBN_day == cont_day[[i]] & XBN_year >= 1990 & XBN_year < 2000))$Discharge_acfte6_day, na.rm=TRUE)
+		disch_avg_XBN_2000[[i]] <- mean(filter(input[[XBN_loc]]$Data, (XBN_mon == cont_mon[[i]] & XBN_day == cont_day[[i]] & XBN_year >= 2000 & XBN_year < 2010))$Discharge_acfte6_day, na.rm=TRUE)
+		disch_avg_XBN_2010[[i]] <- mean(filter(input[[XBN_loc]]$Data, (XBN_mon == cont_mon[[i]] & XBN_day == cont_day[[i]] & XBN_year >= 2010 & XBN_year < 2020))$Discharge_acfte6_day, na.rm=TRUE)	 
+	}
+	
+	result_XBN <- list(Continuous=data.frame(Date=cont,Discharge_maf_avg=disch_avg_XBN), "1900s"=data.frame(Date=cont,Discharge_maf_avg_1900s=disch_avg_XBN_1900),
+			"1910s"=data.frame(Date=cont,Discharge_maf_avg_1910s=disch_avg_XBN_1910),
+			"1920s"=data.frame(Date=cont,Discharge_maf_avg_1900s=disch_avg_XBN_1920),
+			"1930s"=data.frame(Date=cont,Discharge_maf_avg_1900s=disch_avg_XBN_1930),
+			"1940s"=data.frame(Date=cont,Discharge_maf_avg_1900s=disch_avg_XBN_1940),
+			"1950s"=data.frame(Date=cont,Discharge_maf_avg_1900s=disch_avg_XBN_1950),
+			"1960s"=data.frame(Date=cont,Discharge_maf_avg_1900s=disch_avg_XBN_1960),
+			"1970s"=data.frame(Date=cont,Discharge_maf_avg_1900s=disch_avg_XBN_1970),
+			"1980s"=data.frame(Date=cont,Discharge_maf_avg_1900s=disch_avg_XBN_1980),
+			"1990s"=data.frame(Date=cont,Discharge_maf_avg_1900s=disch_avg_XBN_1990),
+			"2000s"=data.frame(Date=cont,Discharge_maf_avg_1900s=disch_avg_XBN_2000),
+			"2010s"=data.frame(Date=cont,Discharge_maf_avg_1900s=disch_avg_XBN_2010))
+	
+	for(j in length(result_XBN):1){
+		if(all(is.na(result_XBN[[j]][[2]]))){
+			result_XBN[[j]] <- NULL
+		}
+	}
+	} else {result_XBN <- input[[XBN_loc]]}
+	
+	if(class(input[[XAN_loc]])=="list"){
+	XAN_mon <- as.numeric(format(input[[XAN_loc]]$Data$Date,"%m"))
+	XAN_day <- as.numeric(format(input[[XAN_loc]]$Data$Date,"%d"))
+	XAN_year <- as.numeric(format(input[[XAN_loc]]$Data$Date,"%Y"))
+	
+	disch_avg_XAN <- NA
+	disch_avg_XAN_1900 <- NA
+	disch_avg_XAN_1910 <- NA
+	disch_avg_XAN_1920 <- NA
+	disch_avg_XAN_1930 <- NA
+	disch_avg_XAN_1940 <- NA
+	disch_avg_XAN_1950 <- NA
+	disch_avg_XAN_1960 <- NA
+	disch_avg_XAN_1970 <- NA
+	disch_avg_XAN_1980 <- NA
+	disch_avg_XAN_1990 <- NA
+	disch_avg_XAN_2000 <- NA
+	disch_avg_XAN_2010 <- NA
+	
+	for(i in 1:length(cont)){
+		disch_avg_XAN[[i]]<- mean(filter(input[[XAN_loc]]$Data, (XAN_mon == cont_mon[[i]] & XAN_day == cont_day[[i]]))$Discharge_acfte6_day, na.rm=TRUE)
+		disch_avg_XAN_1900[[i]] <- mean(filter(input[[XAN_loc]]$Data, (XAN_mon == cont_mon[[i]] & XAN_day == cont_day[[i]] & XAN_year >= 1900 & XAN_year < 1910))$Discharge_acfte6_day, na.rm=TRUE)
+		disch_avg_XAN_1910[[i]] <- mean(filter(input[[XAN_loc]]$Data, (XAN_mon == cont_mon[[i]] & XAN_day == cont_day[[i]] & XAN_year >= 1910 & XAN_year < 1920))$Discharge_acfte6_day, na.rm=TRUE)
+		disch_avg_XAN_1920[[i]] <- mean(filter(input[[XAN_loc]]$Data, (XAN_mon == cont_mon[[i]] & XAN_day == cont_day[[i]] & XAN_year >= 1920 & XAN_year < 1930))$Discharge_acfte6_day, na.rm=TRUE)
+		disch_avg_XAN_1930[[i]] <- mean(filter(input[[XAN_loc]]$Data, (XAN_mon == cont_mon[[i]] & XAN_day == cont_day[[i]] & XAN_year >= 1930 & XAN_year < 1940))$Discharge_acfte6_day, na.rm=TRUE)
+		disch_avg_XAN_1940[[i]] <- mean(filter(input[[XAN_loc]]$Data, (XAN_mon == cont_mon[[i]] & XAN_day == cont_day[[i]] & XAN_year >= 1940 & XAN_year < 1950))$Discharge_acfte6_day, na.rm=TRUE)
+		disch_avg_XAN_1950[[i]] <- mean(filter(input[[XAN_loc]]$Data, (XAN_mon == cont_mon[[i]] & XAN_day == cont_day[[i]] & XAN_year >= 1950 & XAN_year < 1960))$Discharge_acfte6_day, na.rm=TRUE)
+		disch_avg_XAN_1960[[i]] <- mean(filter(input[[XAN_loc]]$Data, (XAN_mon == cont_mon[[i]] & XAN_day == cont_day[[i]] & XAN_year >= 1960 & XAN_year < 1970))$Discharge_acfte6_day, na.rm=TRUE)
+		disch_avg_XAN_1970[[i]] <- mean(filter(input[[XAN_loc]]$Data, (XAN_mon == cont_mon[[i]] & XAN_day == cont_day[[i]] & XAN_year >= 1970 & XAN_year < 1980))$Discharge_acfte6_day, na.rm=TRUE)
+		disch_avg_XAN_1980[[i]] <- mean(filter(input[[XAN_loc]]$Data, (XAN_mon == cont_mon[[i]] & XAN_day == cont_day[[i]] & XAN_year >= 1980 & XAN_year < 1990))$Discharge_acfte6_day, na.rm=TRUE)
+		disch_avg_XAN_1990[[i]] <- mean(filter(input[[XAN_loc]]$Data, (XAN_mon == cont_mon[[i]] & XAN_day == cont_day[[i]] & XAN_year >= 1990 & XAN_year < 2000))$Discharge_acfte6_day, na.rm=TRUE)
+		disch_avg_XAN_2000[[i]] <- mean(filter(input[[XAN_loc]]$Data, (XAN_mon == cont_mon[[i]] & XAN_day == cont_day[[i]] & XAN_year >= 2000 & XAN_year < 2010))$Discharge_acfte6_day, na.rm=TRUE)
+		disch_avg_XAN_2010[[i]] <- mean(filter(input[[XAN_loc]]$Data, (XAN_mon == cont_mon[[i]] & XAN_day == cont_day[[i]] & XAN_year >= 2010 & XAN_year < 2020))$Discharge_acfte6_day, na.rm=TRUE)	 
+	}
+	
+	result_XAN <- list(Continuous=data.frame(Date=cont,Discharge_maf_avg=disch_avg_XAN), "1900s"=data.frame(Date=cont,Discharge_maf_avg_1900s=disch_avg_XAN_1900),
+			"1910s"=data.frame(Date=cont,Discharge_maf_avg_1910s=disch_avg_XAN_1910),
+			"1920s"=data.frame(Date=cont,Discharge_maf_avg_1900s=disch_avg_XAN_1920),
+			"1930s"=data.frame(Date=cont,Discharge_maf_avg_1900s=disch_avg_XAN_1930),
+			"1940s"=data.frame(Date=cont,Discharge_maf_avg_1900s=disch_avg_XAN_1940),
+			"1950s"=data.frame(Date=cont,Discharge_maf_avg_1900s=disch_avg_XAN_1950),
+			"1960s"=data.frame(Date=cont,Discharge_maf_avg_1900s=disch_avg_XAN_1960),
+			"1970s"=data.frame(Date=cont,Discharge_maf_avg_1900s=disch_avg_XAN_1970),
+			"1980s"=data.frame(Date=cont,Discharge_maf_avg_1900s=disch_avg_XAN_1980),
+			"1990s"=data.frame(Date=cont,Discharge_maf_avg_1900s=disch_avg_XAN_1990),
+			"2000s"=data.frame(Date=cont,Discharge_maf_avg_1900s=disch_avg_XAN_2000),
+			"2010s"=data.frame(Date=cont,Discharge_maf_avg_1900s=disch_avg_XAN_2010))
+	
+	for(j in length(result_XAN):1){
+		if(all(is.na(result_XAN[[j]][[2]]))){
+			result_XAN[[j]] <- NULL
+		}
+	}
+	} else {result_XAN <- input[[XAN_loc]]}
+	
+	if(class(input[[XW_loc]])=="list"){
+	XW_mon <- as.numeric(format(input[[XW_loc]]$Data$Date,"%m"))
+	XW_day <- as.numeric(format(input[[XW_loc]]$Data$Date,"%d"))
+	XW_year <- as.numeric(format(input[[XW_loc]]$Data$Date,"%Y"))
+	
+	disch_avg_XW <- NA
+	disch_avg_XW_1900 <- NA
+	disch_avg_XW_1910 <- NA
+	disch_avg_XW_1920 <- NA
+	disch_avg_XW_1930 <- NA
+	disch_avg_XW_1940 <- NA
+	disch_avg_XW_1950 <- NA
+	disch_avg_XW_1960 <- NA
+	disch_avg_XW_1970 <- NA
+	disch_avg_XW_1980 <- NA
+	disch_avg_XW_1990 <- NA
+	disch_avg_XW_2000 <- NA
+	disch_avg_XW_2010 <- NA
+	
+	for(i in 1:length(cont)){
+		disch_avg_XW[[i]]<- mean(filter(input[[XW_loc]]$Data, (XW_mon == cont_mon[[i]] & XW_day == cont_day[[i]]))$Discharge_acfte6_day, na.rm=TRUE)
+		disch_avg_XW_1900[[i]] <- mean(filter(input[[XW_loc]]$Data, (XW_mon == cont_mon[[i]] & XW_day == cont_day[[i]] & XW_year >= 1900 & XW_year < 1910))$Discharge_acfte6_day, na.rm=TRUE)
+		disch_avg_XW_1910[[i]] <- mean(filter(input[[XW_loc]]$Data, (XW_mon == cont_mon[[i]] & XW_day == cont_day[[i]] & XW_year >= 1910 & XW_year < 1920))$Discharge_acfte6_day, na.rm=TRUE)
+		disch_avg_XW_1920[[i]] <- mean(filter(input[[XW_loc]]$Data, (XW_mon == cont_mon[[i]] & XW_day == cont_day[[i]] & XW_year >= 1920 & XW_year < 1930))$Discharge_acfte6_day, na.rm=TRUE)
+		disch_avg_XW_1930[[i]] <- mean(filter(input[[XW_loc]]$Data, (XW_mon == cont_mon[[i]] & XW_day == cont_day[[i]] & XW_year >= 1930 & XW_year < 1940))$Discharge_acfte6_day, na.rm=TRUE)
+		disch_avg_XW_1940[[i]] <- mean(filter(input[[XW_loc]]$Data, (XW_mon == cont_mon[[i]] & XW_day == cont_day[[i]] & XW_year >= 1940 & XW_year < 1950))$Discharge_acfte6_day, na.rm=TRUE)
+		disch_avg_XW_1950[[i]] <- mean(filter(input[[XW_loc]]$Data, (XW_mon == cont_mon[[i]] & XW_day == cont_day[[i]] & XW_year >= 1950 & XW_year < 1960))$Discharge_acfte6_day, na.rm=TRUE)
+		disch_avg_XW_1960[[i]] <- mean(filter(input[[XW_loc]]$Data, (XW_mon == cont_mon[[i]] & XW_day == cont_day[[i]] & XW_year >= 1960 & XW_year < 1970))$Discharge_acfte6_day, na.rm=TRUE)
+		disch_avg_XW_1970[[i]] <- mean(filter(input[[XW_loc]]$Data, (XW_mon == cont_mon[[i]] & XW_day == cont_day[[i]] & XW_year >= 1970 & XW_year < 1980))$Discharge_acfte6_day, na.rm=TRUE)
+		disch_avg_XW_1980[[i]] <- mean(filter(input[[XW_loc]]$Data, (XW_mon == cont_mon[[i]] & XW_day == cont_day[[i]] & XW_year >= 1980 & XW_year < 1990))$Discharge_acfte6_day, na.rm=TRUE)
+		disch_avg_XW_1990[[i]] <- mean(filter(input[[XW_loc]]$Data, (XW_mon == cont_mon[[i]] & XW_day == cont_day[[i]] & XW_year >= 1990 & XW_year < 2000))$Discharge_acfte6_day, na.rm=TRUE)
+		disch_avg_XW_2000[[i]] <- mean(filter(input[[XW_loc]]$Data, (XW_mon == cont_mon[[i]] & XW_day == cont_day[[i]] & XW_year >= 2000 & XW_year < 2010))$Discharge_acfte6_day, na.rm=TRUE)
+		disch_avg_XW_2010[[i]] <- mean(filter(input[[XW_loc]]$Data, (XW_mon == cont_mon[[i]] & XW_day == cont_day[[i]] & XW_year >= 2010 & XW_year < 2020))$Discharge_acfte6_day, na.rm=TRUE)	 
+	}
+	
+	result_XW <- list(Continuous=data.frame(Date=cont,Discharge_maf_avg=disch_avg_XW), "1900s"=data.frame(Date=cont,Discharge_maf_avg_1900s=disch_avg_XW_1900),
+			"1910s"=data.frame(Date=cont,Discharge_maf_avg_1910s=disch_avg_XW_1910),
+			"1920s"=data.frame(Date=cont,Discharge_maf_avg_1900s=disch_avg_XW_1920),
+			"1930s"=data.frame(Date=cont,Discharge_maf_avg_1900s=disch_avg_XW_1930),
+			"1940s"=data.frame(Date=cont,Discharge_maf_avg_1900s=disch_avg_XW_1940),
+			"1950s"=data.frame(Date=cont,Discharge_maf_avg_1900s=disch_avg_XW_1950),
+			"1960s"=data.frame(Date=cont,Discharge_maf_avg_1900s=disch_avg_XW_1960),
+			"1970s"=data.frame(Date=cont,Discharge_maf_avg_1900s=disch_avg_XW_1970),
+			"1980s"=data.frame(Date=cont,Discharge_maf_avg_1900s=disch_avg_XW_1980),
+			"1990s"=data.frame(Date=cont,Discharge_maf_avg_1900s=disch_avg_XW_1990),
+			"2000s"=data.frame(Date=cont,Discharge_maf_avg_1900s=disch_avg_XW_2000),
+			"2010s"=data.frame(Date=cont,Discharge_maf_avg_1900s=disch_avg_XW_2010))
+	
+	for(j in length(result_XW):1){
+		if(all(is.na(result_XW[[j]][[2]]))){
+			result_XW[[j]] <- NULL
+		}
+	}
+	} else {result_XW <- input[[XW_loc]]}
+	
+	 
+	 summary <- list(All=result_all, C=result_XC, D=result_XD, BN=result_XBN, AN=result_XAN, W=result_XW)
+	 
+	 return(summary)
+}
