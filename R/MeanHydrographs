@@ -29,8 +29,8 @@ MeanHydrographs <- function(input, num_months){
 		cont <- seq(from=as.Date("0001-11-01"), to=as.Date("0002-04-30"), by="day")
 	} else if(num_months==3){
 		cont <- seq(from=as.Date("0001-12-01"), to=as.Date("0002-02-28"), by="day")
-	} else if(num_months==2){
-		cont <- list()
+	} else if(num_months==12){
+		cont <- seq(from=as.Date("0001-10-01"), to=as.Date("0002-09-30"), by="day")
 	}
 	cont_mon <- as.numeric(format(cont,"%m"))
 	cont_day <- as.numeric(format(cont,"%d"))
@@ -74,16 +74,16 @@ MeanHydrographs <- function(input, num_months){
 	 
 	result_all <- list(Continuous=data.frame(Date=cont,Discharge_maf_avg=disch_avg_all), "1900s"=data.frame(Date=cont,Discharge_maf_avg_1900s=disch_avg_all_1900),
 			"1910s"=data.frame(Date=cont,Discharge_maf_avg_1910s=disch_avg_all_1910),
-			"1920s"=data.frame(Date=cont,Discharge_maf_avg_1900s=disch_avg_all_1920),
-			"1930s"=data.frame(Date=cont,Discharge_maf_avg_1900s=disch_avg_all_1930),
-			"1940s"=data.frame(Date=cont,Discharge_maf_avg_1900s=disch_avg_all_1940),
-			"1950s"=data.frame(Date=cont,Discharge_maf_avg_1900s=disch_avg_all_1950),
-			"1960s"=data.frame(Date=cont,Discharge_maf_avg_1900s=disch_avg_all_1960),
-			"1970s"=data.frame(Date=cont,Discharge_maf_avg_1900s=disch_avg_all_1970),
-			"1980s"=data.frame(Date=cont,Discharge_maf_avg_1900s=disch_avg_all_1980),
-			"1990s"=data.frame(Date=cont,Discharge_maf_avg_1900s=disch_avg_all_1990),
-			"2000s"=data.frame(Date=cont,Discharge_maf_avg_1900s=disch_avg_all_2000),
-			"2010s"=data.frame(Date=cont,Discharge_maf_avg_1900s=disch_avg_all_2010))
+			"1920s"=data.frame(Date=cont,Discharge_maf_avg_1920s=disch_avg_all_1920),
+			"1930s"=data.frame(Date=cont,Discharge_maf_avg_1930s=disch_avg_all_1930),
+			"1940s"=data.frame(Date=cont,Discharge_maf_avg_1940s=disch_avg_all_1940),
+			"1950s"=data.frame(Date=cont,Discharge_maf_avg_1950s=disch_avg_all_1950),
+			"1960s"=data.frame(Date=cont,Discharge_maf_avg_1960s=disch_avg_all_1960),
+			"1970s"=data.frame(Date=cont,Discharge_maf_avg_1970s=disch_avg_all_1970),
+			"1980s"=data.frame(Date=cont,Discharge_maf_avg_1980s=disch_avg_all_1980),
+			"1990s"=data.frame(Date=cont,Discharge_maf_avg_1990s=disch_avg_all_1990),
+			"2000s"=data.frame(Date=cont,Discharge_maf_avg_2000s=disch_avg_all_2000),
+			"2010s"=data.frame(Date=cont,Discharge_maf_avg_2010s=disch_avg_all_2010))
 	for(j in length(result_all):1){
 		if(all(is.na(result_all[[j]][[2]]))){
 			result_all[[j]] <- NULL
@@ -127,16 +127,16 @@ MeanHydrographs <- function(input, num_months){
 	
 	result_XC <- list(Continuous=data.frame(Date=cont,Discharge_maf_avg=disch_avg_XC), "1900s"=data.frame(Date=cont,Discharge_maf_avg_1900s=disch_avg_XC_1900),
 			"1910s"=data.frame(Date=cont,Discharge_maf_avg_1910s=disch_avg_XC_1910),
-			"1920s"=data.frame(Date=cont,Discharge_maf_avg_1900s=disch_avg_XC_1920),
-			"1930s"=data.frame(Date=cont,Discharge_maf_avg_1900s=disch_avg_XC_1930),
-			"1940s"=data.frame(Date=cont,Discharge_maf_avg_1900s=disch_avg_XC_1940),
-			"1950s"=data.frame(Date=cont,Discharge_maf_avg_1900s=disch_avg_XC_1950),
-			"1960s"=data.frame(Date=cont,Discharge_maf_avg_1900s=disch_avg_XC_1960),
-			"1970s"=data.frame(Date=cont,Discharge_maf_avg_1900s=disch_avg_XC_1970),
-			"1980s"=data.frame(Date=cont,Discharge_maf_avg_1900s=disch_avg_XC_1980),
-			"1990s"=data.frame(Date=cont,Discharge_maf_avg_1900s=disch_avg_XC_1990),
-			"2000s"=data.frame(Date=cont,Discharge_maf_avg_1900s=disch_avg_XC_2000),
-			"2010s"=data.frame(Date=cont,Discharge_maf_avg_1900s=disch_avg_XC_2010))
+			"1920s"=data.frame(Date=cont,Discharge_maf_avg_1920s=disch_avg_XC_1920),
+			"1930s"=data.frame(Date=cont,Discharge_maf_avg_1930s=disch_avg_XC_1930),
+			"1940s"=data.frame(Date=cont,Discharge_maf_avg_1940s=disch_avg_XC_1940),
+			"1950s"=data.frame(Date=cont,Discharge_maf_avg_1950s=disch_avg_XC_1950),
+			"1960s"=data.frame(Date=cont,Discharge_maf_avg_1960s=disch_avg_XC_1960),
+			"1970s"=data.frame(Date=cont,Discharge_maf_avg_1970s=disch_avg_XC_1970),
+			"1980s"=data.frame(Date=cont,Discharge_maf_avg_1980s=disch_avg_XC_1980),
+			"1990s"=data.frame(Date=cont,Discharge_maf_avg_1990s=disch_avg_XC_1990),
+			"2000s"=data.frame(Date=cont,Discharge_maf_avg_2000s=disch_avg_XC_2000),
+			"2010s"=data.frame(Date=cont,Discharge_maf_avg_2010s=disch_avg_XC_2010))
 	
 	for(j in length(result_XC):1){
 		if(all(is.na(result_XC[[j]][[2]]))){
@@ -182,16 +182,16 @@ MeanHydrographs <- function(input, num_months){
 	
 	result_XD <- list(Continuous=data.frame(Date=cont,Discharge_maf_avg=disch_avg_XD), "1900s"=data.frame(Date=cont,Discharge_maf_avg_1900s=disch_avg_XD_1900),
 			"1910s"=data.frame(Date=cont,Discharge_maf_avg_1910s=disch_avg_XD_1910),
-			"1920s"=data.frame(Date=cont,Discharge_maf_avg_1900s=disch_avg_XD_1920),
-			"1930s"=data.frame(Date=cont,Discharge_maf_avg_1900s=disch_avg_XD_1930),
-			"1940s"=data.frame(Date=cont,Discharge_maf_avg_1900s=disch_avg_XD_1940),
-			"1950s"=data.frame(Date=cont,Discharge_maf_avg_1900s=disch_avg_XD_1950),
-			"1960s"=data.frame(Date=cont,Discharge_maf_avg_1900s=disch_avg_XD_1960),
-			"1970s"=data.frame(Date=cont,Discharge_maf_avg_1900s=disch_avg_XD_1970),
-			"1980s"=data.frame(Date=cont,Discharge_maf_avg_1900s=disch_avg_XD_1980),
-			"1990s"=data.frame(Date=cont,Discharge_maf_avg_1900s=disch_avg_XD_1990),
-			"2000s"=data.frame(Date=cont,Discharge_maf_avg_1900s=disch_avg_XD_2000),
-			"2010s"=data.frame(Date=cont,Discharge_maf_avg_1900s=disch_avg_XD_2010))
+			"1920s"=data.frame(Date=cont,Discharge_maf_avg_1920s=disch_avg_XD_1920),
+			"1930s"=data.frame(Date=cont,Discharge_maf_avg_1930s=disch_avg_XD_1930),
+			"1940s"=data.frame(Date=cont,Discharge_maf_avg_1940s=disch_avg_XD_1940),
+			"1950s"=data.frame(Date=cont,Discharge_maf_avg_1950s=disch_avg_XD_1950),
+			"1960s"=data.frame(Date=cont,Discharge_maf_avg_1960s=disch_avg_XD_1960),
+			"1970s"=data.frame(Date=cont,Discharge_maf_avg_1970s=disch_avg_XD_1970),
+			"1980s"=data.frame(Date=cont,Discharge_maf_avg_1980s=disch_avg_XD_1980),
+			"1990s"=data.frame(Date=cont,Discharge_maf_avg_1990s=disch_avg_XD_1990),
+			"2000s"=data.frame(Date=cont,Discharge_maf_avg_2000s=disch_avg_XD_2000),
+			"2010s"=data.frame(Date=cont,Discharge_maf_avg_2010s=disch_avg_XD_2010))
 	
 	for(j in length(result_XD):1){
 		if(all(is.na(result_XD[[j]][[2]]))){
@@ -237,16 +237,16 @@ MeanHydrographs <- function(input, num_months){
 	
 	result_XBN <- list(Continuous=data.frame(Date=cont,Discharge_maf_avg=disch_avg_XBN), "1900s"=data.frame(Date=cont,Discharge_maf_avg_1900s=disch_avg_XBN_1900),
 			"1910s"=data.frame(Date=cont,Discharge_maf_avg_1910s=disch_avg_XBN_1910),
-			"1920s"=data.frame(Date=cont,Discharge_maf_avg_1900s=disch_avg_XBN_1920),
-			"1930s"=data.frame(Date=cont,Discharge_maf_avg_1900s=disch_avg_XBN_1930),
-			"1940s"=data.frame(Date=cont,Discharge_maf_avg_1900s=disch_avg_XBN_1940),
-			"1950s"=data.frame(Date=cont,Discharge_maf_avg_1900s=disch_avg_XBN_1950),
-			"1960s"=data.frame(Date=cont,Discharge_maf_avg_1900s=disch_avg_XBN_1960),
-			"1970s"=data.frame(Date=cont,Discharge_maf_avg_1900s=disch_avg_XBN_1970),
-			"1980s"=data.frame(Date=cont,Discharge_maf_avg_1900s=disch_avg_XBN_1980),
-			"1990s"=data.frame(Date=cont,Discharge_maf_avg_1900s=disch_avg_XBN_1990),
-			"2000s"=data.frame(Date=cont,Discharge_maf_avg_1900s=disch_avg_XBN_2000),
-			"2010s"=data.frame(Date=cont,Discharge_maf_avg_1900s=disch_avg_XBN_2010))
+			"1920s"=data.frame(Date=cont,Discharge_maf_avg_1920s=disch_avg_XBN_1920),
+			"1930s"=data.frame(Date=cont,Discharge_maf_avg_1930s=disch_avg_XBN_1930),
+			"1940s"=data.frame(Date=cont,Discharge_maf_avg_1940s=disch_avg_XBN_1940),
+			"1950s"=data.frame(Date=cont,Discharge_maf_avg_1950s=disch_avg_XBN_1950),
+			"1960s"=data.frame(Date=cont,Discharge_maf_avg_1960s=disch_avg_XBN_1960),
+			"1970s"=data.frame(Date=cont,Discharge_maf_avg_1970s=disch_avg_XBN_1970),
+			"1980s"=data.frame(Date=cont,Discharge_maf_avg_1980s=disch_avg_XBN_1980),
+			"1990s"=data.frame(Date=cont,Discharge_maf_avg_1990s=disch_avg_XBN_1990),
+			"2000s"=data.frame(Date=cont,Discharge_maf_avg_2000s=disch_avg_XBN_2000),
+			"2010s"=data.frame(Date=cont,Discharge_maf_avg_2010s=disch_avg_XBN_2010))
 	
 	for(j in length(result_XBN):1){
 		if(all(is.na(result_XBN[[j]][[2]]))){
@@ -292,16 +292,16 @@ MeanHydrographs <- function(input, num_months){
 	
 	result_XAN <- list(Continuous=data.frame(Date=cont,Discharge_maf_avg=disch_avg_XAN), "1900s"=data.frame(Date=cont,Discharge_maf_avg_1900s=disch_avg_XAN_1900),
 			"1910s"=data.frame(Date=cont,Discharge_maf_avg_1910s=disch_avg_XAN_1910),
-			"1920s"=data.frame(Date=cont,Discharge_maf_avg_1900s=disch_avg_XAN_1920),
-			"1930s"=data.frame(Date=cont,Discharge_maf_avg_1900s=disch_avg_XAN_1930),
-			"1940s"=data.frame(Date=cont,Discharge_maf_avg_1900s=disch_avg_XAN_1940),
-			"1950s"=data.frame(Date=cont,Discharge_maf_avg_1900s=disch_avg_XAN_1950),
-			"1960s"=data.frame(Date=cont,Discharge_maf_avg_1900s=disch_avg_XAN_1960),
-			"1970s"=data.frame(Date=cont,Discharge_maf_avg_1900s=disch_avg_XAN_1970),
-			"1980s"=data.frame(Date=cont,Discharge_maf_avg_1900s=disch_avg_XAN_1980),
-			"1990s"=data.frame(Date=cont,Discharge_maf_avg_1900s=disch_avg_XAN_1990),
-			"2000s"=data.frame(Date=cont,Discharge_maf_avg_1900s=disch_avg_XAN_2000),
-			"2010s"=data.frame(Date=cont,Discharge_maf_avg_1900s=disch_avg_XAN_2010))
+			"1920s"=data.frame(Date=cont,Discharge_maf_avg_1920s=disch_avg_XAN_1920),
+			"1930s"=data.frame(Date=cont,Discharge_maf_avg_1930s=disch_avg_XAN_1930),
+			"1940s"=data.frame(Date=cont,Discharge_maf_avg_1940s=disch_avg_XAN_1940),
+			"1950s"=data.frame(Date=cont,Discharge_maf_avg_1950s=disch_avg_XAN_1950),
+			"1960s"=data.frame(Date=cont,Discharge_maf_avg_1960s=disch_avg_XAN_1960),
+			"1970s"=data.frame(Date=cont,Discharge_maf_avg_1970s=disch_avg_XAN_1970),
+			"1980s"=data.frame(Date=cont,Discharge_maf_avg_1980s=disch_avg_XAN_1980),
+			"1990s"=data.frame(Date=cont,Discharge_maf_avg_1990s=disch_avg_XAN_1990),
+			"2000s"=data.frame(Date=cont,Discharge_maf_avg_2000s=disch_avg_XAN_2000),
+			"2010s"=data.frame(Date=cont,Discharge_maf_avg_2010s=disch_avg_XAN_2010))
 	
 	for(j in length(result_XAN):1){
 		if(all(is.na(result_XAN[[j]][[2]]))){
@@ -347,16 +347,16 @@ MeanHydrographs <- function(input, num_months){
 	
 	result_XW <- list(Continuous=data.frame(Date=cont,Discharge_maf_avg=disch_avg_XW), "1900s"=data.frame(Date=cont,Discharge_maf_avg_1900s=disch_avg_XW_1900),
 			"1910s"=data.frame(Date=cont,Discharge_maf_avg_1910s=disch_avg_XW_1910),
-			"1920s"=data.frame(Date=cont,Discharge_maf_avg_1900s=disch_avg_XW_1920),
-			"1930s"=data.frame(Date=cont,Discharge_maf_avg_1900s=disch_avg_XW_1930),
-			"1940s"=data.frame(Date=cont,Discharge_maf_avg_1900s=disch_avg_XW_1940),
-			"1950s"=data.frame(Date=cont,Discharge_maf_avg_1900s=disch_avg_XW_1950),
-			"1960s"=data.frame(Date=cont,Discharge_maf_avg_1900s=disch_avg_XW_1960),
-			"1970s"=data.frame(Date=cont,Discharge_maf_avg_1900s=disch_avg_XW_1970),
-			"1980s"=data.frame(Date=cont,Discharge_maf_avg_1900s=disch_avg_XW_1980),
-			"1990s"=data.frame(Date=cont,Discharge_maf_avg_1900s=disch_avg_XW_1990),
-			"2000s"=data.frame(Date=cont,Discharge_maf_avg_1900s=disch_avg_XW_2000),
-			"2010s"=data.frame(Date=cont,Discharge_maf_avg_1900s=disch_avg_XW_2010))
+			"1920s"=data.frame(Date=cont,Discharge_maf_avg_1920s=disch_avg_XW_1920),
+			"1930s"=data.frame(Date=cont,Discharge_maf_avg_1930s=disch_avg_XW_1930),
+			"1940s"=data.frame(Date=cont,Discharge_maf_avg_1940s=disch_avg_XW_1940),
+			"1950s"=data.frame(Date=cont,Discharge_maf_avg_1950s=disch_avg_XW_1950),
+			"1960s"=data.frame(Date=cont,Discharge_maf_avg_1960s=disch_avg_XW_1960),
+			"1970s"=data.frame(Date=cont,Discharge_maf_avg_1970s=disch_avg_XW_1970),
+			"1980s"=data.frame(Date=cont,Discharge_maf_avg_1980s=disch_avg_XW_1980),
+			"1990s"=data.frame(Date=cont,Discharge_maf_avg_1990s=disch_avg_XW_1990),
+			"2000s"=data.frame(Date=cont,Discharge_maf_avg_2000s=disch_avg_XW_2000),
+			"2010s"=data.frame(Date=cont,Discharge_maf_avg_2010s=disch_avg_XW_2010))
 	
 	for(j in length(result_XW):1){
 		if(all(is.na(result_XW[[j]][[2]]))){
