@@ -42,7 +42,7 @@ for(z in 1:5){
 	unimpaired$Winter_6mon <- Split6Winter(unimpaired$prep, unimpaired$Index, unimpaired$thresholds_maf)
 	unimpaired$Winter_monthly <- SplitWinterMonthly(unimpaired$prep, unimpaired$Index, unimpaired$thresholds_maf)
 	unimpaired$HydroYear <- SplitHydroYear(unimpaired$prep, unimpaired$Index, unimpaired$thresholds_maf)
-	
+	unimpaired$Daysmax <- FreqAnalysis(unimpaired$Winter_6mon, c(1,3,7))
 	
 	
 	### WRITE TO FILES #####
