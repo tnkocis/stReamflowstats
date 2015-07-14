@@ -48,7 +48,7 @@ USGS11377100$Winter_3mon <- Split3Winter(USGS11377100$prep, USGS11377100$Index, 
 USGS11377100$Winter_6mon <- Split6Winter(USGS11377100$prep, USGS11377100$Index, USGS11377100$thresholds_maf)
 USGS11377100$Winter_monthly <- SplitWinterMonthly(USGS11377100$prep, USGS11377100$Index, USGS11377100$thresholds_maf)
 USGS11377100$HydroYear <- SplitHydroYear(USGS11377100$prep, USGS11377100$Index, USGS11377100$thresholds_maf)
-
+USGS11377100$Daysmax <- FreqAnalysis(USGS11377100$HydroYear, c(1,3,7))
 
 
 ### WRITE TO FILES #####
