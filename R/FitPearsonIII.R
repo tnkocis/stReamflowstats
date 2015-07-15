@@ -3,7 +3,7 @@
 # Author: tiffn_000
 ###############################################################################
 
-FitPearsonIII <- function(zooinput, startparams){
+FitqPearsonIII <- function(zooinput, startparams, probs){
 #remove if package
 	if(!require(dplyr)){
 		install.packages("dplyr")
@@ -23,6 +23,8 @@ FitPearsonIII <- function(zooinput, startparams){
 	}
 	if (missing(zooinput))
 		stop("Input data is required, by hydrologic year.")
+	if (missing(probs))
+		stop("Nonexceedence Probability Vector is required, by hydrologic year.")
 	if(anyNA(coredata(zooinput))){
 		p3 <- NA
 	}else{
@@ -73,11 +75,12 @@ FitPearsonIII <- function(zooinput, startparams){
 #	
 #	
 #	p3 <- fitdist(log(coredata(zooinput)), distr="PIII", method="mle", start=my.param)
-		
-	p3 <- quape3(0.01, para=params, paracheck=TRUE)
+	for (i in 1:length(probs)){
+		p3[[i]] <- quape3(probs[[i]], para=params, paracheck=TRUE)
+	}
 }
-	
-return(p3)
+	p5 <- data.frame(nonexcprobs=probs, Qmaf=p3)
+return(p5)
 }
 
 
