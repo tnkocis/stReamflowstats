@@ -3,7 +3,7 @@
 # Author: tiffn_000
 ###############################################################################
 
-FitqPearsonIII <- function(zooinput, startparams, probs){
+FitqPearsonIII <- function(zooinput, startparams, prob){
 #remove if package
 	if(!require(dplyr)){
 		install.packages("dplyr")
@@ -13,17 +13,23 @@ FitqPearsonIII <- function(zooinput, startparams, probs){
 		install.packages("zoo")
 		library(zoo)
 	}
-	if(!require(fitdistrplus)){
-		install.packages("fitdistrplus")
-		library(fitdistrplus)
+#	if(!require(fitdistrplus)){
+#		install.packages("fitdistrplus")
+#		library(fitdistrplus)
+#	}
+#	if(!require(PearsonDS)){
+#		install.packages("PearsonDS")
+#		library(PearsonDS)
+#	}
+#	
+	if(!require(lmomco)){
+		install.packages("lmomco")
+		library(lmomco)
 	}
-	if(!require(PearsonDS)){
-		install.packages("PearsonDS")
-		library(PearsonDS)
-	}
+	
 	if (missing(zooinput))
 		stop("Input data is required, by hydrologic year.")
-	if (missing(probs))
+	if (missing(prob))
 		stop("Nonexceedence Probability Vector is required, by hydrologic year.")
 	if(anyNA(coredata(zooinput))){
 		p3 <- NA
@@ -75,11 +81,12 @@ FitqPearsonIII <- function(zooinput, startparams, probs){
 #	
 #	
 #	p3 <- fitdist(log(coredata(zooinput)), distr="PIII", method="mle", start=my.param)
-	for (i in 1:length(probs)){
-		p3[[i]] <- quape3(probs[[i]], para=params, paracheck=TRUE)
+	p3 <- rep(NA, length(prob))
+	for (i in 1:length(prob)){
+		p3[[i]] <- quape3(prob[[i]], para=params, paracheck=TRUE)
 	}
 }
-	p5 <- data.frame(nonexcprobs=probs, Qmaf=p3)
+	p5 <- data.frame(nonexcprob=prob, Qmaf=p3)
 return(p5)
 }
 

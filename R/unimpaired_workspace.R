@@ -12,39 +12,54 @@ unimpaired_g <- read.csv("C:\\Users\\tiffn_000\\Documents\\workspaces\\eclipse_w
 unimpaired_g <- as.numeric(unimpaired_g$Unimpaired)
 
 
-
+unimpaired <- vector("list", 5)
 for(z in 1:5){
-	unimpaired <- list()
-	unimpaired$raw <- readNWISdv(unimpaired_g[[z]],"00060", startDate="1900-01-01",
+	unimpaired[[z]] <- list()
+	unimpaired[[z]]$raw <- readNWISdv(unimpaired_g[[z]],"00060", startDate="1900-01-01",
 			endDate=Sys.Date(), statCd="00003")
 
-	unimpaired$raw <- RemoveLeapDays(unimpaired$raw)
+	unimpaired[[z]]$raw <- RemoveLeapDays(unimpaired[[z]]$raw)
 	
-	if(as.numeric(unimpaired$raw$site_no[[1]]) %in% SacV_gauges$site_no){
-		unimpaired$Index$Valley <- "SacV"
-		unimpaired$Index$Index <- YEARTYPEqdf$SacV_num
-		unimpaired$Index$Year <- YEARTYPEqdf$Year
-	} else if(as.numeric(unimpaired$raw$site_no[[1]]) %in% SJV_gauges$site_no){
-		unimpaired$Index$Valley <- "SJV"
-		unimpaired$Index$Index <- YEARTYPEqdf$SJV_num
-		unimpaired$Index$Year <- YEARTYPEqdf$Year
+	if(as.numeric(unimpaired[[z]]$raw$site_no[[1]]) %in% SacV_gauges$site_no){
+		unimpaired[[z]]$Index$Valley <- "SacV"
+		unimpaired[[z]]$Index$Index <- YEARTYPEqdf$SacV_num
+		unimpaired[[z]]$Index$Year <- YEARTYPEqdf$Year
+	} else if(as.numeric(unimpaired[[z]]$raw$site_no[[1]]) %in% SJV_gauges$site_no){
+		unimpaired[[z]]$Index$Valley <- "SJV"
+		unimpaired[[z]]$Index$Index <- YEARTYPEqdf$SJV_num
+		unimpaired[[z]]$Index$Year <- YEARTYPEqdf$Year
 	} else {
-		unimpaired$Index$Valley <- "ERROR"
-		print(paste("Error",unimpaired$raw$site_no[[1]]))
+		unimpaired[[z]]$Index$Valley <- "ERROR"
+		print(paste("Error",unimpaired[[z]]$raw$site_no[[1]]))
 	}
 	
 	###DATA PROCESSING
-	unimpaired$prep <- prepdata(unimpaired$raw)
-	unimpaired$Availability <- DataAvailability(unimpaired$raw)
-	unimpaired$thresholds_maf <- thresholds(unimpaired$prep)
-	unimpaired$record_stats <- record_stats(unimpaired$prep, unimpaired$thresholds_maf)
-	unimpaired$Winter_3mon <- Split3Winter(unimpaired$prep, unimpaired$Index, unimpaired$thresholds_maf)
-	unimpaired$Winter_6mon <- Split6Winter(unimpaired$prep, unimpaired$Index, unimpaired$thresholds_maf)
-	unimpaired$Winter_monthly <- SplitWinterMonthly(unimpaired$prep, unimpaired$Index, unimpaired$thresholds_maf)
-	unimpaired$HydroYear <- SplitHydroYear(unimpaired$prep, unimpaired$Index, unimpaired$thresholds_maf)
-	unimpaired$Daysmax <- FreqAnalysis(unimpaired$HydroYear, c(1,3,7), unimpaired$Index)
-	
-	
+	unimpaired[[z]]$prep <- prepdata(unimpaired[[z]]$raw)
+	unimpaired[[z]]$Availability <- DataAvailability(unimpaired[[z]]$raw)
+	unimpaired[[z]]$thresholds_maf <- thresholds(unimpaired[[z]]$prep)
+#	unimpaired[[z]]$record_stats <- record_stats(unimpaired[[z]]$prep, unimpaired[[z]]$thresholds_maf)
+#	unimpaired[[z]]$Winter_3mon <- Split3Winter(unimpaired[[z]]$prep, unimpaired[[z]]$Index, unimpaired[[z]]$thresholds_maf)
+#	unimpaired[[z]]$Winter_6mon <- Split6Winter(unimpaired[[z]]$prep, unimpaired[[z]]$Index, unimpaired[[z]]$thresholds_maf)
+#	unimpaired[[z]]$Winter_monthly <- SplitWinterMonthly(unimpaired[[z]]$prep, unimpaired[[z]]$Index, unimpaired[[z]]$thresholds_maf)
+	unimpaired[[z]]$HydroYear <- SplitHydroYear(unimpaired[[z]]$prep, unimpaired[[z]]$Index, unimpaired[[z]]$thresholds_maf)	
+	unimpaired[[z]]$HydroYear <- cleanup(unimpaired[[z]]$HydroYear)
+	unimpaired[[z]]$Daysmax <- FreqAnalysis(unimpaired[[z]]$HydroYear, c(1,3,7), unimpaired[[z]]$Index)
+	unimpaired[[z]]$PearsonIII <- FitqPearsonIIIroll(unimpaired[[z]]$Daysmax$All$zoo$X3DayMaxQ_maf,10, probs=c(0.01, 1/50, 1/20, 1/10))	
+}	
+names(unimpaired) <- unimpaired_g[1:5]
+datex <- seq.Date(from=as.Date("1900-01-01"), to=Sys.Date(), by="day")
+for(z in 1:5){
+	for(n in 1:length(unimpaired[[z]]$PearsonIII)){
+	pdf(paste0("C:\\Users\\tiffn_000\\Desktop\\Plots6\\",names(unimpaired)[[z]],names(unimpaired[[z]]$PearsonIII)[[n]],".pdf"), width=11, height=8.5, useDingbats=FALSE)
+	plot(x=unimpaired[[z]]$PearsonIII[[n]][[2]], y=unimpaired[[z]]$PearsonIII[[n]][[1]], type="b", xlab=NA, ylab=NA, xlim=c(as.Date("1900-01-01"), Sys.Date()))
+	title(main=paste(names(unimpaired)[[z]],names(unimpaired[[z]]$PearsonIII)[[n]], "3-Day Max" ,sep=" "),
+			xlab="Date", ylab="Q (maf)")
+	dev.off()
+	}
+}
+
+
+
 	### WRITE TO FILES #####
 	maindir <- "C:\\Users\\tiffn_000\\Documents\\workspaces\\output"
 	gaugedir <- as.character(unimpaired$raw$site_no[[1]])
@@ -286,4 +301,4 @@ for(z in 1:5){
 		}
 	}
 	
-}
+

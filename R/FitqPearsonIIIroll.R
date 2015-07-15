@@ -4,7 +4,7 @@
 ###############################################################################
 
 
-FitPearsonIIIroll <- function(zooinput,  movewidth, startparams, probs){
+FitqPearsonIIIroll <- function(zooinput,  movewidth, startparams, probs){
 #remove if package
 	if(!require(dplyr)){
 		install.packages("dplyr")
@@ -38,14 +38,26 @@ FitPearsonIIIroll <- function(zooinput,  movewidth, startparams, probs){
 		output$location <- as.Date(rep(NA, length.out=L))
 		
 		lm <- L-(movewidth-1)
-		p3 <- rep(NA, lm)
+		p3 <- vector("list", length(probs))
+		p5 <- vector("list", length(probs))
 		p4 <- as.Date(rep(NA,lm))
 		for (i in 1:lm){
-###!!!!!!!!!! addedprobs			p3[[i]] <- FitPearsonIII(zooinput[i:(i+(movewidth-1))], probs=probs)
-			p4[[i]] <- index(zooinput)[[i]]
+			p3[[i]] <- FitqPearsonIII(zooinput=zooinput[i:(i+(movewidth-1))], prob=probs)
 		}
+		for (n in 1:length(probs)){
+			for(i in 1:lm){
+				p5[[n]][[i]] <- p3[[i]]$Qmaf[[n]]
+				p4[[i]] <- index(zooinput)[[i]]
+				}
+			}
 		
-		out <- data.frame(prob0.1Q_maf=exp(p3), Date=p4)
+		
+		out <- vector("list", length(probs))
+		for (n in 1:length(probs)){
+			out[[n]] <- data.frame((exp(p5[[n]])), p4)
+			names(out[[n]]) <- c(paste("prob_",probs[[n]],"_Q_maf", sep=""), "Date")
+			names(out)[[n]] <- paste("prob_",probs[[n]],"_Q_maf", sep="")
+		}
 	} else {}
 return(out)	
 }
