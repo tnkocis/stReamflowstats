@@ -32,7 +32,8 @@ for(z in 1:5){
 		unimpaired[[z]]$Index$Valley <- "ERROR"
 		print(paste("Error",unimpaired[[z]]$raw$site_no[[1]]))
 	}
-	
+
+
 	###DATA PROCESSING
 	unimpaired[[z]]$prep <- prepdata(unimpaired[[z]]$raw)
 	unimpaired[[z]]$Availability <- DataAvailability(unimpaired[[z]]$raw)
@@ -47,17 +48,17 @@ for(z in 1:5){
 	unimpaired[[z]]$PearsonIII <- FitqPearsonIIIroll(unimpaired[[z]]$Daysmax$All$zoo$X3DayMaxQ_maf,10, probs=c(0.01, 1/50, 1/20, 1/10))	
 }	
 names(unimpaired) <- unimpaired_g[1:5]
-datex <- seq.Date(from=as.Date("1900-01-01"), to=Sys.Date(), by="day")
+
 for(z in 1:5){
 	for(n in 1:length(unimpaired[[z]]$PearsonIII)){
-	pdf(paste0("C:\\Users\\tiffn_000\\Desktop\\Plots6\\",names(unimpaired)[[z]],names(unimpaired[[z]]$PearsonIII)[[n]],".pdf"), width=11, height=8.5, useDingbats=FALSE)
-	plot(x=unimpaired[[z]]$PearsonIII[[n]][[2]], y=unimpaired[[z]]$PearsonIII[[n]][[1]], type="b", xlab=NA, ylab=NA, xlim=c(as.Date("1900-01-01"), Sys.Date()))
-	title(main=paste(names(unimpaired)[[z]],names(unimpaired[[z]]$PearsonIII)[[n]], "3-Day Max" ,sep=" "),
+		pdf(paste0("C:\\Users\\tiffn_000\\Desktop\\Plots6\\",names(unimpaired)[[z]],names(unimpaired[[z]]$PearsonIII)[[n]],".pdf"), width=11, height=8.5, useDingbats=FALSE)
+		plot(x=unimpaired[[z]]$PearsonIII[[n]][[2]], y=unimpaired[[z]]$PearsonIII[[n]][[1]], type="b", xlab=NA, ylab=NA, xlim=c(as.Date("1900-01-01"), Sys.Date()))
+		title(main=paste(names(unimpaired)[[z]],names(unimpaired[[z]]$PearsonIII)[[n]], "3-Day Max" ,sep=" "),
 			xlab="Date", ylab="Q (maf)")
-	dev.off()
+		dev.off()
 	}
 }
-
+########################################
 
 
 	### WRITE TO FILES #####
