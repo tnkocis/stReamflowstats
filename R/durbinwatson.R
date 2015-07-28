@@ -76,6 +76,7 @@ durbinWatsonTest(mod.ols, max.lag=10)
 ## GLS estimates
 
 #library(nlme) #- only load ones at the beginning
-mod.gls <- gls(prob0.1Q_maf ~ Date, data=test.zoo.lp3, correlation=corARMA(p=1), method='ML')
+mod.gls <- gls(prob_0.1_Q_maf ~ Date, data=test.zoo.lp3, correlation=corARMA(p=1), method='ML')
 summary(mod.gls)
-summary(mod.gls)$tTable #gives full p-value
+blah <- as.data.frame(summary(mod.gls)$tTable) #gives full p-value
+blah$coeff_names <- dimnames(summary(mod.gls)$tTable)[[1]]

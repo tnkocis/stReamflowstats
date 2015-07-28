@@ -45,7 +45,13 @@ for(z in 1:5){
 	unimpaired[[z]]$HydroYear <- SplitHydroYear(unimpaired[[z]]$prep, unimpaired[[z]]$Index, unimpaired[[z]]$thresholds_maf)	
 	unimpaired[[z]]$HydroYear <- cleanup(unimpaired[[z]]$HydroYear)
 	unimpaired[[z]]$Daysmax <- FreqAnalysis(unimpaired[[z]]$HydroYear, c(1,3,7), unimpaired[[z]]$Index)
-	unimpaired[[z]]$PearsonIII <- FitqPearsonIIIroll(unimpaired[[z]]$Daysmax$All$zoo$X3DayMaxQ_maf,10, probs=c(0.01, 1/50, 1/20, 1/10))	
+## add loop here (UPDATES BELOW AS OF 7/27/15
+	unimpaired[[z]]$PearsonIIIroll <- FitqPearsonIIIroll(unimpaired[[z]]$Daysmax$All$zoo$X3DayMaxQ_maf, movewidth=10, probs=c(0.01, 1/50, 1/20, 1/10))	
+	unimpaired[[z]]$glsPIII <- glsPIII(unimpaired[[z]]$PearsonIIIroll)
+	unimpaired[[z]]$MonthlyThreshold <- MonthlyThresholdQ(unimpaired[[z]]$Winter_monthly, prob=0.95)
+
+
+
 }	
 names(unimpaired) <- unimpaired_g[1:5]
 

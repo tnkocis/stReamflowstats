@@ -3,7 +3,7 @@
 # Author: tiffn_000
 ###############################################################################
 
-FitqPearsonIII <- function(zooinput, startparams){ #, prob){
+FitqPearsonIII <- function(zooinput, startparams, prob){ #, prob){
 #remove if package
 	if(!require(dplyr)){
 		install.packages("dplyr")
@@ -13,10 +13,10 @@ FitqPearsonIII <- function(zooinput, startparams){ #, prob){
 		install.packages("zoo")
 		library(zoo)
 	}
-#	if(!require(fitdistrplus)){
-#		install.packages("fitdistrplus")
-#		library(fitdistrplus)
-#	}
+	if(!require(fitdistrplus)){
+		install.packages("fitdistrplus")
+		library(fitdistrplus)
+	}
 #	if(!require(PearsonDS)){
 #		install.packages("PearsonDS")
 #		library(PearsonDS)
@@ -29,8 +29,8 @@ FitqPearsonIII <- function(zooinput, startparams){ #, prob){
 	
 	if (missing(zooinput))
 		stop("Input data is required, by hydrologic year.")
-#	if (missing(prob))
-#		stop("Nonexceedence Probability Vector is required, by hydrologic year.")
+	if (missing(prob))
+		stop("Nonexceedence Probability Vector is required, by hydrologic year.")
 	if(anyNA(coredata(zooinput))){
 		p3 <- NA
 	}else{
@@ -61,8 +61,7 @@ FitqPearsonIII <- function(zooinput, startparams){ #, prob){
 #		my.shape <- (2/g)^2
 #		my.scale <- sqrt(v)/sqrt(my.shape)
 #		my.location <- m-sqrt(v * my.shape)
-		
-		lmoments <- lmom.ub(log(coredata(zooinput)))
+		lmoments <- lmom.ub(log(coredata(zooinput)*1.23348184e9))
 		params <- parpe3(lmoments, checklmom=TRUE)
 ########## Lmomco consistent with Handbook of Hydrology by Maidment
 #		standard <- list(mu=params$para[[1]], sigma=params$para[[2]], gamma=params$para[[3]])
@@ -86,16 +85,17 @@ FitqPearsonIII <- function(zooinput, startparams){ #, prob){
 	qPIII<<-function(p, mu, sigma, gamma){ lmomco::quape3(f=p, para=vec2par(c(mu, sigma, gamma), type="pe3"), paracheck=TRUE)}
 	
 	
-#	p3 <- fitdist(log(coredata(zooinput)), distr="PIII", method="mle",start=list(mu=params$para[[1]], sigma=params$para[[2]], gamma=params$para[[3]]))
-	p3 <- plotdist(log(coredata(zooinput)), distr="PIII", para=list(mu=params$para[[1]], sigma=params$para[[2]], gamma=params$para[[3]]))
-#	p3 <- rep(NA, length(prob))
-#	for (i in 1:length(prob)){
-#		p3[[i]] <- quape3(prob[[i]], para=params, paracheck=TRUE)
-#	}
-#}
-#	p5 <- data.frame(nonexcprob=prob, Qmaf=p3)
+#	p3 <- fitdist(log(coredata(zooinput)*1e6), distr="PIII", method="mle",start=list(mu=params$para[[1]], sigma=params$para[[2]], gamma=params$para[[3]]))
+###	p3 <- plotdist(log(coredata(zooinput)), distr="PIII", para=list(mu=params$para[[1]], sigma=params$para[[2]], gamma=params$para[[3]]))
+	p4 <- rep(NA, length(prob))
+	for (i in 1:length(prob)){
+		p4[[i]] <- qPIII(prob[[i]], mu=params$para[[1]], sigma=params$para[[2]], gamma=params$para[[3]])
+	}
+
+	p5 <- data.frame(nonexcprob=prob, Qm3=p4)
 #return(p5)
-return(p3)
+	#p6 <- list(plots=p3, quantiles=p4)
+return(p5)
 }
 }
 
