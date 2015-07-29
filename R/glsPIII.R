@@ -15,7 +15,7 @@ glsPIII <- function(data){
 	}
 	if(!require(nlme)){
 		install.packages("nlme")
-		library(fitdistrplus)
+		library(nlme)
 	}
 
 	if (missing(data))

@@ -4,7 +4,7 @@
 ###############################################################################
 
 
-FitqPearsonIIIroll <- function(zooinput,  movewidth, startparams, probs){
+FitqPearsonIIIroll <- function(zooinput,  movewidth, startparams, probs, npoints){
 #remove if package
 	if(!require(dplyr)){
 		install.packages("dplyr")
@@ -28,7 +28,8 @@ FitqPearsonIIIroll <- function(zooinput,  movewidth, startparams, probs){
 		stop("numeric width of moving window required")
 	if (missing(probs))
 		stop("Non Exceedence Probability vector required")
-	
+	if (missing(npoints))
+		stop("Minimum number of final points required.")
 	 if(missing(startparams)){
 		L <- length(coredata(zooinput))
 #		output <- list()
@@ -37,27 +38,33 @@ FitqPearsonIIIroll <- function(zooinput,  movewidth, startparams, probs){
 #		output$location <- rep(NA, length.out=L)
 #		output$location <- as.Date(rep(NA, length.out=L))
 #		
-		lm <- L-(movewidth-1)
-		p3 <- vector("list", length(probs))
-		p5 <- vector("list", length(probs))
-		p4 <- as.Date(rep(NA,lm))
-		for (i in 1:lm){
-			p3[[i]] <- FitqPearsonIII(zooinput=zooinput[i:(i+(movewidth-1))], prob=probs)
-		}
-		for (n in 1:length(probs)){
-			for(i in 1:lm){
-				p5[[n]][[i]] <- p3[[i]]$Qm3[[n]]
-				p4[[i]] <- index(zooinput)[[i]]
-				}
+		if(L == 0){
+			out <- c("Length of data is 0")
+		} else if(L < ((npoints-1)+movewidth)){
+		 	out <- c("Not enough data points to satistfy minimum points required.")
+		} else if(L >= ((npoints-1)+movewidth)){
+			lm <- L-(movewidth-1)
+			p3 <- vector("list", length(probs))
+			p5 <- vector("list", length(probs))
+			p4 <- as.Date(rep(NA,lm))
+			for (i in 1:lm){
+				p3[[i]] <- FitqPearsonIII(zooinput=zooinput[i:(i+(movewidth-1))], prob=probs)
 			}
-		
-		
-		out <- vector("list", length(probs))
-		for (n in 1:length(probs)){
-			out[[n]] <- data.frame((exp(p5[[n]])), p4)
-			names(out[[n]]) <- c(paste("prob_",probs[[n]],"_Q_m3", sep=""), "Date")
-			names(out)[[n]] <- paste("prob_",probs[[n]],"_Q_m3", sep="")
-		}
+			for (n in 1:length(probs)){
+				for(i in 1:lm){
+					p5[[n]][[i]] <- p3[[i]]$Qm3[[n]]
+					p4[[i]] <- index(zooinput)[[i]]
+					}
+				}
+			
+			
+			out <- vector("list", length(probs))
+			for (n in 1:length(probs)){
+				out[[n]] <- data.frame((exp(p5[[n]])), p4)
+				names(out[[n]]) <- c(paste("prob_",probs[[n]],"_Q_m3", sep=""), "Date")
+				names(out)[[n]] <- paste("prob_",probs[[n]],"_Q_m3", sep="")
+			}
+		} else {out <- NA}
 	} else {}
 return(out)	
 }
