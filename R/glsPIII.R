@@ -51,7 +51,7 @@ glsPIIIMonthly <- function(data){
 	p <- vector("list",6)
 	for(k in 1:6){
 		for(i in 1:length(data[[k]])){
-			nums <- data[[k]][[i]][[1]]*1.23348184e9
+			nums <- data[[k]][[i]][[1]]
 			Date <- as.Date(as.character(data[[k]][[i]][[2]]), format="%Y")
 			g <- gls(nums ~ Date,correlation=corARMA(p=1), method='ML' )
 			p[[k]][[i]] <- as.data.frame(summary(g)$tTable)

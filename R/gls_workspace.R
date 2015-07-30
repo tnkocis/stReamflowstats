@@ -4,12 +4,6 @@
 ###############################################################################
 
 
-# TODO: Add comment
-# 
-# Author: tiffn_000
-###############################################################################
-
-
 library(dplyr)
 library(hydroTSM)
 library(dataRetrieval)
@@ -60,7 +54,7 @@ for(k in 1:6){
 
 
 #unimpaired <- vector("list", 5)
-for(z in 1:2){
+for(z in 1:length(unimpaired_g)){
 	unimpaired <- list()
 	unimpaired$raw <- readNWISdv(unimpaired_g[[z]],"00060", startDate="1945-10-01",
 			endDate=Sys.Date(), statCd="00003")
@@ -102,7 +96,7 @@ for(z in 1:2){
 	unimpaired$PearsonIIIrollHY <- vector("list", 6)
 	unimpaired$PearsonIIIroll6MON <- vector("list", 6)
 	unimpaired$PearsonIIIroll3MON <- vector("list", 6)
-	for(k in 1:6){
+	for(k in 1:1){
 		unimpaired$PearsonIIIrollHY[[k]] <- FitqPearsonIIIroll(unimpaired$DaysmaxHY[[k]]$zoo$X3DayMaxQ_maf, movewidth=10, probs=c(0.01, 1/50, 1/20, 1/10), npoints=10)	
 		unimpaired$PearsonIIIroll6MON[[k]] <- FitqPearsonIIIroll(unimpaired$Daysmax6MON[[k]]$zoo$X3DayMaxQ_maf, movewidth=10, probs=c(0.01, 1/50, 1/20, 1/10), npoints=10)
 		unimpaired$PearsonIIIroll3MON[[k]] <- FitqPearsonIIIroll(unimpaired$Daysmax3MON[[k]]$zoo$X3DayMaxQ_maf, movewidth=10, probs=c(0.01, 1/50, 1/20, 1/10), npoints=10)
