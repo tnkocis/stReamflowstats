@@ -62,7 +62,7 @@ FitqPearsonIII <- function(zooinput, startparams, prob){ #, prob){
 #		my.scale <- sqrt(v)/sqrt(my.shape)
 #		my.location <- m-sqrt(v * my.shape)
 		lmoments <- lmom.ub(log(coredata(zooinput)*1.23348184e9))
-		params <- parpe3(lmoments, checklmom=TRUE)
+		params <- parpe3(lmoments, checklmom=FALSE)
 ########## Lmomco consistent with Handbook of Hydrology by Maidment
 #		standard <- list(mu=params$para[[1]], sigma=params$para[[2]], gamma=params$para[[3]])
 #		tau <- standard$mu - (2*(standard$sigma/standard$gamma))

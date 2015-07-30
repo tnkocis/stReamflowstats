@@ -241,3 +241,75 @@ FreqAnalysis <- function(input, vday, index){
 				
 	return(daysmax3)
 }
+
+
+FreqAnalysisMonthly <- function(input, vday, index){
+#remove if package
+	if(!require(dplyr)){
+		install.packages("dplyr")
+		library(dplyr)
+	}
+	if(!require(zoo)){
+		install.packages("zoo")
+		library(zoo)
+	}
+#
+	if (missing(input))
+		stop("Input data is required, by hydrologic year.")
+	if (missing(vday))
+		stop("Vector containing days to max required")
+	if (missing(index))
+		stop("Index data location is required")
+	
+	z <- length(vday)
+	daysmax <- vector("list", z)
+	for(n in 1:z){
+		daysmax[[n]] <- list()
+		for(k in 1:6){
+			daysmax[[n]][[k]] <- list()
+			daysmax[[n]][[k]]$Date <- as.Date(rep(NA, length.out=length(input$Data)))
+			daysmax[[n]][[k]]$Discharge_maf <- rep(NA, length.out=length(input$Data))
+		}
+	}
+	
+	for(i in 1:length(input$Data)){
+		for(k in 1:6){
+			ts.zoo <- zoo(input$Data[[i]][[k]]$Discharge_maf, input$Data[[i]][[k]]$Date)
+			for(n in 1:z){
+				ts.zoo.roll <- rollapply(ts.zoo, vday[[n]], mean, fill=NA, align=c("center"))
+				daysmax[[n]][[k]]$Discharge_maf[[i]]<- coredata(ts.zoo.roll[which.max(ts.zoo.roll)])
+				daysmax[[n]][[k]]$Date[[i]]<- index(ts.zoo.roll[which.max(ts.zoo.roll)])
+			}
+		}
+	}
+	
+	
+	for(n in 1:z){
+		for(k in 1:6){
+			daysmax[[n]][[k]] <- as.data.frame(daysmax[[n]][[k]])
+			name <- names(input$Data[[1]])[[k]]
+			names(daysmax[[n]])[[k]] <- paste(name,"X",vday[[n]],"DayMaxQ_maf", sep="")
+		}
+	}
+	
+
+	df <- daysmax
+	
+	for(n in 1:z){
+		for(k in 1:6){
+			daysmax[[n]][[k]] <- zoo(as.numeric(daysmax[[n]][[k]]$Discharge_maf), as.Date(daysmax[[n]][[k]]$Date))
+			name <- names(input$Data[[1]])[[k]]
+			names(daysmax[[n]])[[k]] <- paste(name,"X",vday[[n]],"DayMaxQ_maf", sep="")
+		}
+	}
+	
+	zoo <- daysmax
+	
+	daysmax3 <- list()
+	daysmax3$All[[1]] <- df
+	daysmax3$All[[2]] <- zoo
+	daysmax3$All[[1]] <- daysmax3$All[[1]][[1]]
+	daysmax3$All[[2]] <- daysmax3$All[[2]][[1]]
+	names(daysmax3$All) <- c("df","zoo")
+ return(daysmax3)
+ }
