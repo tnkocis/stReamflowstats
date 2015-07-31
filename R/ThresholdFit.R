@@ -26,7 +26,7 @@ ThresholdFit <- function(input, threshold){
 		 daydf$dayfracabove[[i]] <- input$Stats[[i]]$Thresholds$Totals$FracDaysAbove[[threshloc]]
 		 daydf$startyear[[i]] <- syear
 		 voldf$volfracabove[[i]] <- input$Stats[[i]]$Thresholds$Totals$Frac_Abv[[threshloc]]
-		 voldf$statyear[[i]] <- syear
+		 voldf$startyear[[i]] <- syear
 	 }
 	 out <- list(daydf=daydf, voldf=voldf)
 	 return(out)
