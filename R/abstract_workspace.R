@@ -28,35 +28,24 @@ SJV_gauges <- read.csv("C:\\Users\\tiffn_000\\Documents\\workspaces\\eclipse_wor
 unimpaired_g <- read.csv("C:\\Users\\tiffn_000\\Documents\\workspaces\\eclipse_workspace\\unimpaired_gauges.csv")
 unimpaired_g <- as.numeric(unimpaired_g$Unimpaired)
 
-glsHY <- vector("list", 4)
-names(glsHY) <- c("NEP_0.01", "NEP_0.02", "NEP_0.05", "NEP_0.1")
-for(i in 1:4){
-	glsHY[[i]] <- data.frame(slope=rep(NA,length(unimpaired_g)), pvalue=rep(NA, length(unimpaired_g)), gauge=rep(NA, length(unimpaired_g)))
-}
-gls6MON <- vector("list", 4)
-names(gls6MON) <- c("NEP_0.01", "NEP_0.02", "NEP_0.05", "NEP_0.1")
-for(i in 1:4){
-	gls6MON[[i]] <- data.frame(slope=rep(NA,length(unimpaired_g)), pvalue=rep(NA, length(unimpaired_g)), gauge=rep(NA, length(unimpaired_g)))
-}
-gls3MON <- vector("list", 4)
-names(gls3MON) <- c("NEP_0.01", "NEP_0.02", "NEP_0.05", "NEP_0.1")
-for(i in 1:4){
-	gls3MON[[i]] <- data.frame(slope=rep(NA,length(unimpaired_g)), pvalue=rep(NA, length(unimpaired_g)), gauge=rep(NA, length(unimpaired_g)))
-}
 
-glsMON <- vector("list",6)
-names(glsMON)<- c("NOV","DEC","JAN","FEB","MAR","APR")
-glsMONRelQ <- vector("list",6)
-names(glsMONRelQ)<- c("NOV_RelQ","DEC_RelQ","JAN_RelQ","FEB_RelQ","MAR_RelQ","APR_RelQ")
-
+MKTMONday <- vector("list",6)
+names(MKTMONday)<- c("NOV","DEC","JAN","FEB","MAR","APR")
 for(k in 1:6){
-	glsMON[[k]] <- vector("list",4)
-	names(glsMON[[k]]) <- c("NEP_0.01", "NEP_0.02", "NEP_0.05", "NEP_0.1")
-	glsMONRelQ[[k]] <- data.frame(slope=rep(NA,length(unimpaired_g)), pvalue=rep(NA, length(unimpaired_g)), gauge=rep(NA, length(unimpaired_g)))
-	for(i in 1:4){
-		glsMON[[k]][[i]] <- data.frame(slope=rep(NA,length(unimpaired_g)), pvalue=rep(NA, length(unimpaired_g)), gauge=rep(NA, length(unimpaired_g)))
-	}
+	MKTMONday[[k]] <- data.frame(tau=rep(NA, length(unimpaired_g)), pvalue=rep(NA, length(unimpaired_g)), gauge=rep(NA, length(unimpaired_g)))
 }
+MKT6MONday <- data.frame(tau=rep(NA, length(unimpaired_g)), pvalue=rep(NA, length(unimpaired_g)), gauge=rep(NA, length(unimpaired_g)))
+MKT3MONday <- data.frame(tau=rep(NA, length(unimpaired_g)), pvalue=rep(NA, length(unimpaired_g)), gauge=rep(NA, length(unimpaired_g)))
+MKTHYday <- data.frame(tau=rep(NA, length(unimpaired_g)), pvalue=rep(NA, length(unimpaired_g)), gauge=rep(NA, length(unimpaired_g)))
+
+MKTMONvol <- vector("list",6)
+names(MKTMONvol)<- c("NOV","DEC","JAN","FEB","MAR","APR")
+for(k in 1:6){
+	MKTMONvol[[k]] <- data.frame(tau=rep(NA, length(unimpaired_g)), pvalue=rep(NA, length(unimpaired_g)), gauge=rep(NA, length(unimpaired_g)))
+}
+MKT6MONvol <- data.frame(tau=rep(NA, length(unimpaired_g)), pvalue=rep(NA, length(unimpaired_g)), gauge=rep(NA, length(unimpaired_g)))
+MKT3MONvol <- data.frame(tau=rep(NA, length(unimpaired_g)), pvalue=rep(NA, length(unimpaired_g)), gauge=rep(NA, length(unimpaired_g)))
+MKTHYvol <- data.frame(tau=rep(NA, length(unimpaired_g)), pvalue=rep(NA, length(unimpaired_g)), gauge=rep(NA, length(unimpaired_g)))
 
 
 #unimpaired <- vector("list", 5)
@@ -93,76 +82,7 @@ for(z in 1:length(unimpaired_g)){
 	unimpaired$HydroYear <- cleanupHY(unimpaired$HydroYear)
 	unimpaired$Winter_6mon <- cleanup6MON(unimpaired$Winter_6mon)
 	unimpaired$Winter_3mon <- cleanup3MON(unimpaired$Winter_3mon)
-	unimpaired$Winter_monthly <- cleanupMON(unimpaired$Winter_monthly)
-	unimpaired$DaysmaxHY <- FreqAnalysis(unimpaired$HydroYear, c(3), unimpaired$Index)
-	unimpaired$Daysmax6MON <- FreqAnalysis(unimpaired$Winter_6mon, c(3), unimpaired$Index)
-	unimpaired$Daysmax3MON <- FreqAnalysis(unimpaired$Winter_3mon, c(3), unimpaired$Index)
-	unimpaired$DaysmaxMON <- FreqAnalysisMonthly(unimpaired$Winter_monthly, c(3), unimpaired$Index)
-	## add loop here if daysmax vector length >1 (UPDATES BELOW AS OF 7/27/15)
-	unimpaired$PearsonIIIrollHY <- vector("list", 6)
-	unimpaired$PearsonIIIroll6MON <- vector("list", 6)
-	unimpaired$PearsonIIIroll3MON <- vector("list", 6)
-	for(k in 1:1){
-		unimpaired$PearsonIIIrollHY[[k]] <- FitqPearsonIIIroll(unimpaired$DaysmaxHY[[k]]$zoo$X3DayMaxQ_maf, movewidth=10, probs=c(0.01, 1/50, 1/20, 1/10), npoints=10)	
-		unimpaired$PearsonIIIroll6MON[[k]] <- FitqPearsonIIIroll(unimpaired$Daysmax6MON[[k]]$zoo$X3DayMaxQ_maf, movewidth=10, probs=c(0.01, 1/50, 1/20, 1/10), npoints=10)
-		unimpaired$PearsonIIIroll3MON[[k]] <- FitqPearsonIIIroll(unimpaired$Daysmax3MON[[k]]$zoo$X3DayMaxQ_maf, movewidth=10, probs=c(0.01, 1/50, 1/20, 1/10), npoints=10)
-	}
-	names(unimpaired$PearsonIIIrollHY) <- names(unimpaired$DaysmaxHY)
-	names(unimpaired$PearsonIIIroll6MON) <- names(unimpaired$Daysmax6MON)
-	names(unimpaired$PearsonIIIroll3MON) <- names(unimpaired$Daysmax3MON)
-	unimpaired$PearsonIIIrollMON <- FitqPearsonIIIrollMonthly(unimpaired$DaysmaxMON$All$zoo, movewidth=10,probs=c(0.01, 1/50, 1/20, 1/10), npoints=10)
-#	unimpaired$glsPIIIHY <- vector("list", 6)
-#	unimpaired$glsPIII6MON <- vector("list", 6)
-#	for(k in 1:6){
-#		unimpaired$glsPIIIHY[[k]] <- glsPIII(unimpaired$PearsonIIIrollHY[[k]])
-#		unimpaired$glsPIII6MON[[k]] <- glsPIII(unimpaired$PearsonIIIroll6MON[[k]])
-#	}
-#	names(unimpaired$glsPIIIHY) <- names(unimpaired$DaysmaxHY)
-#	names(unimpaired$glsPIII6MON) <- names(unimpaired$Daysma6MON)
-	unimpaired$glsPIIIHY <- glsPIII(unimpaired$PearsonIIIrollHY[[1]])
-	unimpaired$glsPIII6MON <- glsPIII(unimpaired$PearsonIIIroll6MON[[1]])
-	unimpaired$glsPIII3MON <- glsPIII(unimpaired$PearsonIIIroll3MON[[1]])
-	unimpaired$glsPIIIMON <- glsPIIIMonthly(unimpaired$PearsonIIIrollMON)
-	unimpaired$MonthlyThreshold <- MonthlyThresholdQ(unimpaired$Winter_monthly, prob=0.50)
-	unimpaired$MonthlyRelative <- MonthlyRelativeTotalQ(unimpaired$Winter_monthly)
-	
-	unimpaired$glsMonthly <- vector("list",6)
-#	for(k in 1:6){
-#		unimpaired$glsMonthly[[k]] <- vector("list",6)
-#		for (i in 1:6){
-#			unimpaired$glsMonthly[[k]][[i]] <- glsMonthly(unimpaired$MonthlyThreshold[[k]][[i]])
-#		}
-#		names(unimpaired$glsMonthly[[k]]) <- names(unimpaired$MonthlyThreshold[[k]])
-#	}
-	
-	unimpaired$glsMonthly[[1]] <- glsMonthly(unimpaired$MonthlyThreshold[[1]])
-	unimpaired$glsMonthlyRelQ <- vector("list",6)
-	unimpaired$glsMonthlyRelQ[[1]] <- glsMonthlyRelQ(unimpaired$MonthlyRelative[[1]])
-	
-	names(unimpaired$glsMonthly) <- names(unimpaired$MonthlyThreshold)
-	names(unimpaired$glsMonthlyRelQ) <- names(unimpaired$MonthlyRelative)
-	
-	for(i in 1:4){
-		glsHY[[i]]$slope[[z]] <-  unimpaired$glsPIIIHY[[i]][[1]][[2]]
-		glsHY[[i]]$pvalue[[z]] <-  unimpaired$glsPIIIHY[[i]][[4]][[2]]
-		glsHY[[i]]$gauge[[z]] <-  unimpaired$raw$site_no[[1]]
-		gls6MON[[i]]$slope[[z]] <-  unimpaired$glsPIII6MON[[i]][[1]][[2]]
-		gls6MON[[i]]$pvalue[[z]] <-  unimpaired$glsPIII6MON[[i]][[4]][[2]]
-		gls6MON[[i]]$gauge[[z]] <-  unimpaired$raw$site_no[[1]]
-		gls3MON[[i]]$slope[[z]] <-  unimpaired$glsPIII3MON[[i]][[1]][[2]]
-		gls3MON[[i]]$pvalue[[z]] <-  unimpaired$glsPIII3MON[[i]][[4]][[2]]
-		gls3MON[[i]]$gauge[[z]] <-  unimpaired$raw$site_no[[1]]
-		for(k in 1:6){
-			glsMON[[k]][[i]]$slope[[z]] <- unimpaired$glsPIIIMON[[k]][[i]][[1]][[2]]
-			glsMON[[k]][[i]]$pvalue[[z]] <- unimpaired$glsPIIIMON[[k]][[i]][[4]][[2]]
-			glsMON[[k]][[i]]$gauge[[z]] <- unimpaired$raw$site_no[[1]]
-		}
-	}
-	for(k in 1:6){
-		glsMONRelQ[[k]]$slope[[z]] <- unimpaired$glsMonthlyRelQ[[1]][[k]][[1]][[2]]
-		glsMONRelQ[[k]]$pvalue[[z]] <- unimpaired$glsMonthlyRelQ[[1]][[k]][[4]][[2]]
-		glsMONRelQ[[k]]$gauge[[z]] <- unimpaired$raw$site_no[[1]]
-	}
+
 	
 	#rewrite below to write to a single output df
 	unimpaired$ThresholdFit6MON <- ThresholdFit(unimpaired$Winter_6mon, 0.95)
@@ -176,6 +96,41 @@ for(z in 1:length(unimpaired_g)){
 	unimpaired$MKTMON  <- MKT(unimpaired$ThresholdFitMON)
 	unimpaired$MKTHY <- MKT(unimpaired$ThresholdFitHY)
 	
+	MKT6MONday$tau[[z]] <- unimpaired$MKT6MON$MKTday[[1]][[1]]
+	MKT6MONday$pvalue[[z]] <- unimpaired$MKT6MON$MKTday[[2]][[1]]
+	MKT6MONday$gauge[[z]] <- unimpaired$raw$site_no[[1]]
+	
+	MKT3MONday$tau[[z]] <- unimpaired$MKT3MON$MKTday[[1]][[1]]
+	MKT3MONday$pvalue[[z]] <- unimpaired$MKT3MON$MKTday[[2]][[1]]
+	MKT3MONday$gauge[[z]] <- unimpaired$raw$site_no[[1]]
+	
+	MKTHYday$tau[[z]] <- unimpaired$MKTHY$MKTday[[1]][[1]]
+	MKTHYday$pvalue[[z]] <- unimpaired$MKTHY$MKTday[[2]][[1]]
+	MKTHYday$gauge[[z]] <- unimpaired$raw$site_no[[1]]
+	
+	for(k in 1:6){
+		MKTMONday[[k]]$tau[[z]] <- unimpaired$MKTMON[[k]]$MKTday[[1]][[1]]
+		MKTMONday[[k]]$pvalue[[z]] <- unimpaired$MKTMON[[k]]$MKTday[[2]][[1]]
+		MKTMONday[[k]]$gauge[[z]] <- unimpaired$raw$site_no[[1]]
+	}
+	
+	MKT6MONvol$tau[[z]] <- unimpaired$MKT6MON$MKTvol[[1]][[1]]
+	MKT6MONvol$pvalue[[z]] <- unimpaired$MKT6MON$MKTvol[[2]][[1]]
+	MKT6MONvol$gauge[[z]] <- unimpaired$raw$site_no[[1]]
+	
+	MKT3MONvol$tau[[z]] <- unimpaired$MKT3MON$MKTvol[[1]][[1]]
+	MKT3MONvol$pvalue[[z]] <- unimpaired$MKT3MON$MKTvol[[2]][[1]]
+	MKT3MONvol$gauge[[z]] <- unimpaired$raw$site_no[[1]]
+	
+	MKTHYvol$tau[[z]] <- unimpaired$MKTHY$MKTvol[[1]][[1]]
+	MKTHYvol$pvalue[[z]] <- unimpaired$MKTHY$MKTvol[[2]][[1]]
+	MKTHYvol$gauge[[z]] <- unimpaired$raw$site_no[[1]]
+	
+	for(k in 1:6){
+		MKTMONvol[[k]]$tau[[z]] <- unimpaired$MKTMON[[k]]$MKTvol[[1]][[1]]
+		MKTMONvol[[k]]$pvalue[[z]] <- unimpaired$MKTMON[[k]]$MKTvol[[2]][[1]]
+		MKTMONvol[[k]]$gauge[[z]] <- unimpaired$raw$site_no[[1]]
+	}
 }	
 
 #names(unimpaired) <- unimpaired_g[1:2]
