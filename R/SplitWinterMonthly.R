@@ -69,17 +69,22 @@ SplitWinterMonthly <- function(input, index, percentiles){
 #				}
 #			}
 			for (k in 1:length(percentiles)){
-				for (m in 1:length(wint_by_year[[i]][[n]][["Discharge_acfte6_day"]])){
-					if(is.na(wint_by_year[[i]][[n]][["Discharge_acfte6_day"]][[m]])){
-						stats[[i]][[n]][["Thresholds"]][["coded"]][[names(percentiles)[k]]][[m]] <- NA
-					} else if (wint_by_year[[i]][[n]][["Discharge_acfte6_day"]][[m]] >= percentiles[[k]]){
-						stats[[i]][[n]][["Thresholds"]][["coded"]][[names(percentiles)[k]]][[m]] <- 1
-					} else if (wint_by_year[[i]][[n]][["Discharge_acfte6_day"]][[m]] < percentiles[[k]]){
-						stats[[i]][[n]][["Thresholds"]][["coded"]][[names(percentiles)[k]]][[m]] <- 0	
-					} else {
-						stats[[i]][[n]][["Thresholds"]][["coded"]][[names(percentiles)[k]]][[m]] <- NA
+				if(length(wint_by_year[[i]][[n]][["Discharge_acfte6_day"]])==0){
+					stats[[i]][[n]][["Thresholds"]][["coded"]][[names(percentiles)[k]]] <- NA
+				}else{
+					for (m in 1:length(wint_by_year[[i]][[n]][["Discharge_acfte6_day"]])){
+						
+						if(is.na(wint_by_year[[i]][[n]][["Discharge_acfte6_day"]][[m]])){
+							stats[[i]][[n]][["Thresholds"]][["coded"]][[names(percentiles)[k]]][[m]] <- NA
+						} else if (wint_by_year[[i]][[n]][["Discharge_acfte6_day"]][[m]] >= percentiles[[k]]){
+							stats[[i]][[n]][["Thresholds"]][["coded"]][[names(percentiles)[k]]][[m]] <- 1
+						} else if (wint_by_year[[i]][[n]][["Discharge_acfte6_day"]][[m]] < percentiles[[k]]){
+							stats[[i]][[n]][["Thresholds"]][["coded"]][[names(percentiles)[k]]][[m]] <- 0	
+						} else {
+							stats[[i]][[n]][["Thresholds"]][["coded"]][[names(percentiles)[k]]][[m]] <- NA
+						}
 					}
-				}
+				}	
 			}
 			stats[[i]][[n]][["Thresholds"]][["Totals"]] <- list()
 			stats[[i]][[n]][["Thresholds"]][["Totals"]][["Thresholds"]] <- c(0.05,0.1,0.2,0.25,0.5,0.75,0.9,0.95)
@@ -165,10 +170,12 @@ SplitWinterMonthly <- function(input, index, percentiles){
 			XC[[k]] <- list()
 			XC[[k]][["Data"]][["Discharge_acfte6_day"]] <- wint_by_year[[XCyears[[1]]]][[k]][["Discharge_acfte6_day"]]
 			XC[[k]][["Data"]][["Date"]] <- wint_by_year[[XCyears[[1]]]][[k]][["Date"]]
-			for (i in 2:length(XCyears) ){
-				XC[[k]][["Data"]][["Discharge_acfte6_day"]] <- append(XC[[k]][["Data"]][["Discharge_acfte6_day"]], wint_by_year[[XCyears[[i]]]][[k]][["Discharge_acfte6_day"]], after=length(XC[[k]][["Data"]][["Discharge_acfte6_day"]]))
-				XC[[k]][["Data"]][["Date"]] <-  append(XC[[k]][["Data"]][["Date"]], wint_by_year[[XCyears[[i]]]][[k]][["Date"]], after=length(XC[[k]][["Data"]][["Date"]]))
-			}
+			if(length(XCyears)>1){
+				for (i in 2:length(XCyears) ){
+					XC[[k]][["Data"]][["Discharge_acfte6_day"]] <- append(XC[[k]][["Data"]][["Discharge_acfte6_day"]], wint_by_year[[XCyears[[i]]]][[k]][["Discharge_acfte6_day"]], after=length(XC[[k]][["Data"]][["Discharge_acfte6_day"]]))
+					XC[[k]][["Data"]][["Date"]] <-  append(XC[[k]][["Data"]][["Date"]], wint_by_year[[XCyears[[i]]]][[k]][["Date"]], after=length(XC[[k]][["Data"]][["Date"]]))
+				}
+			} else {}	
 			XC[[k]][["Stats"]] <-list()
 			XC[[k]][["Stats"]]["Mean_acfte6"] <- mean(XC[[k]][["Data"]][["Discharge_acfte6_day"]], na.rm=TRUE)
 			XC[[k]][["Stats"]]["Median_acfte6"] <- median(XC[[k]][["Data"]][["Discharge_acfte6_day"]], na.rm=TRUE)
@@ -236,10 +243,12 @@ SplitWinterMonthly <- function(input, index, percentiles){
 			XD[[k]] <- list()
 			XD[[k]][["Data"]][["Discharge_acfte6_day"]] <- wint_by_year[[XDyears[[1]]]][[k]][["Discharge_acfte6_day"]]
 			XD[[k]][["Data"]][["Date"]] <- wint_by_year[[XDyears[[1]]]][[k]][["Date"]]
-			for (i in 2:length(XDyears) ){
-				XD[[k]][["Data"]][["Discharge_acfte6_day"]] <- append(XD[[k]][["Data"]][["Discharge_acfte6_day"]], wint_by_year[[XDyears[[i]]]][[k]][["Discharge_acfte6_day"]], after=length(XD[[k]][["Data"]][["Discharge_acfte6_day"]]))
-				XD[[k]][["Data"]][["Date"]] <-  append(XD[[k]][["Data"]][["Date"]], wint_by_year[[XDyears[[i]]]][[k]][["Date"]], after=length(XD[[k]][["Data"]][["Date"]]))
-			}
+			if(length(XDyears)>1){
+				for (i in 2:length(XDyears) ){
+					XD[[k]][["Data"]][["Discharge_acfte6_day"]] <- append(XD[[k]][["Data"]][["Discharge_acfte6_day"]], wint_by_year[[XDyears[[i]]]][[k]][["Discharge_acfte6_day"]], after=length(XD[[k]][["Data"]][["Discharge_acfte6_day"]]))
+					XD[[k]][["Data"]][["Date"]] <-  append(XD[[k]][["Data"]][["Date"]], wint_by_year[[XDyears[[i]]]][[k]][["Date"]], after=length(XD[[k]][["Data"]][["Date"]]))
+				}
+			} else {}
 			XD[[k]][["Stats"]] <-list()
 			XD[[k]][["Stats"]]["Mean_acfte6"] <- mean(XD[[k]][["Data"]][["Discharge_acfte6_day"]], na.rm=TRUE)
 			XD[[k]][["Stats"]]["Median_acfte6"] <- median(XD[[k]][["Data"]][["Discharge_acfte6_day"]], na.rm=TRUE)
@@ -308,10 +317,12 @@ SplitWinterMonthly <- function(input, index, percentiles){
 			XBN[[k]] <- list()
 			XBN[[k]][["Data"]][["Discharge_acfte6_day"]] <- wint_by_year[[XBNyears[[1]]]][[k]][["Discharge_acfte6_day"]]
 			XBN[[k]][["Data"]][["Date"]] <- wint_by_year[[XBNyears[[1]]]][[k]][["Date"]]
-			for (i in 2:length(XBNyears) ){
-				XBN[[k]][["Data"]][["Discharge_acfte6_day"]] <- append(XBN[[k]][["Data"]][["Discharge_acfte6_day"]], wint_by_year[[XBNyears[[i]]]][[k]][["Discharge_acfte6_day"]], after=length(XBN[[k]][["Data"]][["Discharge_acfte6_day"]]))
-				XBN[[k]][["Data"]][["Date"]] <-  append(XBN[[k]][["Data"]][["Date"]], wint_by_year[[XBNyears[[i]]]][[k]][["Date"]], after=length(XBN[[k]][["Data"]][["Date"]]))
-			}
+			if(length(XBNyears)>1){
+				for (i in 2:length(XBNyears) ){
+					XBN[[k]][["Data"]][["Discharge_acfte6_day"]] <- append(XBN[[k]][["Data"]][["Discharge_acfte6_day"]], wint_by_year[[XBNyears[[i]]]][[k]][["Discharge_acfte6_day"]], after=length(XBN[[k]][["Data"]][["Discharge_acfte6_day"]]))
+					XBN[[k]][["Data"]][["Date"]] <-  append(XBN[[k]][["Data"]][["Date"]], wint_by_year[[XBNyears[[i]]]][[k]][["Date"]], after=length(XBN[[k]][["Data"]][["Date"]]))
+				}
+			} else {}
 			XBN[[k]][["Stats"]] <-list()
 			XBN[[k]][["Stats"]]["Mean_acfte6"] <- mean(XBN[[k]][["Data"]][["Discharge_acfte6_day"]], na.rm=TRUE)
 			XBN[[k]][["Stats"]]["Median_acfte6"] <- median(XBN[[k]][["Data"]][["Discharge_acfte6_day"]], na.rm=TRUE)
@@ -380,10 +391,12 @@ SplitWinterMonthly <- function(input, index, percentiles){
 			XAN[[k]] <- list()
 			XAN[[k]][["Data"]][["Discharge_acfte6_day"]] <- wint_by_year[[XANyears[[1]]]][[k]][["Discharge_acfte6_day"]]
 			XAN[[k]][["Data"]][["Date"]] <- wint_by_year[[XANyears[[1]]]][[k]][["Date"]]
-			for (i in 2:length(XANyears) ){
-				XAN[[k]][["Data"]][["Discharge_acfte6_day"]] <- append(XAN[[k]][["Data"]][["Discharge_acfte6_day"]], wint_by_year[[XANyears[[i]]]][[k]][["Discharge_acfte6_day"]], after=length(XAN[[k]][["Data"]][["Discharge_acfte6_day"]]))
-				XAN[[k]][["Data"]][["Date"]] <-  append(XAN[[k]][["Data"]][["Date"]], wint_by_year[[XANyears[[i]]]][[k]][["Date"]], after=length(XAN[[k]][["Data"]][["Date"]]))
-			}
+			if(length(XANyears)>1){
+				for (i in 2:length(XANyears) ){
+					XAN[[k]][["Data"]][["Discharge_acfte6_day"]] <- append(XAN[[k]][["Data"]][["Discharge_acfte6_day"]], wint_by_year[[XANyears[[i]]]][[k]][["Discharge_acfte6_day"]], after=length(XAN[[k]][["Data"]][["Discharge_acfte6_day"]]))
+					XAN[[k]][["Data"]][["Date"]] <-  append(XAN[[k]][["Data"]][["Date"]], wint_by_year[[XANyears[[i]]]][[k]][["Date"]], after=length(XAN[[k]][["Data"]][["Date"]]))
+				} 
+			}else{}
 			XAN[[k]][["Stats"]] <-list()
 			XAN[[k]][["Stats"]]["Mean_acfte6"] <- mean(XAN[[k]][["Data"]][["Discharge_acfte6_day"]], na.rm=TRUE)
 			XAN[[k]][["Stats"]]["Median_acfte6"] <- median(XAN[[k]][["Data"]][["Discharge_acfte6_day"]], na.rm=TRUE)
@@ -451,10 +464,12 @@ SplitWinterMonthly <- function(input, index, percentiles){
 			XW[[k]] <- list()
 			XW[[k]][["Data"]][["Discharge_acfte6_day"]] <- wint_by_year[[XWyears[[1]]]][[k]][["Discharge_acfte6_day"]]
 			XW[[k]][["Data"]][["Date"]] <- wint_by_year[[XWyears[[1]]]][[k]][["Date"]]
-			for (i in 2:length(XWyears) ){
-				XW[[k]][["Data"]][["Discharge_acfte6_day"]] <- append(XW[[k]][["Data"]][["Discharge_acfte6_day"]], wint_by_year[[XWyears[[i]]]][[k]][["Discharge_acfte6_day"]], after=length(XW[[k]][["Data"]][["Discharge_acfte6_day"]]))
-				XW[[k]][["Data"]][["Date"]] <-  append(XW[[k]][["Data"]][["Date"]], wint_by_year[[XWyears[[i]]]][[k]][["Date"]], after=length(XW[[k]][["Data"]][["Date"]]))
-			}
+			if(length(XWyears)>1){
+				for (i in 2:length(XWyears) ){
+					XW[[k]][["Data"]][["Discharge_acfte6_day"]] <- append(XW[[k]][["Data"]][["Discharge_acfte6_day"]], wint_by_year[[XWyears[[i]]]][[k]][["Discharge_acfte6_day"]], after=length(XW[[k]][["Data"]][["Discharge_acfte6_day"]]))
+					XW[[k]][["Data"]][["Date"]] <-  append(XW[[k]][["Data"]][["Date"]], wint_by_year[[XWyears[[i]]]][[k]][["Date"]], after=length(XW[[k]][["Data"]][["Date"]]))
+				}
+			} else{}
 			XW[[k]][["Stats"]] <-list()
 			XW[[k]][["Stats"]]["Mean_acfte6"] <- mean(XW[[k]][["Data"]][["Discharge_acfte6_day"]], na.rm=TRUE)
 			XW[[k]][["Stats"]]["Median_acfte6"] <- median(XW[[k]][["Data"]][["Discharge_acfte6_day"]], na.rm=TRUE)

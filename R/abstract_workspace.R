@@ -25,7 +25,7 @@ SJV_gauges <- read.csv("C:\\Users\\tiffn_000\\Documents\\workspaces\\eclipse_wor
 
 
 
-unimpaired_g <- read.csv("C:\\Users\\tiffn_000\\Documents\\workspaces\\eclipse_workspace\\unimpaired_gauges.csv")
+unimpaired_g <- read.csv("C:\\Users\\tiffn_000\\Documents\\workspaces\\eclipse_workspace\\TXT\\unimpaired_70.csv")
 unimpaired_g <- as.numeric(unimpaired_g$Unimpaired)
 
 
@@ -47,12 +47,19 @@ MKT6MONvol <- data.frame(tau=rep(NA, length(unimpaired_g)), pvalue=rep(NA, lengt
 MKT3MONvol <- data.frame(tau=rep(NA, length(unimpaired_g)), pvalue=rep(NA, length(unimpaired_g)), gauge=rep(NA, length(unimpaired_g)))
 MKTHYvol <- data.frame(tau=rep(NA, length(unimpaired_g)), pvalue=rep(NA, length(unimpaired_g)), gauge=rep(NA, length(unimpaired_g)))
 
-
+txtgauges <- list.files("C:\\Users\\tiffn_000\\Documents\\workspaces\\eclipse_workspace\\TXT\\TXT\\")
+txtgauges <- unlist(strsplit(unlist(strsplit(txtgauges,".csv")),"g"))
+txtgauges <- txtgauges[txtgauges != ""]
+unimpaired_g <- unimpaired_g[which(unimpaired_g %in% txtgauges)]
+#length(unimpaired_g)
 #unimpaired <- vector("list", 5)
 for(z in 1:length(unimpaired_g)){
 	unimpaired <- list()
-	unimpaired$raw <- readNWISdv(unimpaired_g[[z]],"00060", startDate="1945-10-01",
-			endDate=Sys.Date(), statCd="00003")
+	unimpaired$raw <- read.csv(paste("C:\\Users\\tiffn_000\\Documents\\workspaces\\eclipse_workspace\\TXT\\TXT\\","g",unimpaired_g[[z]],".csv",sep=""), header=TRUE)
+#	unimpaired$raw2$site_no <- as.numeric(unimpaired$raw2$site_no)
+#	unimpaired$raw <- readNWISdv(unimpaired_g[[z]],"00060", startDate="1945-10-01",
+#			endDate=Sys.Date(), statCd="00003")
+	unimpaired$raw$Date <- as.Date(unimpaired$raw$Date, "%Y-%m-%d")
 	
 	unimpaired$raw <- RemoveLeapDays(unimpaired$raw)
 	
@@ -74,6 +81,8 @@ for(z in 1:length(unimpaired_g)){
 	unimpaired$prep <- prepdata(unimpaired$raw)
 	unimpaired$Availability <- DataAvailability(unimpaired$raw)
 	unimpaired$thresholds_maf <- thresholds(unimpaired$prep)
+	if(all(unimpaired$thresholds_maf==0)){
+	} else {
 #	unimpaired$record_stats <- record_stats(unimpaired$prep, unimpaired$thresholds_maf)
 	unimpaired$Winter_3mon <- Split3Winter(unimpaired$prep, unimpaired$Index, unimpaired$thresholds_maf)
 	unimpaired$Winter_6mon <- Split6Winter(unimpaired$prep, unimpaired$Index, unimpaired$thresholds_maf)
@@ -130,6 +139,7 @@ for(z in 1:length(unimpaired_g)){
 		MKTMONvol[[k]]$tau[[z]] <- unimpaired$MKTMON[[k]]$MKTvol[[1]][[1]]
 		MKTMONvol[[k]]$pvalue[[z]] <- unimpaired$MKTMON[[k]]$MKTvol[[2]][[1]]
 		MKTMONvol[[k]]$gauge[[z]] <- unimpaired$raw$site_no[[1]]
+	}
 	}
 }	
 
