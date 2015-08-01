@@ -163,7 +163,21 @@ for(z in 1:length(unimpaired_g)){
 		glsMONRelQ[[k]]$pvalue[[z]] <- unimpaired$glsMonthlyRelQ[[1]][[k]][[4]][[2]]
 		glsMONRelQ[[k]]$gauge[[z]] <- unimpaired$raw$site_no[[1]]
 	}
+	
+	#rewrite below to write to a single output df
+	unimpaired$ThresholdFit6MON <- ThresholdFit(unimpaired$Winter_6mon, 0.95)
+	unimpaired$ThresholdFit3MON <- ThresholdFit(unimpaired$Winter_3mon, 0.95)
+	unimpaired$ThresholdFitMON  <- ThresholdFitMonthly(unimpaired$Winter_monthly, 0.95)
+	unimpaired$ThresholdFitHY <- ThresholdFit(unimpaired$HydroYear, 0.95)
+	
+	
+	unimpaired$MKT6MON <- MKT(unimpaired$ThresholdFit6MON)
+	unimpaired$MKT3MON <- MKT(unimpaired$ThresholdFit3MON)
+	unimpaired$MKTMON  <- MKT(unimpaired$ThresholdFitMON)
+	unimpaired$MKTHY <- MKT(unimpaired$ThresholdFitHY)
+	
 }	
+
 #names(unimpaired) <- unimpaired_g[1:2]
 
 
