@@ -47,6 +47,30 @@ MKT6MONvol <- data.frame(tau=rep(NA, length(unimpaired_g)), pvalue=rep(NA, lengt
 MKT3MONvol <- data.frame(tau=rep(NA, length(unimpaired_g)), pvalue=rep(NA, length(unimpaired_g)), gauge=rep(NA, length(unimpaired_g)))
 MKTHYvol <- data.frame(tau=rep(NA, length(unimpaired_g)), pvalue=rep(NA, length(unimpaired_g)), gauge=rep(NA, length(unimpaired_g)))
 
+
+
+
+######################
+FracAboveMONday <- vector("list",6)
+names(FracAboveMONday)<- c("NOV","DEC","JAN","FEB","MAR","APR")
+for(k in 1:6){
+	FracAboveMONday[[k]] <- data.frame(FracAboveday=rep(NA, length(unimpaired_g)), gauge=rep(NA, length(unimpaired_g)))
+}
+FracAbove6MONday <- data.frame(FracAboveday=rep(NA, length(unimpaired_g)), gauge=rep(NA, length(unimpaired_g)))
+FracAbove3MONday <- data.frame(FracAboveday=rep(NA, length(unimpaired_g)), gauge=rep(NA, length(unimpaired_g)))
+FracAboveHYday <- data.frame(FracAboveday=rep(NA, length(unimpaired_g)), gauge=rep(NA, length(unimpaired_g)))
+
+FracAboveMONvol <- vector("list",6)
+names(FracAboveMONvol)<- c("NOV","DEC","JAN","FEB","MAR","APR")
+for(k in 1:6){
+	FracAboveMONvol[[k]] <- data.frame(FracAbovevol=rep(NA, length(unimpaired_g)), gauge=rep(NA, length(unimpaired_g)))
+}
+FracAbove6MONvol <- data.frame(FracAbovevol=rep(NA, length(unimpaired_g)), gauge=rep(NA, length(unimpaired_g)))
+FracAbove3MONvol <- data.frame(FracAbovevol=rep(NA, length(unimpaired_g)), gauge=rep(NA, length(unimpaired_g)))
+FracAboveHYvol <- data.frame(FracAbovevol=rep(NA, length(unimpaired_g)), gauge=rep(NA, length(unimpaired_g)))
+################################
+
+
 txtgauges <- list.files("C:\\Users\\tiffn_000\\Documents\\workspaces\\eclipse_workspace\\TXT\\TXT\\")
 txtgauges <- unlist(strsplit(unlist(strsplit(txtgauges,".csv")),"g"))
 txtgauges <- txtgauges[txtgauges != ""]
@@ -154,8 +178,50 @@ for(z in 1:length(unimpaired_g)){
 		MKTMONvol[[k]]$pvalue[[z]] <- unimpaired$MKTMON[[k]]$MKTvol[[2]][[1]]
 		MKTMONvol[[k]]$gauge[[z]] <- unimpaired$raw$site_no[[1]]
 	}
+	
+	
+	##########################
+	unimpaired$FracAbove6MON <- FracAboveExtract(unimpaired$ThresholdFit6MON)
+	unimpaired$FracAbove3MON <- FracAboveExtract(unimpaired$ThresholdFit3MON)
+	unimpaired$FracAboveMON  <- FracAboveExtract(unimpaired$ThresholdFitMON)
+	unimpaired$FracAboveHY <- FracAboveExtract(unimpaired$ThresholdFitHY)
+	
+	FracAbove6MONday$FracAboveday[[z]] <- unimpaired$FracAbove6MON$FracAboveday[[1]]
+	FracAbove6MONday$gauge[[z]] <- unimpaired$raw$site_no[[1]]
+	
+	FracAbove3MONday$FracAboveday[[z]] <- unimpaired$FracAbove3MON$FracAboveday[[1]]
+	FracAbove3MONday$gauge[[z]] <- unimpaired$raw$site_no[[1]]
+	
+	FracAboveHYday$FracAboveday[[z]] <- unimpaired$FracAboveHY$FracAboveday[[1]]
+	FracAboveHYday$gauge[[z]] <- unimpaired$raw$site_no[[1]]
+	
+	for(k in 1:6){
+		FracAboveMONday[[k]]$FracAboveday[[z]] <- unimpaired$FracAboveMON[[k]]$FracAboveday[[1]]
+		FracAboveMONday[[k]]$gauge[[z]] <- unimpaired$raw$site_no[[1]]
+	}
+	
+	FracAbove6MONvol$FracAbovevol[[z]] <- unimpaired$FracAbove6MON$FracAbovevol[[1]]
+	FracAbove6MONvol$gauge[[z]] <- unimpaired$raw$site_no[[1]]
+	
+	FracAbove3MONvol$FracAbovevol[[z]] <- unimpaired$FracAbove3MON$FracAbovevol[[1]]
+	FracAbove3MONvol$gauge[[z]] <- unimpaired$raw$site_no[[1]]
+	
+	FracAboveHYvol$FracAbovevol[[z]] <- unimpaired$FracAboveHY$FracAbovevol[[1]]
+	FracAboveHYvol$gauge[[z]] <- unimpaired$raw$site_no[[1]]
+	
+	for(k in 1:6){
+		FracAboveMONvol[[k]]$FracAbovevol[[z]] <- unimpaired$FracAboveMON[[k]]$FracAbovevol[[1]]
+		FracAboveMONvol[[k]]$gauge[[z]] <- unimpaired$raw$site_no[[1]]
+	}
+	###############################################################
 	}
 }	
+
+
+
+
+
+
 
 #names(unimpaired) <- unimpaired_g[1:2]
 
