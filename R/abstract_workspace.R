@@ -186,31 +186,31 @@ for(z in 1:length(unimpaired_g)){
 	unimpaired$FracAboveMON  <- FracAboveExtract(unimpaired$ThresholdFitMON)
 	unimpaired$FracAboveHY <- FracAboveExtract(unimpaired$ThresholdFitHY)
 	
-	FracAbove6MONday$FracAboveday[[z]] <- unimpaired$FracAbove6MON$FracAboveday[[1]]
+	FracAbove6MONday$FracAboveday[[z]] <- mean(unimpaired$FracAbove6MON$FracAboveday, na.rm=TRUE)
 	FracAbove6MONday$gauge[[z]] <- unimpaired$raw$site_no[[1]]
 	
-	FracAbove3MONday$FracAboveday[[z]] <- unimpaired$FracAbove3MON$FracAboveday[[1]]
+	FracAbove3MONday$FracAboveday[[z]] <- mean(unimpaired$FracAbove3MON$FracAboveday, na.rm=TRUE)
 	FracAbove3MONday$gauge[[z]] <- unimpaired$raw$site_no[[1]]
 	
-	FracAboveHYday$FracAboveday[[z]] <- unimpaired$FracAboveHY$FracAboveday[[1]]
+	FracAboveHYday$FracAboveday[[z]] <- mean(unimpaired$FracAboveHY$FracAboveday, na.rm=TRUE)
 	FracAboveHYday$gauge[[z]] <- unimpaired$raw$site_no[[1]]
 	
 	for(k in 1:6){
-		FracAboveMONday[[k]]$FracAboveday[[z]] <- unimpaired$FracAboveMON[[k]]$FracAboveday[[1]]
+		FracAboveMONday[[k]]$FracAboveday[[z]] <- mean(unimpaired$FracAboveMON[[k]]$FracAboveday, na.rm=TRUE)
 		FracAboveMONday[[k]]$gauge[[z]] <- unimpaired$raw$site_no[[1]]
 	}
 	
-	FracAbove6MONvol$FracAbovevol[[z]] <- unimpaired$FracAbove6MON$FracAbovevol[[1]]
+	FracAbove6MONvol$FracAbovevol[[z]] <- mean(unimpaired$FracAbove6MON$FracAbovevol, na.rm=TRUE)
 	FracAbove6MONvol$gauge[[z]] <- unimpaired$raw$site_no[[1]]
 	
-	FracAbove3MONvol$FracAbovevol[[z]] <- unimpaired$FracAbove3MON$FracAbovevol[[1]]
+	FracAbove3MONvol$FracAbovevol[[z]] <- mean(unimpaired$FracAbove3MON$FracAbovevol, na.rm=TRUE)
 	FracAbove3MONvol$gauge[[z]] <- unimpaired$raw$site_no[[1]]
 	
-	FracAboveHYvol$FracAbovevol[[z]] <- unimpaired$FracAboveHY$FracAbovevol[[1]]
+	FracAboveHYvol$FracAbovevol[[z]] <- mean(unimpaired$FracAboveHY$FracAbovevol, na.rm=TRUE)
 	FracAboveHYvol$gauge[[z]] <- unimpaired$raw$site_no[[1]]
 	
 	for(k in 1:6){
-		FracAboveMONvol[[k]]$FracAbovevol[[z]] <- unimpaired$FracAboveMON[[k]]$FracAbovevol[[1]]
+		FracAboveMONvol[[k]]$FracAbovevol[[z]] <- mean(unimpaired$FracAboveMON[[k]]$FracAbovevol, na.rm=TRUE)
 		FracAboveMONvol[[k]]$gauge[[z]] <- unimpaired$raw$site_no[[1]]
 	}
 	###############################################################
