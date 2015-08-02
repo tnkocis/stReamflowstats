@@ -63,19 +63,33 @@ for(z in 1:length(unimpaired_g)){
 	
 	unimpaired$raw <- RemoveLeapDays(unimpaired$raw)
 	
+	yeartype_old <- read.csv("C:\\Users\\tiffn_000\\Documents\\workspaces\\eclipse_workspace\\SVISJI\\Index.csv")
 	if(as.numeric(unimpaired$raw$site_no[[1]]) %in% SacV_gauges$site_no){
 		unimpaired$Index$Valley <- "SacV"
-		unimpaired$Index$Index <- YEARTYPEqdf$SacV_num
-		unimpaired$Index$Year <- YEARTYPEqdf$Year
+		unimpaired$Index$Index <- yeartype_old$SVI
+		unimpaired$Index$Year <- yeartype_old$Year
 	} else if(as.numeric(unimpaired$raw$site_no[[1]]) %in% SJV_gauges$site_no){
 		unimpaired$Index$Valley <- "SJV"
-		unimpaired$Index$Index <- YEARTYPEqdf$SJV_num
-		unimpaired$Index$Year <- YEARTYPEqdf$Year
+		unimpaired$Index$Index <- yeartype_old$SJV
+		unimpaired$Index$Year <- yeartype_old$Year
 	} else {
 		unimpaired$Index$Valley <- "ERROR"
 		print(paste("Error",unimpaired$raw$site_no[[1]]))
 	}
 	
+#	if(as.numeric(unimpaired$raw$site_no[[1]]) %in% SacV_gauges$site_no){
+#		unimpaired$Index$Valley <- "SacV"
+#		unimpaired$Index$Index <- YEARTYPEqdf$SacV_num
+#		unimpaired$Index$Year <- YEARTYPEqdf$Year
+#	} else if(as.numeric(unimpaired$raw$site_no[[1]]) %in% SJV_gauges$site_no){
+#		unimpaired$Index$Valley <- "SJV"
+#		unimpaired$Index$Index <- YEARTYPEqdf$SJV_num
+#		unimpaired$Index$Year <- YEARTYPEqdf$Year
+#	} else {
+#		unimpaired$Index$Valley <- "ERROR"
+#		print(paste("Error",unimpaired$raw$site_no[[1]]))
+#	}
+#	
 	
 	###DATA PROCESSING
 	unimpaired$prep <- prepdata(unimpaired$raw)

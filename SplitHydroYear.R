@@ -153,10 +153,12 @@ SplitHydroYear <- function(input, index, percentiles){
 	} else {
 		XC[["Data"]][["Discharge_acfte6_day"]] <- wint_by_year[[XCyears[[1]]]][["Discharge_acfte6_day"]]
 		XC[["Data"]][["Date"]] <- wint_by_year[[XCyears[[1]]]][["Date"]]
-		for (i in 2:length(XCyears) ){
-			XC[["Data"]][["Discharge_acfte6_day"]] <- append(XC[["Data"]][["Discharge_acfte6_day"]], wint_by_year[[XCyears[[i]]]][["Discharge_acfte6_day"]], after=length(XC[["Data"]][["Discharge_acfte6_day"]]))
-			XC[["Data"]][["Date"]] <-  append(XC[["Data"]][["Date"]], wint_by_year[[XCyears[[i]]]][["Date"]], after=length(XC[["Data"]][["Date"]]))
-		}
+		if(length(XCyears)>1){
+			for (i in 2:length(XCyears) ){
+				XC[["Data"]][["Discharge_acfte6_day"]] <- append(XC[["Data"]][["Discharge_acfte6_day"]], wint_by_year[[XCyears[[i]]]][["Discharge_acfte6_day"]], after=length(XC[["Data"]][["Discharge_acfte6_day"]]))
+				XC[["Data"]][["Date"]] <-  append(XC[["Data"]][["Date"]], wint_by_year[[XCyears[[i]]]][["Date"]], after=length(XC[["Data"]][["Date"]]))
+			}
+		} else {}
 		XC[["Stats"]] <-list()
 		XC[["Stats"]]["Mean_acfte6"] <- mean(XC[["Data"]][["Discharge_acfte6_day"]], na.rm=TRUE)
 		XC[["Stats"]]["Median_acfte6"] <- median(XC[["Data"]][["Discharge_acfte6_day"]], na.rm=TRUE)
@@ -213,10 +215,12 @@ SplitHydroYear <- function(input, index, percentiles){
 	} else {
 		XD[["Data"]][["Discharge_acfte6_day"]] <- wint_by_year[[XDyears[[1]]]][["Discharge_acfte6_day"]]
 		XD[["Data"]][["Date"]] <- wint_by_year[[XDyears[[1]]]][["Date"]]
-		for (i in 2:length(XDyears) ){
-			XD[["Data"]][["Discharge_acfte6_day"]] <- append(XD[["Data"]][["Discharge_acfte6_day"]], wint_by_year[[XDyears[[i]]]][["Discharge_acfte6_day"]], after=length(XD[["Data"]][["Discharge_acfte6_day"]]))
-			XD[["Data"]][["Date"]] <-  append(XD[["Data"]][["Date"]], wint_by_year[[XDyears[[i]]]][["Date"]], after=length(XD[["Data"]][["Date"]]))
-		}
+		if(length(XDyears)>1){
+			for (i in 2:length(XDyears) ){
+				XD[["Data"]][["Discharge_acfte6_day"]] <- append(XD[["Data"]][["Discharge_acfte6_day"]], wint_by_year[[XDyears[[i]]]][["Discharge_acfte6_day"]], after=length(XD[["Data"]][["Discharge_acfte6_day"]]))
+				XD[["Data"]][["Date"]] <-  append(XD[["Data"]][["Date"]], wint_by_year[[XDyears[[i]]]][["Date"]], after=length(XD[["Data"]][["Date"]]))
+			}
+		} else {}
 		XD[["Stats"]] <-list()
 		XD[["Stats"]]["Mean_acfte6"] <- mean(XD[["Data"]][["Discharge_acfte6_day"]], na.rm=TRUE)
 		XD[["Stats"]]["Median_acfte6"] <- median(XD[["Data"]][["Discharge_acfte6_day"]], na.rm=TRUE)
@@ -273,10 +277,12 @@ SplitHydroYear <- function(input, index, percentiles){
 	} else {
 		XBN[["Data"]][["Discharge_acfte6_day"]] <- wint_by_year[[XBNyears[[1]]]][["Discharge_acfte6_day"]]
 		XBN[["Data"]][["Date"]] <- wint_by_year[[XBNyears[[1]]]][["Date"]]
-		for (i in 2:length(XBNyears) ){
-			XBN[["Data"]][["Discharge_acfte6_day"]] <- append(XBN[["Data"]][["Discharge_acfte6_day"]], wint_by_year[[XBNyears[[i]]]][["Discharge_acfte6_day"]], after=length(XBN[["Data"]][["Discharge_acfte6_day"]]))
-			XBN[["Data"]][["Date"]] <-  append(XBN[["Data"]][["Date"]], wint_by_year[[XBNyears[[i]]]][["Date"]], after=length(XBN[["Data"]][["Date"]]))
-		}
+		if(length(XBNyears)>1){
+			for (i in 2:length(XBNyears) ){
+				XBN[["Data"]][["Discharge_acfte6_day"]] <- append(XBN[["Data"]][["Discharge_acfte6_day"]], wint_by_year[[XBNyears[[i]]]][["Discharge_acfte6_day"]], after=length(XBN[["Data"]][["Discharge_acfte6_day"]]))
+				XBN[["Data"]][["Date"]] <-  append(XBN[["Data"]][["Date"]], wint_by_year[[XBNyears[[i]]]][["Date"]], after=length(XBN[["Data"]][["Date"]]))
+			}
+		} else {}
 		XBN[["Stats"]] <-list()
 		XBN[["Stats"]]["Mean_acfte6"] <- mean(XBN[["Data"]][["Discharge_acfte6_day"]], na.rm=TRUE)
 		XBN[["Stats"]]["Median_acfte6"] <- median(XBN[["Data"]][["Discharge_acfte6_day"]], na.rm=TRUE)
@@ -333,10 +339,12 @@ SplitHydroYear <- function(input, index, percentiles){
 	} else {
 		XAN[["Data"]][["Discharge_acfte6_day"]] <- wint_by_year[[XANyears[[1]]]][["Discharge_acfte6_day"]]
 		XAN[["Data"]][["Date"]] <- wint_by_year[[XANyears[[1]]]][["Date"]]
-		for (i in 2:length(XANyears) ){
-			XAN[["Data"]][["Discharge_acfte6_day"]] <- append(XAN[["Data"]][["Discharge_acfte6_day"]], wint_by_year[[XANyears[[i]]]][["Discharge_acfte6_day"]], after=length(XAN[["Data"]][["Discharge_acfte6_day"]]))
-			XAN[["Data"]][["Date"]] <-  append(XAN[["Data"]][["Date"]], wint_by_year[[XANyears[[i]]]][["Date"]], after=length(XAN[["Data"]][["Date"]]))
-		}
+		if(length(XANyears)>1){
+			for (i in 2:length(XANyears) ){
+				XAN[["Data"]][["Discharge_acfte6_day"]] <- append(XAN[["Data"]][["Discharge_acfte6_day"]], wint_by_year[[XANyears[[i]]]][["Discharge_acfte6_day"]], after=length(XAN[["Data"]][["Discharge_acfte6_day"]]))
+				XAN[["Data"]][["Date"]] <-  append(XAN[["Data"]][["Date"]], wint_by_year[[XANyears[[i]]]][["Date"]], after=length(XAN[["Data"]][["Date"]]))
+			}
+		}else{}
 		XAN[["Stats"]] <-list()
 		XAN[["Stats"]]["Mean_acfte6"] <- mean(XAN[["Data"]][["Discharge_acfte6_day"]], na.rm=TRUE)
 		XAN[["Stats"]]["Median_acfte6"] <- median(XAN[["Data"]][["Discharge_acfte6_day"]], na.rm=TRUE)
@@ -393,10 +401,12 @@ SplitHydroYear <- function(input, index, percentiles){
 	} else {
 		XW[["Data"]][["Discharge_acfte6_day"]] <- wint_by_year[[XWyears[[1]]]][["Discharge_acfte6_day"]]
 		XW[["Data"]][["Date"]] <- wint_by_year[[XWyears[[1]]]][["Date"]]
-		for (i in 2:length(XWyears) ){
-			XW[["Data"]][["Discharge_acfte6_day"]] <- append(XW[["Data"]][["Discharge_acfte6_day"]], wint_by_year[[XWyears[[i]]]][["Discharge_acfte6_day"]], after=length(XW[["Data"]][["Discharge_acfte6_day"]]))
-			XW[["Data"]][["Date"]] <-  append(XW[["Data"]][["Date"]], wint_by_year[[XWyears[[i]]]][["Date"]], after=length(XW[["Data"]][["Date"]]))
-		}
+		if(length(XWyears)>1){
+			for (i in 2:length(XWyears) ){
+				XW[["Data"]][["Discharge_acfte6_day"]] <- append(XW[["Data"]][["Discharge_acfte6_day"]], wint_by_year[[XWyears[[i]]]][["Discharge_acfte6_day"]], after=length(XW[["Data"]][["Discharge_acfte6_day"]]))
+				XW[["Data"]][["Date"]] <-  append(XW[["Data"]][["Date"]], wint_by_year[[XWyears[[i]]]][["Date"]], after=length(XW[["Data"]][["Date"]]))
+			}
+		}else{}
 		XW[["Stats"]] <-list()
 		XW[["Stats"]]["Mean_acfte6"] <- mean(XW[["Data"]][["Discharge_acfte6_day"]], na.rm=TRUE)
 		XW[["Stats"]]["Median_acfte6"] <- median(XW[["Data"]][["Discharge_acfte6_day"]], na.rm=TRUE)
