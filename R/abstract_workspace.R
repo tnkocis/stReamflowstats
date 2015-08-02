@@ -77,6 +77,8 @@ txtgauges <- txtgauges[txtgauges != ""]
 unimpaired_g <- unimpaired_g[which(unimpaired_g %in% txtgauges)]
 #length(unimpaired_g)
 #unimpaired <- vector("list", 5)
+
+
 for(z in 1:length(unimpaired_g)){
 	unimpaired <- list()
 	unimpaired$raw <- read.csv(paste("C:\\Users\\tiffn_000\\Documents\\workspaces\\eclipse_workspace\\TXT\\TXT\\","g",unimpaired_g[[z]],".csv",sep=""), header=TRUE)
@@ -215,8 +217,13 @@ for(z in 1:length(unimpaired_g)){
 	}
 	###############################################################
 	}
+	
+	if(any(z==seq(10,200,10))){
+		save.image()
+	}
 }	
 
+save.image()
 
 
 
