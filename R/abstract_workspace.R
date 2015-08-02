@@ -78,29 +78,29 @@ unimpaired_g <- unimpaired_g[which(unimpaired_g %in% txtgauges)]
 #length(unimpaired_g)
 #unimpaired <- vector("list", 5)
 
-
+unimpaired <- vector("list", length(unimpaired_g))
 for(z in 1:length(unimpaired_g)){
-	unimpaired <- list()
-	unimpaired$raw <- read.csv(paste("C:\\Users\\tiffn_000\\Documents\\workspaces\\eclipse_workspace\\TXT\\TXT\\","g",unimpaired_g[[z]],".csv",sep=""), header=TRUE)
+#	unimpaired <- list()
+	unimpaired[[z]]$raw <- read.csv(paste("C:\\Users\\tiffn_000\\Documents\\workspaces\\eclipse_workspace\\TXT\\TXT\\","g",unimpaired_g[[z]],".csv",sep=""), header=TRUE)
 #	unimpaired$raw2$site_no <- as.numeric(unimpaired$raw2$site_no)
 #	unimpaired$raw <- readNWISdv(unimpaired_g[[z]],"00060", startDate="1945-10-01",
 #			endDate=Sys.Date(), statCd="00003")
-	unimpaired$raw$Date <- as.Date(unimpaired$raw$Date, "%Y-%m-%d")
+	unimpaired[[z]]$raw$Date <- as.Date(unimpaired[[z]]$raw$Date, "%Y-%m-%d")
 	
-	unimpaired$raw <- RemoveLeapDays(unimpaired$raw)
+	unimpaired[[z]]$raw <- RemoveLeapDays(unimpaired[[z]]$raw)
 	
 	yeartype_old <- read.csv("C:\\Users\\tiffn_000\\Documents\\workspaces\\eclipse_workspace\\SVISJI\\Index.csv")
-	if(as.numeric(unimpaired$raw$site_no[[1]]) %in% SacV_gauges$site_no){
-		unimpaired$Index$Valley <- "SacV"
-		unimpaired$Index$Index <- yeartype_old$SVI
-		unimpaired$Index$Year <- yeartype_old$Year
-	} else if(as.numeric(unimpaired$raw$site_no[[1]]) %in% SJV_gauges$site_no){
-		unimpaired$Index$Valley <- "SJV"
-		unimpaired$Index$Index <- yeartype_old$SJV
-		unimpaired$Index$Year <- yeartype_old$Year
+	if(as.numeric(unimpaired[[z]]$raw$site_no[[1]]) %in% SacV_gauges$site_no){
+		unimpaired[[z]]$Index$Valley <- "SacV"
+		unimpaired[[z]]$Index$Index <- yeartype_old$SVI
+		unimpaired[[z]]$Index$Year <- yeartype_old$Year
+	} else if(as.numeric(unimpaired[[z]]$raw$site_no[[1]]) %in% SJV_gauges$site_no){
+		unimpaired[[z]]$Index$Valley <- "SJV"
+		unimpaired[[z]]$Index$Index <- yeartype_old$SJV
+		unimpaired[[z]]$Index$Year <- yeartype_old$Year
 	} else {
-		unimpaired$Index$Valley <- "ERROR"
-		print(paste("Error",unimpaired$raw$site_no[[1]]))
+		unimpaired[[z]]$Index$Valley <- "ERROR"
+		print(paste("Error",unimpaired[[z]]$raw$site_no[[1]]))
 	}
 	
 #	if(as.numeric(unimpaired$raw$site_no[[1]]) %in% SacV_gauges$site_no){
@@ -118,26 +118,26 @@ for(z in 1:length(unimpaired_g)){
 #	
 	
 	###DATA PROCESSING
-	unimpaired$prep <- prepdata(unimpaired$raw)
-	unimpaired$Availability <- DataAvailability(unimpaired$raw)
-	unimpaired$thresholds_maf <- thresholds(unimpaired$prep)
-	if(all(unimpaired$thresholds_maf==0)){
+	unimpaired[[z]]$prep <- prepdata(unimpaired[[z]]$raw)
+	unimpaired[[z]]$Availability <- DataAvailability(unimpaired[[z]]$raw)
+	unimpaired[[z]]$thresholds_maf <- thresholds(unimpaired[[z]]$prep)
+	if(all(unimpaired[[z]]$thresholds_maf==0)){
 	} else {
 #	unimpaired$record_stats <- record_stats(unimpaired$prep, unimpaired$thresholds_maf)
-	unimpaired$Winter_3mon <- Split3Winter(unimpaired$prep, unimpaired$Index, unimpaired$thresholds_maf)
-	unimpaired$Winter_6mon <- Split6Winter(unimpaired$prep, unimpaired$Index, unimpaired$thresholds_maf)
-	unimpaired$Winter_monthly <- SplitWinterMonthly(unimpaired$prep, unimpaired$Index, unimpaired$thresholds_maf)
-	unimpaired$HydroYear <- SplitHydroYear(unimpaired$prep, unimpaired$Index, unimpaired$thresholds_maf)	
-	unimpaired$HydroYear <- cleanupHY(unimpaired$HydroYear)
-	unimpaired$Winter_6mon <- cleanup6MON(unimpaired$Winter_6mon)
-	unimpaired$Winter_3mon <- cleanup3MON(unimpaired$Winter_3mon)
+	unimpaired[[z]]$Winter_3mon <- Split3Winter(unimpaired[[z]]$prep, unimpaired[[z]]$Index, unimpaired[[z]]$thresholds_maf)
+	unimpaired[[z]]$Winter_6mon <- Split6Winter(unimpaired[[z]]$prep, unimpaired[[z]]$Index, unimpaired[[z]]$thresholds_maf)
+	unimpaired[[z]]$Winter_monthly <- SplitWinterMonthly(unimpaired[[z]]$prep, unimpaired[[z]]$Index, unimpaired[[z]]$thresholds_maf)
+	unimpaired[[z]]$HydroYear <- SplitHydroYear(unimpaired[[z]]$prep, unimpaired[[z]]$Index, unimpaired[[z]]$thresholds_maf)	
+	unimpaired[[z]]$HydroYear <- cleanupHY(unimpaired[[z]]$HydroYear)
+	unimpaired[[z]]$Winter_6mon <- cleanup6MON(unimpaired[[z]]$Winter_6mon)
+	unimpaired[[z]]$Winter_3mon <- cleanup3MON(unimpaired[[z]]$Winter_3mon)
 
 	
 	#rewrite below to write to a single output df
-	unimpaired$ThresholdFit6MON <- ThresholdFit(unimpaired$Winter_6mon, 0.95)
-	unimpaired$ThresholdFit3MON <- ThresholdFit(unimpaired$Winter_3mon, 0.95)
-	unimpaired$ThresholdFitMON  <- ThresholdFitMonthly(unimpaired$Winter_monthly, 0.95)
-	unimpaired$ThresholdFitHY <- ThresholdFit(unimpaired$HydroYear, 0.95)
+	unimpaired[[z]]$ThresholdFit6MON <- ThresholdFit(unimpaired[[z]]$Winter_6mon, 0.9)
+	unimpaired[[z]]$ThresholdFit3MON <- ThresholdFit(unimpaired[[z]]$Winter_3mon, 0.9)
+	unimpaired[[z]]$ThresholdFitMON  <- ThresholdFitMonthly(unimpaired[[z]]$Winter_monthly, 0.9)
+	unimpaired[[z]]$ThresholdFitHY <- ThresholdFit(unimpaired[[z]]$HydroYear, 0.9)
 	
 	
 	unimpaired$MKT6MON <- MKT(unimpaired$ThresholdFit6MON)
@@ -216,6 +216,36 @@ for(z in 1:length(unimpaired_g)){
 		FracAboveMONvol[[k]]$gauge[[z]] <- unimpaired$raw$site_no[[1]]
 	}
 	###############################################################
+	
+	FracAbove6MONday$FracAboveday[[z]] <- gls(unimpaired$FracAbove6MON$FracAboveday, na.rm=TRUE)
+	FracAbove6MONday$gauge[[z]] <- unimpaired$raw$site_no[[1]]
+	
+	FracAbove3MONday$FracAboveday[[z]] <- mean(unimpaired$FracAbove3MON$FracAboveday, na.rm=TRUE)
+	FracAbove3MONday$gauge[[z]] <- unimpaired$raw$site_no[[1]]
+	
+	FracAboveHYday$FracAboveday[[z]] <- mean(unimpaired$FracAboveHY$FracAboveday, na.rm=TRUE)
+	FracAboveHYday$gauge[[z]] <- unimpaired$raw$site_no[[1]]
+	
+	for(k in 1:6){
+		FracAboveMONday[[k]]$FracAboveday[[z]] <- mean(unimpaired$FracAboveMON[[k]]$FracAboveday, na.rm=TRUE)
+		FracAboveMONday[[k]]$gauge[[z]] <- unimpaired$raw$site_no[[1]]
+	}
+	
+	FracAbove6MONvol$FracAbovevol[[z]] <- mean(unimpaired$FracAbove6MON$FracAbovevol, na.rm=TRUE)
+	FracAbove6MONvol$gauge[[z]] <- unimpaired$raw$site_no[[1]]
+	
+	FracAbove3MONvol$FracAbovevol[[z]] <- mean(unimpaired$FracAbove3MON$FracAbovevol, na.rm=TRUE)
+	FracAbove3MONvol$gauge[[z]] <- unimpaired$raw$site_no[[1]]
+	
+	FracAboveHYvol$FracAbovevol[[z]] <- mean(unimpaired$FracAboveHY$FracAbovevol, na.rm=TRUE)
+	FracAboveHYvol$gauge[[z]] <- unimpaired$raw$site_no[[1]]
+	
+	for(k in 1:6){
+		FracAboveMONvol[[k]]$FracAbovevol[[z]] <- mean(unimpaired$FracAboveMON[[k]]$FracAbovevol, na.rm=TRUE)
+		FracAboveMONvol[[k]]$gauge[[z]] <- unimpaired$raw$site_no[[1]]
+	}
+	
+	#############################
 	}
 	
 	if(any(z==seq(10,200,10))){
