@@ -261,7 +261,7 @@ for(z in 1:length(SJ_g)){
 		#############################
 	}
 	
-	if(any(z==seq(5,200,5))){
+	if(any(z==seq(5,200,10))){
 		save.image()
 	}
 }	
