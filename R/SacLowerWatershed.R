@@ -58,11 +58,11 @@ FracAboveHYday <- data.frame(FracAboveday=rep(NA, length(saclower_g)), gauge=rep
 FracAboveMONvol <- vector("list",6)
 names(FracAboveMONvol)<- c("NOV","DEC","JAN","FEB","MAR","APR")
 for(k in 1:6){
-	FracAboveMONvol[[k]] <- data.frame(FracAbovevol=rep(NA, length(saclower_g)), gauge=rep(NA, length(saclower_g)))
+	FracAboveMONvol[[k]] <- data.frame(FracAbovevol=rep(NA, length(saclower_g)), VolAbvMAF=rep(NA, length(saclower_g)), gauge=rep(NA, length(saclower_g)))
 }
-FracAbove6MONvol <- data.frame(FracAbovevol=rep(NA, length(saclower_g)), gauge=rep(NA, length(saclower_g)))
-FracAbove3MONvol <- data.frame(FracAbovevol=rep(NA, length(saclower_g)), gauge=rep(NA, length(saclower_g)))
-FracAboveHYvol <- data.frame(FracAbovevol=rep(NA, length(saclower_g)), gauge=rep(NA, length(saclower_g)))
+FracAbove6MONvol <- data.frame(FracAbovevol=rep(NA, length(saclower_g)), VolAbvMAF=rep(NA, length(saclower_g)), gauge=rep(NA, length(saclower_g)))
+FracAbove3MONvol <- data.frame(FracAbovevol=rep(NA, length(saclower_g)),  VolAbvMAF=rep(NA, length(saclower_g)),gauge=rep(NA, length(saclower_g)))
+FracAboveHYvol <- data.frame(FracAbovevol=rep(NA, length(saclower_g)),  VolAbvMAF=rep(NA, length(saclower_g)),gauge=rep(NA, length(saclower_g)))
 ################################
 
 
@@ -91,7 +91,7 @@ for(z in 1:length(saclower_g)){
 		saclower[[z]]$Index$Year <- yeartype_old$Year
 	} else if(as.numeric(saclower[[z]]$raw$site_no[[1]]) %in% SJV_gauges$site_no){
 		saclower[[z]]$Index$Valley <- "SJV"
-		saclower[[z]]$Index$Index <- yeartype_old$SJV
+		saclower[[z]]$Index$Index <- yeartype_old$SJI
 		saclower[[z]]$Index$Year <- yeartype_old$Year
 	} else {
 		saclower[[z]]$Index$Valley <- "ERROR"
@@ -198,16 +198,20 @@ for(z in 1:length(saclower_g)){
 		}
 		
 		FracAbove6MONvol$FracAbovevol[[z]] <- mean(saclower[[z]]$FracAbove6MON$FracAbovevol, na.rm=TRUE)
+		FracAbove6MONvol$VolAbvMAF[[z]] <- mean(saclower[[z]]$FracAbove6MON$VolAbvMAF, na.rm=TRUE)
 		FracAbove6MONvol$gauge[[z]] <- saclower[[z]]$raw$site_no[[1]]
 		
 		FracAbove3MONvol$FracAbovevol[[z]] <- mean(saclower[[z]]$FracAbove3MON$FracAbovevol, na.rm=TRUE)
+		FracAbove3MONvol$VolAbvMAF[[z]] <- mean(saclower[[z]]$FracAbove3MON$VolAbvMAF, na.rm=TRUE)
 		FracAbove3MONvol$gauge[[z]] <- saclower[[z]]$raw$site_no[[1]]
 		
 		FracAboveHYvol$FracAbovevol[[z]] <- mean(saclower[[z]]$FracAboveHY$FracAbovevol, na.rm=TRUE)
+		FracAboveHYvol$VolAbvMAF[[z]] <- mean(saclower[[z]]$FracAboveHY$VolAbvMAF, na.rm=TRUE)
 		FracAboveHYvol$gauge[[z]] <- saclower[[z]]$raw$site_no[[1]]
 		
 		for(k in 1:6){
 			FracAboveMONvol[[k]]$FracAbovevol[[z]] <- mean(saclower[[z]]$FracAboveMON[[k]]$FracAbovevol, na.rm=TRUE)
+			FracAboveMONvol[[k]]$VolAbvMAF[[z]] <- mean(saclower[[z]]$FracAboveMON[[k]]$VolAbvMAF, na.rm=TRUE)
 			FracAboveMONvol[[k]]$gauge[[z]] <- saclower[[z]]$raw$site_no[[1]]
 		}
 		###############################################################

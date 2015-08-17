@@ -18,7 +18,7 @@ ThresholdFit <- function(input, threshold){
 	 L <- length(input$Stats)
 	 
 	 daydf <- data.frame(dayfracabove= rep(NA, L), startyear=rep(NA,L))
-	 voldf <- data.frame(volfracabove= rep(NA, L), startyear=rep(NA,L))
+	 voldf <- data.frame(volfracabove= rep(NA, L), volabvMAF=rep(NA, L), startyear=rep(NA,L))
 	
 	 for(i in 1:L){
 		 threshloc <- which(input$Stats[[i]]$Thresholds$Totals$Thresholds == threshold)
@@ -26,6 +26,7 @@ ThresholdFit <- function(input, threshold){
 		 daydf$dayfracabove[[i]] <- input$Stats[[i]]$Thresholds$Totals$FracDaysAbove[[threshloc]]
 		 daydf$startyear[[i]] <- syear
 		 voldf$volfracabove[[i]] <- input$Stats[[i]]$Thresholds$Totals$Frac_Abv[[threshloc]]
+		 voldf$volabvMAF[[i]] <- input$Stats[[i]]$Thresholds$Totals$Volume_Abv_acfte6[[threshloc]]
 		 voldf$startyear[[i]] <- syear
 	 }
 	 if(any(is.na(daydf))){
@@ -57,7 +58,7 @@ ThresholdFit <- function(input, threshold){
 	 voldf <- vector("list",6)
 	 for(i in 1:6){
 		daydf[[i]] <- data.frame(dayfracabove= rep(NA, L), startyear=rep(NA,L))
-	 	voldf[[i]] <- data.frame(volfracabove= rep(NA, L), startyear=rep(NA,L))
+	 	voldf[[i]] <- data.frame(volfracabove= rep(NA, L), volabvMAF=rep(NA, L), startyear=rep(NA,L))
 	}
 	names(daydf) <- c("NOV","DEC","JAN","FEB", "MAR", "APR")
 	names(voldf) <- c("NOV","DEC","JAN","FEB", "MAR", "APR")
@@ -69,6 +70,7 @@ ThresholdFit <- function(input, threshold){
 			 daydf[[k]]$dayfracabove[[i]] <- input$Stats[[i]][[k]]$Thresholds$Totals$FracDaysAbove[[threshloc]]
 			 daydf[[k]]$startyear[[i]] <- syear
 			 voldf[[k]]$volfracabove[[i]] <- input$Stats[[i]][[k]]$Thresholds$Totals$Frac_Abv[[threshloc]]
+			 voldf[[k]]$volabvMAF[[i]] <- input$Stats[[i]][[k]]$Thresholds$Totals$Volume_Abv_acfte6[[threshloc]]
 			 voldf[[k]]$startyear[[i]] <- syear
 	 	}
 	 }

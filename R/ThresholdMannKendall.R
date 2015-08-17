@@ -46,16 +46,20 @@ FracAboveExtract <- function(input){
 		FracAbove <- vector("list",6)
 		names(FracAbove) <- names(input$daydf)
 		for(i in 1:6){
-			FracAbove[[i]] <- vector("list",2)
-			names(FracAbove[[i]]) <- c("FracAboveday", "FracAbovevol")
+			FracAbove[[i]] <- vector("list",4)
+			names(FracAbove[[i]]) <- c("FracAboveday", "FracAbovevol", "VolAbvMAF","startyear")
 			FracAbove[[i]][[1]] <-input$daydf[[i]]$dayfracabove
 			FracAbove[[i]][[2]] <-input$voldf[[i]]$volfracabove
+			FracAbove[[i]][[3]] <-input$voldf[[i]]$volabvMAF
+			FracAbove[[i]][[4]] <-input$daydf[[i]]$startyear
 		}
 		return(FracAbove)
 	} else {
 		FracAboveday <- input$daydf$dayfracabove
 		FracAbovevol <- input$voldf$volfracabove
-		out <- list(FracAboveday=FracAboveday, FracAbovevol=FracAbovevol)
+		VolAbvMAF <- input$voldf$volabvMAF
+		startyear <- input$daydf$startyear
+		out <- list(FracAboveday=FracAboveday, FracAbovevol=FracAbovevol, VolAbvMAF=VolAbvMAF, startyear=startyear)
 		return(out)
 	}
 }

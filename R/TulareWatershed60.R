@@ -70,11 +70,12 @@ FracAboveHYdaytulare60 <- data.frame(FracAboveday=rep(NA, length(tulare60_g)), g
 FracAboveMONvoltulare60 <- vector("list",6)
 names(FracAboveMONvoltulare60)<- c("NOV","DEC","JAN","FEB","MAR","APR")
 for(k in 1:6){
-	FracAboveMONvoltulare60[[k]] <- data.frame(FracAbovevol=rep(NA, length(tulare60_g)), gauge=rep(NA, length(tulare60_g)))
+	FracAboveMONvoltulare60[[k]] <- data.frame(FracAbovevol=rep(NA, length(tulare60_g)), VolAbvMAF=rep(NA, length(tulare60_g)), gauge=rep(NA, length(tulare60_g)))
 }
-FracAbove6MONvoltulare60 <- data.frame(FracAbovevol=rep(NA, length(tulare60_g)), gauge=rep(NA, length(tulare60_g)))
-FracAbove3MONvoltulare60 <- data.frame(FracAbovevol=rep(NA, length(tulare60_g)), gauge=rep(NA, length(tulare60_g)))
-FracAboveHYvoltulare60 <- data.frame(FracAbovevol=rep(NA, length(tulare60_g)), gauge=rep(NA, length(tulare60_g)))
+FracAbove6MONvoltulare60 <- data.frame(FracAbovevol=rep(NA, length(tulare60_g)), VolAbvMAF=rep(NA, length(tulare60_g)), gauge=rep(NA, length(tulare60_g)))
+FracAbove3MONvoltulare60 <- data.frame(FracAbovevol=rep(NA, length(tulare60_g)),  VolAbvMAF=rep(NA, length(tulare60_g)),gauge=rep(NA, length(tulare60_g)))
+FracAboveHYvoltulare60 <- data.frame(FracAbovevol=rep(NA, length(tulare60_g)),  VolAbvMAF=rep(NA, length(tulare60_g)),gauge=rep(NA, length(tulare60_g)))
+
 ################################
 
 
@@ -103,7 +104,7 @@ for(z in 1:length(tulare60_g)){
 		tulare60[[z]]$Index$Year <- yeartype_old$Year
 	} else if(as.numeric(tulare60[[z]]$raw$site_no[[1]]) %in% SJV_gauges$site_no){
 		tulare60[[z]]$Index$Valley <- "SJV"
-		tulare60[[z]]$Index$Index <- yeartype_old$SJV
+		tulare60[[z]]$Index$Index <- yeartype_old$SJI
 		tulare60[[z]]$Index$Year <- yeartype_old$Year
 	} else {
 		tulare60[[z]]$Index$Valley <- "ERROR"
@@ -210,16 +211,20 @@ for(z in 1:length(tulare60_g)){
 		}
 		
 		FracAbove6MONvoltulare60$FracAbovevol[[z]] <- mean(tulare60[[z]]$FracAbove6MON$FracAbovevol, na.rm=TRUE)
+		FracAbove6MONvoltulare60$VolAbvMAF[[z]] <- mean(tulare60[[z]]$FracAbove6MON$VolAbvMAF, na.rm=TRUE)
 		FracAbove6MONvoltulare60$gauge[[z]] <- tulare60[[z]]$raw$site_no[[1]]
 		
 		FracAbove3MONvoltulare60$FracAbovevol[[z]] <- mean(tulare60[[z]]$FracAbove3MON$FracAbovevol, na.rm=TRUE)
+		FracAbove3MONvoltulare60$VolAbvMAF[[z]] <- mean(tulare60[[z]]$FracAbove3MON$VolAbvMAF, na.rm=TRUE)
 		FracAbove3MONvoltulare60$gauge[[z]] <- tulare60[[z]]$raw$site_no[[1]]
 		
 		FracAboveHYvoltulare60$FracAbovevol[[z]] <- mean(tulare60[[z]]$FracAboveHY$FracAbovevol, na.rm=TRUE)
+		FracAboveHYvoltulare60$VolAbvMAF[[z]] <- mean(tulare60[[z]]$FracAboveHY$VolAbvMAF, na.rm=TRUE)
 		FracAboveHYvoltulare60$gauge[[z]] <- tulare60[[z]]$raw$site_no[[1]]
 		
 		for(k in 1:6){
 			FracAboveMONvoltulare60[[k]]$FracAbovevol[[z]] <- mean(tulare60[[z]]$FracAboveMON[[k]]$FracAbovevol, na.rm=TRUE)
+			FracAboveMONvoltulare60[[k]]$VolAbvMAF[[z]] <- mean(tulare60[[z]]$FracAboveMON[[k]]$VolAbvMAF, na.rm=TRUE)
 			FracAboveMONvoltulare60[[k]]$gauge[[z]] <- tulare60[[z]]$raw$site_no[[1]]
 		}
 		###############################################################

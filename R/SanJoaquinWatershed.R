@@ -76,11 +76,12 @@ FracAboveHYdaySJ <- data.frame(FracAboveday=rep(NA, length(SJ_g)), gauge=rep(NA,
 FracAboveMONvolSJ <- vector("list",6)
 names(FracAboveMONvolSJ)<- c("NOV","DEC","JAN","FEB","MAR","APR")
 for(k in 1:6){
-	FracAboveMONvolSJ[[k]] <- data.frame(FracAbovevol=rep(NA, length(SJ_g)), gauge=rep(NA, length(SJ_g)))
+	FracAboveMONvolSJ[[k]] <- data.frame(FracAbovevol=rep(NA, length(SJ_g)), VolAbvMAF=rep(NA, length(SJ_g)), gauge=rep(NA, length(SJ_g)))
 }
-FracAbove6MONvolSJ <- data.frame(FracAbovevol=rep(NA, length(SJ_g)), gauge=rep(NA, length(SJ_g)))
-FracAbove3MONvolSJ <- data.frame(FracAbovevol=rep(NA, length(SJ_g)), gauge=rep(NA, length(SJ_g)))
-FracAboveHYvolSJ <- data.frame(FracAbovevol=rep(NA, length(SJ_g)), gauge=rep(NA, length(SJ_g)))
+FracAbove6MONvolSJ <- data.frame(FracAbovevol=rep(NA, length(SJ_g)), VolAbvMAF=rep(NA, length(SJ_g)), gauge=rep(NA, length(SJ_g)))
+FracAbove3MONvolSJ <- data.frame(FracAbovevol=rep(NA, length(SJ_g)),  VolAbvMAF=rep(NA, length(SJ_g)),gauge=rep(NA, length(SJ_g)))
+FracAboveHYvolSJ <- data.frame(FracAbovevol=rep(NA, length(SJ_g)),  VolAbvMAF=rep(NA, length(SJ_g)),gauge=rep(NA, length(SJ_g)))
+
 ################################
 
 
@@ -92,7 +93,7 @@ SJ_g <- SJ_g[which(SJ_g %in% txtgauges)]
 #SJ <- vector("list", 5)
 
 SJ <- vector("list", length(SJ_g))
-for(z in 1:length(SJ_g)){
+for(z in 22:length(SJ_g)){
 #	SJ <- list()
 	SJ[[z]]$raw <- read.csv(paste("C:\\Users\\tiffn_000\\Documents\\workspaces\\eclipse_workspace\\TXT\\TXT\\","g",SJ_g[[z]],".csv",sep=""), header=TRUE)
 #	SJ$raw2$site_no <- as.numeric(SJ$raw2$site_no)
@@ -109,7 +110,7 @@ for(z in 1:length(SJ_g)){
 		SJ[[z]]$Index$Year <- yeartype_old$Year
 	} else if(as.numeric(SJ[[z]]$raw$site_no[[1]]) %in% SJV_gauges$site_no){
 		SJ[[z]]$Index$Valley <- "SJV"
-		SJ[[z]]$Index$Index <- yeartype_old$SJV
+		SJ[[z]]$Index$Index <- yeartype_old$SJI
 		SJ[[z]]$Index$Year <- yeartype_old$Year
 	} else {
 		SJ[[z]]$Index$Valley <- "ERROR"
@@ -216,16 +217,20 @@ for(z in 1:length(SJ_g)){
 		}
 		
 		FracAbove6MONvolSJ$FracAbovevol[[z]] <- mean(SJ[[z]]$FracAbove6MON$FracAbovevol, na.rm=TRUE)
+		FracAbove6MONvolSJ$VolAbvMAF[[z]] <- mean(SJ[[z]]$FracAbove6MON$VolAbvMAF, na.rm=TRUE)
 		FracAbove6MONvolSJ$gauge[[z]] <- SJ[[z]]$raw$site_no[[1]]
 		
 		FracAbove3MONvolSJ$FracAbovevol[[z]] <- mean(SJ[[z]]$FracAbove3MON$FracAbovevol, na.rm=TRUE)
+		FracAbove3MONvolSJ$VolAbvMAF[[z]] <- mean(SJ[[z]]$FracAbove3MON$VolAbvMAF, na.rm=TRUE)
 		FracAbove3MONvolSJ$gauge[[z]] <- SJ[[z]]$raw$site_no[[1]]
 		
 		FracAboveHYvolSJ$FracAbovevol[[z]] <- mean(SJ[[z]]$FracAboveHY$FracAbovevol, na.rm=TRUE)
+		FracAboveHYvolSJ$VolAbvMAF[[z]] <- mean(SJ[[z]]$FracAboveHY$VolAbvMAF, na.rm=TRUE)
 		FracAboveHYvolSJ$gauge[[z]] <- SJ[[z]]$raw$site_no[[1]]
 		
 		for(k in 1:6){
 			FracAboveMONvolSJ[[k]]$FracAbovevol[[z]] <- mean(SJ[[z]]$FracAboveMON[[k]]$FracAbovevol, na.rm=TRUE)
+			FracAboveMONvolSJ[[k]]$VolAbvMAF[[z]] <- mean(SJ[[z]]$FracAboveMON[[k]]$VolAbvMAF, na.rm=TRUE)
 			FracAboveMONvolSJ[[k]]$gauge[[z]] <- SJ[[z]]$raw$site_no[[1]]
 		}
 		###############################################################
