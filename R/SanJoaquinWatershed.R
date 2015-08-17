@@ -93,7 +93,7 @@ SJ_g <- SJ_g[which(SJ_g %in% txtgauges)]
 #SJ <- vector("list", 5)
 
 SJ <- vector("list", length(SJ_g))
-for(z in 22:length(SJ_g)){
+for(z in 1:length(SJ_g)){
 #	SJ <- list()
 	SJ[[z]]$raw <- read.csv(paste("C:\\Users\\tiffn_000\\Documents\\workspaces\\eclipse_workspace\\TXT\\TXT\\","g",SJ_g[[z]],".csv",sep=""), header=TRUE)
 #	SJ$raw2$site_no <- as.numeric(SJ$raw2$site_no)
