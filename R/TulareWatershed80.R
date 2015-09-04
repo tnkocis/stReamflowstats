@@ -276,5 +276,7 @@ save.image()
 names(tulare80) <- tulare80_g
 
 
-
+for(i in 1:length(tulare80)){
+	tulare80[[i]]$Winter_monthly <- cleanupMON(tulare80[[i]]$Winter_monthly)
+}
 

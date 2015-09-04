@@ -272,35 +272,41 @@ FreqAnalysisMonthly <- function(input, vday, index){
 		}
 	}
 	
-	for(i in 1:length(input$Data)){
-		for(k in 1:6){
-			ts.zoo <- zoo(input$Data[[i]][[k]]$Discharge_maf, input$Data[[i]][[k]]$Date)
-			for(n in 1:z){
-				ts.zoo.roll <- rollapply(ts.zoo, vday[[n]], mean, fill=NA, align=c("center"))
-				daysmax[[n]][[k]]$Discharge_maf[[i]]<- coredata(ts.zoo.roll[which.max(ts.zoo.roll)])
-				daysmax[[n]][[k]]$Date[[i]]<- index(ts.zoo.roll[which.max(ts.zoo.roll)])
+	if(length(input$Data[[i]])==6){
+		
+		for(i in 1:length(input$Data)){
+			for(k in 1:6){
+				ts.zoo <- zoo(input$Data[[i]][[k]]$Discharge_maf, input$Data[[i]][[k]]$Date)
+				for(n in 1:z){
+					ts.zoo.roll <- rollapply(ts.zoo, vday[[n]], mean, fill=NA, align=c("center"))
+						daysmax[[n]][[k]]$Discharge_maf[[i]]<- coredata(ts.zoo.roll[which.max(ts.zoo.roll)])
+						daysmax[[n]][[k]]$Date[[i]]<- index(ts.zoo.roll[which.max(ts.zoo.roll)])
+					
+				}
 			}
 		}
-	}
-	
-	
-	for(n in 1:z){
-		for(k in 1:6){
-			daysmax[[n]][[k]] <- as.data.frame(daysmax[[n]][[k]])
-			name <- names(input$Data[[1]])[[k]]
-			names(daysmax[[n]])[[k]] <- paste(name,"X",vday[[n]],"DayMaxQ_maf", sep="")
+		
+		
+		for(n in 1:z){
+			for(k in 1:6){
+				daysmax[[n]][[k]] <- as.data.frame(daysmax[[n]][[k]])
+				name <- names(input$Data[[1]])[[k]]
+				names(daysmax[[n]])[[k]] <- paste(name,"X",vday[[n]],"DayMaxQ_maf", sep="")
+			}
 		}
-	}
+		
 	
-
-	df <- daysmax
-	
-	for(n in 1:z){
-		for(k in 1:6){
-			daysmax[[n]][[k]] <- zoo(as.numeric(daysmax[[n]][[k]]$Discharge_maf), as.Date(daysmax[[n]][[k]]$Date))
-			name <- names(input$Data[[1]])[[k]]
-			names(daysmax[[n]])[[k]] <- paste(name,"X",vday[[n]],"DayMaxQ_maf", sep="")
+		df <- daysmax
+		
+		for(n in 1:z){
+			for(k in 1:6){
+				daysmax[[n]][[k]] <- zoo(as.numeric(daysmax[[n]][[k]]$Discharge_maf), as.Date(daysmax[[n]][[k]]$Date))
+				name <- names(input$Data[[1]])[[k]]
+				names(daysmax[[n]])[[k]] <- paste(name,"X",vday[[n]],"DayMaxQ_maf", sep="")
+			}
 		}
+	} else {
+		p <- length()
 	}
 	
 	zoo <- daysmax
@@ -312,4 +318,5 @@ FreqAnalysisMonthly <- function(input, vday, index){
 	daysmax3$All[[2]] <- daysmax3$All[[2]][[1]]
 	names(daysmax3$All) <- c("df","zoo")
  return(daysmax3)
- }
+ 
+  }
