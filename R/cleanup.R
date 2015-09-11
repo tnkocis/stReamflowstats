@@ -40,12 +40,12 @@ cleanupMON <- function(input){
 	if (missing(input))
 		stop("Input data to clean is required.")
 	
-	for(i in 1:length(input$Data)){
+	for(i in length(input$Data):1){
 		for(k in 6:1){
 			if(sum(input$Data[[i]][[k]]$Available, na.rm=TRUE)<20){
 			input$Data[[i]][[k]] <- NULL
 			}
-		if(length(input$Data[[i]])==0){
+		if(length(input$Data[[i]])<6){
 			input$Data[[i]] <- NULL
 		}
 		}

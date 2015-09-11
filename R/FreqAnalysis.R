@@ -253,6 +253,10 @@ FreqAnalysisMonthly <- function(input, vday, index){
 		install.packages("zoo")
 		library(zoo)
 	}
+	if(!require(ttutils)){
+		install.packages("ttutils")
+		library(ttutils)
+	}
 #
 	if (missing(input))
 		stop("Input data is required, by hydrologic year.")
@@ -272,15 +276,85 @@ FreqAnalysisMonthly <- function(input, vday, index){
 		}
 	}
 	
-	if(length(input$Data[[i]])==6){
+	
 		
-		for(i in 1:length(input$Data)){
+	for(i in 1:length(input$Data)){
+		for(k in 1:6){
+			ts.zoo <- zoo(input$Data[[i]][[k]]$Discharge_maf, input$Data[[i]][[k]]$Date)
+			for(n in 1:z){
+				ts.zoo.roll <- rollapply(ts.zoo, vday[[n]], mean, fill=NA, align=c("center"))
+					daysmax[[n]][[k]]$Discharge_maf[[i]]<- coredata(ts.zoo.roll[which.max(ts.zoo.roll)])
+					daysmax[[n]][[k]]$Date[[i]]<- index(ts.zoo.roll[which.max(ts.zoo.roll)])
+				
+			}
+		}
+	}
+	
+	
+	for(n in 1:z){
+		for(k in 1:6){
+			daysmax[[n]][[k]] <- as.data.frame(daysmax[[n]][[k]])
+			name <- names(input$Data[[1]])[[k]]
+			names(daysmax[[n]])[[k]] <- paste(name,"X",vday[[n]],"DayMaxQ_maf", sep="")
+		}
+	}
+	
+
+	df <- daysmax
+	
+	for(n in 1:z){
+		for(k in 1:6){
+			daysmax[[n]][[k]] <- zoo(as.numeric(daysmax[[n]][[k]]$Discharge_maf), as.Date(daysmax[[n]][[k]]$Date))
+			name <- names(input$Data[[1]])[[k]]
+			names(daysmax[[n]])[[k]] <- paste(name,"X",vday[[n]],"DayMaxQ_maf", sep="")
+		}
+	}
+	
+	zoo <- daysmax
+	
+	daysmax3<- list()
+	####ASK MICHAEL
+	zi <- 1
+	repeat{
+		zi <- zi + 1
+		df[[1]] <- merge(df[[1]], df[[zi]])
+		if(zi==z){
+			break
+		}
+	}
+	zi <- 1
+	repeat{
+		zi <- zi + 1
+		zoo[[1]] <- merge(zoo[[1]], zoo[[zi]])
+		if(zi==z){
+			break
+		}
+	}
+	daysmax3$df <- df[[1]]
+	daysmax3$zoo <- zoo[[1]]
+	
+##########################################################################	
+	daysmaxXW <- vector("list", z)
+	XWyears <- which(names(input$Data) %in% index$Year[which(index$Index==5)])
+	for(n in 1:z){
+		daysmaxXW[[n]] <- list()
+		for(k in 1:6){
+			daysmaxXW[[n]][[k]] <- list()
+			daysmaxXW[[n]][[k]]$Date <- as.Date(rep(NA, length.out=length(XWyears)))
+			daysmaxXW[[n]][[k]]$Discharge_maf <- rep(NA, length.out=length(XWyears))
+		}
+	}
+	if(length(XWyears) == 0){
+		daysmaxXW$W <- "No W Years in Input Dataset"
+	} else {
+		
+		for(i in 1:length(XWyears)){
 			for(k in 1:6){
-				ts.zoo <- zoo(input$Data[[i]][[k]]$Discharge_maf, input$Data[[i]][[k]]$Date)
+				ts.zoo <- zoo(input$Data[[XWyears[[i]]]][[k]]$Discharge_maf, input$Data[[XWyears[[i]]]][[k]]$Date)
 				for(n in 1:z){
 					ts.zoo.roll <- rollapply(ts.zoo, vday[[n]], mean, fill=NA, align=c("center"))
-						daysmax[[n]][[k]]$Discharge_maf[[i]]<- coredata(ts.zoo.roll[which.max(ts.zoo.roll)])
-						daysmax[[n]][[k]]$Date[[i]]<- index(ts.zoo.roll[which.max(ts.zoo.roll)])
+					daysmaxXW[[n]][[k]]$Discharge_maf[[i]]<- coredata(ts.zoo.roll[which.max(ts.zoo.roll)])
+					daysmaxXW[[n]][[k]]$Date[[i]]<- index(ts.zoo.roll[which.max(ts.zoo.roll)])
 					
 				}
 			}
@@ -289,34 +363,322 @@ FreqAnalysisMonthly <- function(input, vday, index){
 		
 		for(n in 1:z){
 			for(k in 1:6){
-				daysmax[[n]][[k]] <- as.data.frame(daysmax[[n]][[k]])
+				daysmaxXW[[n]][[k]] <- as.data.frame(daysmaxXW[[n]][[k]])
 				name <- names(input$Data[[1]])[[k]]
-				names(daysmax[[n]])[[k]] <- paste(name,"X",vday[[n]],"DayMaxQ_maf", sep="")
+				names(daysmaxXW[[n]])[[k]] <- paste(name,"X",vday[[n]],"DayMaxQ_maf", sep="")
 			}
 		}
 		
-	
-		df <- daysmax
+		daysmaxXW2 <- list()
+		daysmaxXW2$df <- daysmaxXW
 		
 		for(n in 1:z){
 			for(k in 1:6){
-				daysmax[[n]][[k]] <- zoo(as.numeric(daysmax[[n]][[k]]$Discharge_maf), as.Date(daysmax[[n]][[k]]$Date))
+				daysmaxXW[[n]][[k]] <- zoo(as.numeric(daysmaxXW[[n]][[k]]$Discharge_maf), as.Date(daysmaxXW[[n]][[k]]$Date))
 				name <- names(input$Data[[1]])[[k]]
-				names(daysmax[[n]])[[k]] <- paste(name,"X",vday[[n]],"DayMaxQ_maf", sep="")
+				names(daysmaxXW[[n]])[[k]] <- paste(name,"X",vday[[n]],"DayMaxQ_maf", sep="")
 			}
 		}
-	} else {
-		p <- length()
+		
+		
+		daysmaxXW2$zoo <- daysmaxXW
+		zi <- 1
+		repeat{
+			zi <- zi + 1
+			daysmaxXW2$df[[1]] <- merge(daysmaxXW2$df[[1]], daysmaxXW2$df[[zi]])
+			if(zi==z){
+				break
+			}
+		}
+		zi <- 1
+		repeat{
+			zi <- zi + 1
+			daysmaxXW2$zoo[[1]] <- merge(daysmaxXW2$zoo[[1]], daysmaxXW2$zoo[[zi]])
+			if(zi==z){
+				break
+			}
+		}
+		daysmaxXW2$df <- daysmaxXW2$df[[1]]
+		daysmaxXW2$zoo <- daysmaxXW2$zoo[[1]]
 	}
 	
-	zoo <- daysmax
+##################################	
+	daysmaxXC <- vector("list", z)
+	XCyears <- which(names(input$Data) %in% index$Year[which(index$Index==1)])
+	for(n in 1:z){
+		daysmaxXC[[n]] <- list()
+		for(k in 1:6){
+			daysmaxXC[[n]][[k]] <- list()
+			daysmaxXC[[n]][[k]]$Date <- as.Date(rep(NA, length.out=length(XCyears)))
+			daysmaxXC[[n]][[k]]$Discharge_maf <- rep(NA, length.out=length(XCyears))
+		}
+	}
+	if(length(XCyears) == 0){
+		daysmaxXC$W <- "No C Years in Input Dataset"
+	} else {
+		
+		for(i in 1:length(XCyears)){
+			for(k in 1:6){
+				ts.zoo <- zoo(input$Data[[XCyears[[i]]]][[k]]$Discharge_maf, input$Data[[XCyears[[i]]]][[k]]$Date)
+				for(n in 1:z){
+					ts.zoo.roll <- rollapply(ts.zoo, vday[[n]], mean, fill=NA, align=c("center"))
+					daysmaxXC[[n]][[k]]$Discharge_maf[[i]]<- coredata(ts.zoo.roll[which.max(ts.zoo.roll)])
+					daysmaxXC[[n]][[k]]$Date[[i]]<- index(ts.zoo.roll[which.max(ts.zoo.roll)])
+					
+				}
+			}
+		}
+		
+		
+		for(n in 1:z){
+			for(k in 1:6){
+				daysmaxXC[[n]][[k]] <- as.data.frame(daysmaxXC[[n]][[k]])
+				name <- names(input$Data[[1]])[[k]]
+				names(daysmaxXC[[n]])[[k]] <- paste(name,"X",vday[[n]],"DayMaxQ_maf", sep="")
+			}
+		}
+		
+		daysmaxXC2 <- list()
+		daysmaxXC2$df <- daysmaxXC
+		
+		for(n in 1:z){
+			for(k in 1:6){
+				daysmaxXC[[n]][[k]] <- zoo(as.numeric(daysmaxXC[[n]][[k]]$Discharge_maf), as.Date(daysmaxXC[[n]][[k]]$Date))
+				name <- names(input$Data[[1]])[[k]]
+				names(daysmaxXC[[n]])[[k]] <- paste(name,"X",vday[[n]],"DayMaxQ_maf", sep="")
+			}
+		}
+		
+		
+		daysmaxXC2$zoo <- daysmaxXC
+		zi <- 1
+		repeat{
+			zi <- zi + 1
+			daysmaxXC2$df[[1]] <- merge(daysmaxXC2$df[[1]], daysmaxXC2$df[[zi]])
+			if(zi==z){
+				break
+			}
+		}
+		zi <- 1
+		repeat{
+			zi <- zi + 1
+			daysmaxXC2$zoo[[1]] <- merge(daysmaxXC2$zoo[[1]], daysmaxXC2$zoo[[zi]])
+			if(zi==z){
+				break
+			}
+		}
+		daysmaxXC2$df <- daysmaxXC2$df[[1]]
+		daysmaxXC2$zoo <- daysmaxXC2$zoo[[1]]
+	}
 	
-	daysmax3 <- list()
-	daysmax3$All[[1]] <- df
-	daysmax3$All[[2]] <- zoo
-	daysmax3$All[[1]] <- daysmax3$All[[1]][[1]]
-	daysmax3$All[[2]] <- daysmax3$All[[2]][[1]]
-	names(daysmax3$All) <- c("df","zoo")
- return(daysmax3)
+	
+	##################################	
+	daysmaxXD <- vector("list", z)
+	XDyears <- which(names(input$Data) %in% index$Year[which(index$Index==2)])
+	for(n in 1:z){
+		daysmaxXD[[n]] <- list()
+		for(k in 1:6){
+			daysmaxXD[[n]][[k]] <- list()
+			daysmaxXD[[n]][[k]]$Date <- as.Date(rep(NA, length.out=length(XDyears)))
+			daysmaxXD[[n]][[k]]$Discharge_maf <- rep(NA, length.out=length(XDyears))
+		}
+	}
+	if(length(XDyears) == 0){
+		daysmaxXD$W <- "No D Years in Input Dataset"
+	} else {
+		
+		for(i in 1:length(XDyears)){
+			for(k in 1:6){
+				ts.zoo <- zoo(input$Data[[XDyears[[i]]]][[k]]$Discharge_maf, input$Data[[XDyears[[i]]]][[k]]$Date)
+				for(n in 1:z){
+					ts.zoo.roll <- rollapply(ts.zoo, vday[[n]], mean, fill=NA, align=c("center"))
+					daysmaxXD[[n]][[k]]$Discharge_maf[[i]]<- coredata(ts.zoo.roll[which.max(ts.zoo.roll)])
+					daysmaxXD[[n]][[k]]$Date[[i]]<- index(ts.zoo.roll[which.max(ts.zoo.roll)])
+					
+				}
+			}
+		}
+		
+		
+		for(n in 1:z){
+			for(k in 1:6){
+				daysmaxXD[[n]][[k]] <- as.data.frame(daysmaxXD[[n]][[k]])
+				name <- names(input$Data[[1]])[[k]]
+				names(daysmaxXD[[n]])[[k]] <- paste(name,"X",vday[[n]],"DayMaxQ_maf", sep="")
+			}
+		}
+		
+		daysmaxXD2 <- list()
+		daysmaxXD2$df <- daysmaxXD
+		
+		for(n in 1:z){
+			for(k in 1:6){
+				daysmaxXD[[n]][[k]] <- zoo(as.numeric(daysmaxXD[[n]][[k]]$Discharge_maf), as.Date(daysmaxXD[[n]][[k]]$Date))
+				name <- names(input$Data[[1]])[[k]]
+				names(daysmaxXD[[n]])[[k]] <- paste(name,"X",vday[[n]],"DayMaxQ_maf", sep="")
+			}
+		}
+		
+		
+		daysmaxXD2$zoo <- daysmaxXD
+		zi <- 1
+		repeat{
+			zi <- zi + 1
+			daysmaxXD2$df[[1]] <- merge(daysmaxXD2$df[[1]], daysmaxXD2$df[[zi]])
+			if(zi==z){
+				break
+			}
+		}
+		zi <- 1
+		repeat{
+			zi <- zi + 1
+			daysmaxXD2$zoo[[1]] <- merge(daysmaxXD2$zoo[[1]], daysmaxXD2$zoo[[zi]])
+			if(zi==z){
+				break
+			}
+		}
+		daysmaxXD2$df <- daysmaxXD2$df[[1]]
+		daysmaxXD2$zoo <- daysmaxXD2$zoo[[1]]
+	}
+	
+	
+	##################################	
+	daysmaxXBN <- vector("list", z)
+	XBNyears <- which(names(input$Data) %in% index$Year[which(index$Index==3)])
+	for(n in 1:z){
+		daysmaxXBN[[n]] <- list()
+		for(k in 1:6){
+			daysmaxXBN[[n]][[k]] <- list()
+			daysmaxXBN[[n]][[k]]$Date <- as.Date(rep(NA, length.out=length(XBNyears)))
+			daysmaxXBN[[n]][[k]]$Discharge_maf <- rep(NA, length.out=length(XBNyears))
+		}
+	}
+	if(length(XBNyears) == 0){
+		daysmaxXBN$W <- "No BN Years in Input Dataset"
+	} else {
+		
+		for(i in 1:length(XBNyears)){
+			for(k in 1:6){
+				ts.zoo <- zoo(input$Data[[XBNyears[[i]]]][[k]]$Discharge_maf, input$Data[[XBNyears[[i]]]][[k]]$Date)
+				for(n in 1:z){
+					ts.zoo.roll <- rollapply(ts.zoo, vday[[n]], mean, fill=NA, align=c("center"))
+					daysmaxXBN[[n]][[k]]$Discharge_maf[[i]]<- coredata(ts.zoo.roll[which.max(ts.zoo.roll)])
+					daysmaxXBN[[n]][[k]]$Date[[i]]<- index(ts.zoo.roll[which.max(ts.zoo.roll)])
+					
+				}
+			}
+		}
+		
+		
+		for(n in 1:z){
+			for(k in 1:6){
+				daysmaxXBN[[n]][[k]] <- as.data.frame(daysmaxXBN[[n]][[k]])
+				name <- names(input$Data[[1]])[[k]]
+				names(daysmaxXBN[[n]])[[k]] <- paste(name,"X",vday[[n]],"DayMaxQ_maf", sep="")
+			}
+		}
+		
+		daysmaxXBN2 <- list()
+		daysmaxXBN2$df <- daysmaxXBN
+		
+		for(n in 1:z){
+			for(k in 1:6){
+				daysmaxXBN[[n]][[k]] <- zoo(as.numeric(daysmaxXBN[[n]][[k]]$Discharge_maf), as.Date(daysmaxXBN[[n]][[k]]$Date))
+				name <- names(input$Data[[1]])[[k]]
+				names(daysmaxXBN[[n]])[[k]] <- paste(name,"X",vday[[n]],"DayMaxQ_maf", sep="")
+			}
+		}
+		
+		
+		daysmaxXBN2$zoo <- daysmaxXBN
+		zi <- 1
+		repeat{
+			zi <- zi + 1
+			daysmaxXBN2$df[[1]] <- merge(daysmaxXBN2$df[[1]], daysmaxXBN2$df[[zi]])
+			if(zi==z){
+				break
+			}
+		}
+		zi <- 1
+		repeat{
+			zi <- zi + 1
+			daysmaxXBN2$zoo[[1]] <- merge(daysmaxXBN2$zoo[[1]], daysmaxXBN2$zoo[[zi]])
+			if(zi==z){
+				break
+			}
+		}
+		daysmaxXBN2$df <- daysmaxXBN2$df[[1]]
+		daysmaxXBN2$zoo <- daysmaxXBN2$zoo[[1]]
+	}
+	
+	##################################	
+	daysmaxXAN <- vector("list", z)
+	XANyears <- which(names(input$Data) %in% index$Year[which(index$Index==4)])
+	for(n in 1:z){
+		daysmaxXAN[[n]] <- list()
+		for(k in 1:6){
+			daysmaxXAN[[n]][[k]] <- list()
+			daysmaxXAN[[n]][[k]]$Date <- as.Date(rep(NA, length.out=length(XANyears)))
+			daysmaxXAN[[n]][[k]]$Discharge_maf <- rep(NA, length.out=length(XANyears))
+		}
+	}
+	if(length(XANyears) == 0){
+		daysmaxXAN$W <- "No AN Years in Input Dataset"
+	} else {
+		
+		for(i in 1:length(XANyears)){
+			for(k in 1:6){
+				ts.zoo <- zoo(input$Data[[XANyears[[i]]]][[k]]$Discharge_maf, input$Data[[XANyears[[i]]]][[k]]$Date)
+				for(n in 1:z){
+					ts.zoo.roll <- rollapply(ts.zoo, vday[[n]], mean, fill=NA, align=c("center"))
+					daysmaxXAN[[n]][[k]]$Discharge_maf[[i]]<- coredata(ts.zoo.roll[which.max(ts.zoo.roll)])
+					daysmaxXAN[[n]][[k]]$Date[[i]]<- index(ts.zoo.roll[which.max(ts.zoo.roll)])
+					
+				}
+			}
+		}
+		
+		
+		for(n in 1:z){
+			for(k in 1:6){
+				daysmaxXAN[[n]][[k]] <- as.data.frame(daysmaxXAN[[n]][[k]])
+				name <- names(input$Data[[1]])[[k]]
+				names(daysmaxXAN[[n]])[[k]] <- paste(name,"X",vday[[n]],"DayMaxQ_maf", sep="")
+			}
+		}
+		
+		daysmaxXAN2 <- list()
+		daysmaxXAN2$df <- daysmaxXAN
+		
+		for(n in 1:z){
+			for(k in 1:6){
+				daysmaxXAN[[n]][[k]] <- zoo(as.numeric(daysmaxXAN[[n]][[k]]$Discharge_maf), as.Date(daysmaxXAN[[n]][[k]]$Date))
+				name <- names(input$Data[[1]])[[k]]
+				names(daysmaxXAN[[n]])[[k]] <- paste(name,"X",vday[[n]],"DayMaxQ_maf", sep="")
+			}
+		}
+		
+		
+		daysmaxXAN2$zoo <- daysmaxXAN
+		zi <- 1
+		repeat{
+			zi <- zi + 1
+			daysmaxXAN2$df[[1]] <- merge(daysmaxXAN2$df[[1]], daysmaxXAN2$df[[zi]])
+			if(zi==z){
+				break
+			}
+		}
+		zi <- 1
+		repeat{
+			zi <- zi + 1
+			daysmaxXAN2$zoo[[1]] <- merge(daysmaxXAN2$zoo[[1]], daysmaxXAN2$zoo[[zi]])
+			if(zi==z){
+				break
+			}
+		}
+		daysmaxXAN2$df <- daysmaxXAN2$df[[1]]
+		daysmaxXAN2$zoo <- daysmaxXAN2$zoo[[1]]
+	}
+ return(list(All=daysmax3, C=daysmaxXC2, D=daysmaxXD2, BN=daysmaxXBN2, AN=daysmaxXAN2, W=daysmaxXW2))
  
   }
