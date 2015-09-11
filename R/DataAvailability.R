@@ -16,7 +16,9 @@ DataAvailability <- function(input){
 	cont_date <- cont_date[!(format(cont_date, format="%m-%d")=="02-29")]
 	date_column_location <- which(names(input)=="Date")
 	dates_present <- as.numeric(cont_date %in% input[[date_column_location]])	
-
+	discharge_column_location <- which(names(input)=="X_00060_00003")
+	
+	dates_present[which(is.na(input[[discharge_column_location]]))] <- 0
 	
 	cont_year <- format(seq(from=as.Date("1900-01-01"),
 					to=as.Date(Sys.Date()),by="year"), format="%Y")

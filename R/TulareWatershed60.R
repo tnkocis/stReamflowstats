@@ -269,7 +269,12 @@ save.image()
 
 names(tulare60) <- tulare60_g
 
-
+#rerunall
 for(i in 1:length(tulare60)){
 	tulare60[[i]]$Winter_monthly <- cleanupMON(tulare60[[i]]$Winter_monthly)
+	tulare60[[i]]$daysmax$W3MON <- FreqAnalysis(tulare60[[i]]$Winter_3mon,c(1,3,7),tulare60[[i]]$Index)
+	tulare60[[i]]$daysmax$W6MON <- FreqAnalysis(tulare60[[i]]$Winter_6mon,c(1,3,7),tulare60[[i]]$Index)
+	tulare60[[i]]$daysmax$HY <- FreqAnalysis(tulare60[[i]]$HydroYear,c(1,3,7),tulare60[[i]]$Index)
+	tulare60[[i]]$daysmax$WMON <- FreqAnalysisMonthly(tulare60[[i]]$Winter_monthly,c(1,3,7),tulare60[[i]]$Index)
 }
+

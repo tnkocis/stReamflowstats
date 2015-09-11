@@ -277,4 +277,11 @@ names(SJ) <- SJ_g
 
 
 
+for(i in 1:length(SJ)){
+	SJ[[i]]$Winter_monthly <- cleanupMON(SJ[[i]]$Winter_monthly)
+	SJ[[i]]$daysmax$W3MON <- FreqAnalysis(SJ[[i]]$Winter_3mon,c(1,3,7),SJ[[i]]$Index)
+	SJ[[i]]$daysmax$W6MON <- FreqAnalysis(SJ[[i]]$Winter_6mon,c(1,3,7),SJ[[i]]$Index)
+	SJ[[i]]$daysmax$HY <- FreqAnalysis(SJ[[i]]$HydroYear,c(1,3,7),SJ[[i]]$Index)
+	SJ[[i]]$daysmax$WMON <- FreqAnalysisMonthly(SJ[[i]]$Winter_monthly,c(1,3,7),SJ[[i]]$Index)
+}
 

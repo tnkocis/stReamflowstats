@@ -262,4 +262,11 @@ save.image()
 
 names(sacupper) <- sacupper_g
 
+for(i in 1:length(sacupper)){
+	sacupper[[i]]$Winter_monthly <- cleanupMON(sacupper[[i]]$Winter_monthly)
+	sacupper[[i]]$daysmax$W3MON <- FreqAnalysis(sacupper[[i]]$Winter_3mon,c(1,3,7),sacupper[[i]]$Index)
+	sacupper[[i]]$daysmax$W6MON <- FreqAnalysis(sacupper[[i]]$Winter_6mon,c(1,3,7),sacupper[[i]]$Index)
+	sacupper[[i]]$daysmax$HY <- FreqAnalysis(sacupper[[i]]$HydroYear,c(1,3,7),sacupper[[i]]$Index)
+	sacupper[[i]]$daysmax$WMON <- FreqAnalysisMonthly(sacupper[[i]]$Winter_monthly,c(1,3,7),sacupper[[i]]$Index)
+}
 

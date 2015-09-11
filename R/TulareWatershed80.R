@@ -278,5 +278,10 @@ names(tulare80) <- tulare80_g
 
 for(i in 1:length(tulare80)){
 	tulare80[[i]]$Winter_monthly <- cleanupMON(tulare80[[i]]$Winter_monthly)
+	tulare80[[i]]$daysmax$W3MON <- FreqAnalysis(tulare80[[i]]$Winter_3mon,c(1,3,7),tulare80[[i]]$Index)
+	tulare80[[i]]$daysmax$W6MON <- FreqAnalysis(tulare80[[i]]$Winter_6mon,c(1,3,7),tulare80[[i]]$Index)
+	tulare80[[i]]$daysmax$HY <- FreqAnalysis(tulare80[[i]]$HydroYear,c(1,3,7),tulare80[[i]]$Index)
+	tulare80[[i]]$daysmax$WMON <- FreqAnalysisMonthly(tulare80[[i]]$Winter_monthly,c(1,3,7),tulare80[[i]]$Index)
 }
+
 

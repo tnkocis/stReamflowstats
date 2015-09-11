@@ -275,7 +275,7 @@ for(i in 1:length(active)){
 	active[[i]]$daysmax$W3MON <- FreqAnalysis(active[[i]]$Winter_3mon,c(1,3,7),active[[i]]$Index)
 	active[[i]]$daysmax$W6MON <- FreqAnalysis(active[[i]]$Winter_6mon,c(1,3,7),active[[i]]$Index)
 	active[[i]]$daysmax$HY <- FreqAnalysis(active[[i]]$HydroYear,c(1,3,7),active[[i]]$Index)
-#	active[[i]]$daysmax$WMON <- FreqAnalysisMonthly(active[[i]]$Winter_monthly,c(1,3,7),active[[i]]$Index)
+	active[[i]]$daysmax$WMON <- FreqAnalysisMonthly(active[[i]]$Winter_monthly,c(1,3,7),active[[i]]$Index)
 }
 
 

@@ -19,9 +19,13 @@ prepdata <- function(raw){
 	cont_date <- cont_date[!(format(cont_date, format="%m-%d")=="02-29")]
 	date_column_location <- which(names(raw)=="Date")
 	dates_present <- as.numeric(cont_date %in% raw[[date_column_location]])
+
 #	available <- list(date=cont_date, present=dates_present)
 	discharge_column_location <- which(names(raw)=="X_00060_00003")
 	addNA <- rep(NA, length(cont_date))
+	
+	dates_present[which(is.na(raw[[discharge_column_location]]))] <- 0
+	
 #	for(i in 1:length(cont_date)){
 #		if(dates_present[[i]]==1){
 #			addNA[[i]] <- raw[[discharge_column_location]][[which(raw[[date_column_location]]==cont_date[[i]])]]

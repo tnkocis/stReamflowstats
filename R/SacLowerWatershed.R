@@ -256,3 +256,12 @@ save.image()
 
 names(saclower) <- saclower_g
 
+
+for(i in 1:length(saclower)){
+	saclower[[i]]$Winter_monthly <- cleanupMON(saclower[[i]]$Winter_monthly)
+	saclower[[i]]$daysmax$W3MON <- FreqAnalysis(saclower[[i]]$Winter_3mon,c(1,3,7),saclower[[i]]$Index)
+	saclower[[i]]$daysmax$W6MON <- FreqAnalysis(saclower[[i]]$Winter_6mon,c(1,3,7),saclower[[i]]$Index)
+	saclower[[i]]$daysmax$HY <- FreqAnalysis(saclower[[i]]$HydroYear,c(1,3,7),saclower[[i]]$Index)
+	saclower[[i]]$daysmax$WMON <- FreqAnalysisMonthly(saclower[[i]]$Winter_monthly,c(1,3,7),saclower[[i]]$Index)
+}
+

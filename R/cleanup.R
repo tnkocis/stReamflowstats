@@ -45,10 +45,10 @@ cleanupMON <- function(input){
 			if(sum(input$Data[[i]][[k]]$Available, na.rm=TRUE)<20){
 			input$Data[[i]][[k]] <- NULL
 			}
+		}
 		if(length(input$Data[[i]])<6){
 			input$Data[[i]] <- NULL
 		}
 		}
-	}	
 	return(input)
 }

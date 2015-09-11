@@ -34,8 +34,13 @@ FreqAnalysis <- function(input, vday, index){
 		ts.zoo <- zoo(input$Data[[i]]$Discharge_maf, input$Data[[i]]$Date)
 		for(n in 1:z){
 			ts.zoo.roll <- rollapply(ts.zoo, vday[[n]], mean, fill=NA, align=c("center"))
+			if(length(coredata(ts.zoo.roll[which.max(ts.zoo.roll)]))==0){
+				daysmax[[n]]$Discharge_maf[[i]] <- NA
+				daysmax[[n]]$Date[[i]]<- NA
+			} else {
 			daysmax[[n]]$Discharge_maf[[i]]<- coredata(ts.zoo.roll[which.max(ts.zoo.roll)])
 			daysmax[[n]]$Date[[i]]<- index(ts.zoo.roll[which.max(ts.zoo.roll)])
+			}
 		}
 	}
 	
@@ -72,8 +77,13 @@ FreqAnalysis <- function(input, vday, index){
 			ts.zoo <- zoo(input$Data[[XCyears[[i]]]]$Discharge_maf, input$Data[[XCyears[[i]]]]$Date)
 			for(n in 1:z){
 				ts.zoo.roll <- rollapply(ts.zoo, vday[[n]], mean, fill=NA, align=c("center"))
+				if(length(coredata(ts.zoo.roll[which.max(ts.zoo.roll)]))==0){
+					daysmaxXC[[n]]$Discharge_maf[[i]] <- NA
+					daysmaxXC[[n]]$Date[[i]]<- NA
+				} else {
 				daysmaxXC[[n]]$Discharge_maf[[i]]<- coredata(ts.zoo.roll[which.max(ts.zoo.roll)])
 				daysmaxXC[[n]]$Date[[i]]<- index(ts.zoo.roll[which.max(ts.zoo.roll)])
+			}
 			}
 		}
 		for(n in 1:z){
@@ -108,8 +118,13 @@ FreqAnalysis <- function(input, vday, index){
 			ts.zoo <- zoo(input$Data[[XDyears[[i]]]]$Discharge_maf, input$Data[[XDyears[[i]]]]$Date)
 			for(n in 1:z){
 				ts.zoo.roll <- rollapply(ts.zoo, vday[[n]], mean, fill=NA, align=c("center"))
+				if(length(coredata(ts.zoo.roll[which.max(ts.zoo.roll)]))==0){
+					daysmaxXD[[n]]$Discharge_maf[[i]] <- NA
+					daysmaxXD[[n]]$Date[[i]]<- NA
+				} else {
 				daysmaxXD[[n]]$Discharge_maf[[i]]<- coredata(ts.zoo.roll[which.max(ts.zoo.roll)])
 				daysmaxXD[[n]]$Date[[i]]<- index(ts.zoo.roll[which.max(ts.zoo.roll)])
+			}
 			}
 		}
 		for(n in 1:z){
@@ -145,8 +160,13 @@ FreqAnalysis <- function(input, vday, index){
 			ts.zoo <- zoo(input$Data[[XBNyears[[i]]]]$Discharge_maf, input$Data[[XBNyears[[i]]]]$Date)
 			for(n in 1:z){
 				ts.zoo.roll <- rollapply(ts.zoo, vday[[n]], mean, fill=NA, align=c("center"))
+				if(length(coredata(ts.zoo.roll[which.max(ts.zoo.roll)]))==0){
+					daysmaxXBN[[n]]$Discharge_maf[[i]] <- NA
+					daysmaxXBN[[n]]$Date[[i]]<- NA
+				} else {
 				daysmaxXBN[[n]]$Discharge_maf[[i]]<- coredata(ts.zoo.roll[which.max(ts.zoo.roll)])
 				daysmaxXBN[[n]]$Date[[i]]<- index(ts.zoo.roll[which.max(ts.zoo.roll)])
+			}
 			}
 		}
 		for(n in 1:z){
@@ -182,8 +202,13 @@ FreqAnalysis <- function(input, vday, index){
 			ts.zoo <- zoo(input$Data[[XANyears[[i]]]]$Discharge_maf, input$Data[[XANyears[[i]]]]$Date)
 			for(n in 1:z){
 				ts.zoo.roll <- rollapply(ts.zoo, vday[[n]], mean, fill=NA, align=c("center"))
+				if(length(coredata(ts.zoo.roll[which.max(ts.zoo.roll)]))==0){
+					daysmaxXAN[[n]]$Discharge_maf[[i]] <- NA
+					daysmaxXAN[[n]]$Date[[i]]<- NA
+				} else {
 				daysmaxXAN[[n]]$Discharge_maf[[i]]<- coredata(ts.zoo.roll[which.max(ts.zoo.roll)])
 				daysmaxXAN[[n]]$Date[[i]]<- index(ts.zoo.roll[which.max(ts.zoo.roll)])
+			}
 			}
 		}
 		for(n in 1:z){
@@ -218,8 +243,13 @@ FreqAnalysis <- function(input, vday, index){
 			ts.zoo <- zoo(input$Data[[XWyears[[i]]]]$Discharge_maf, input$Data[[XWyears[[i]]]]$Date)
 			for(n in 1:z){
 				ts.zoo.roll <- rollapply(ts.zoo, vday[[n]], mean, fill=NA, align=c("center"))
+				if(length(coredata(ts.zoo.roll[which.max(ts.zoo.roll)]))==0){
+					daysmaxXW[[n]]$Discharge_maf[[i]] <- NA
+					daysmaxXW[[n]]$Date[[i]]<- NA
+				} else {
 				daysmaxXW[[n]]$Discharge_maf[[i]]<- coredata(ts.zoo.roll[which.max(ts.zoo.roll)])
 				daysmaxXW[[n]]$Date[[i]]<- index(ts.zoo.roll[which.max(ts.zoo.roll)])
+			}
 			}
 		}
 		for(n in 1:z){
@@ -283,9 +313,13 @@ FreqAnalysisMonthly <- function(input, vday, index){
 			ts.zoo <- zoo(input$Data[[i]][[k]]$Discharge_maf, input$Data[[i]][[k]]$Date)
 			for(n in 1:z){
 				ts.zoo.roll <- rollapply(ts.zoo, vday[[n]], mean, fill=NA, align=c("center"))
+				if(length(coredata(ts.zoo.roll[which.max(ts.zoo.roll)]))==0){
+					daysmax[[n]][[k]]$Discharge_maf[[i]] <- NA
+					daysmax[[n]][[k]]$Date[[i]]<- NA
+				} else {
 					daysmax[[n]][[k]]$Discharge_maf[[i]]<- coredata(ts.zoo.roll[which.max(ts.zoo.roll)])
 					daysmax[[n]][[k]]$Date[[i]]<- index(ts.zoo.roll[which.max(ts.zoo.roll)])
-				
+				}
 			}
 		}
 	}
@@ -353,9 +387,13 @@ FreqAnalysisMonthly <- function(input, vday, index){
 				ts.zoo <- zoo(input$Data[[XWyears[[i]]]][[k]]$Discharge_maf, input$Data[[XWyears[[i]]]][[k]]$Date)
 				for(n in 1:z){
 					ts.zoo.roll <- rollapply(ts.zoo, vday[[n]], mean, fill=NA, align=c("center"))
+					if(length(coredata(ts.zoo.roll[which.max(ts.zoo.roll)]))==0){
+						daysmaxXW[[n]][[k]]$Discharge_maf[[i]] <- NA
+						daysmaxXW[[n]][[k]]$Date[[i]]<- NA
+					} else {
 					daysmaxXW[[n]][[k]]$Discharge_maf[[i]]<- coredata(ts.zoo.roll[which.max(ts.zoo.roll)])
 					daysmaxXW[[n]][[k]]$Date[[i]]<- index(ts.zoo.roll[which.max(ts.zoo.roll)])
-					
+					}
 				}
 			}
 		}
@@ -422,9 +460,13 @@ FreqAnalysisMonthly <- function(input, vday, index){
 				ts.zoo <- zoo(input$Data[[XCyears[[i]]]][[k]]$Discharge_maf, input$Data[[XCyears[[i]]]][[k]]$Date)
 				for(n in 1:z){
 					ts.zoo.roll <- rollapply(ts.zoo, vday[[n]], mean, fill=NA, align=c("center"))
+					if(length(coredata(ts.zoo.roll[which.max(ts.zoo.roll)]))==0){
+						daysmaxXC[[n]][[k]]$Discharge_maf[[i]] <- NA
+						daysmaxXC[[n]][[k]]$Date[[i]]<- NA
+					} else {
 					daysmaxXC[[n]][[k]]$Discharge_maf[[i]]<- coredata(ts.zoo.roll[which.max(ts.zoo.roll)])
 					daysmaxXC[[n]][[k]]$Date[[i]]<- index(ts.zoo.roll[which.max(ts.zoo.roll)])
-					
+					}
 				}
 			}
 		}
@@ -492,9 +534,13 @@ FreqAnalysisMonthly <- function(input, vday, index){
 				ts.zoo <- zoo(input$Data[[XDyears[[i]]]][[k]]$Discharge_maf, input$Data[[XDyears[[i]]]][[k]]$Date)
 				for(n in 1:z){
 					ts.zoo.roll <- rollapply(ts.zoo, vday[[n]], mean, fill=NA, align=c("center"))
+					if(length(coredata(ts.zoo.roll[which.max(ts.zoo.roll)]))==0){
+						daysmaxXD[[n]][[k]]$Discharge_maf[[i]] <- NA
+						daysmaxXD[[n]][[k]]$Date[[i]]<- NA
+					} else {
 					daysmaxXD[[n]][[k]]$Discharge_maf[[i]]<- coredata(ts.zoo.roll[which.max(ts.zoo.roll)])
 					daysmaxXD[[n]][[k]]$Date[[i]]<- index(ts.zoo.roll[which.max(ts.zoo.roll)])
-					
+					}
 				}
 			}
 		}
@@ -562,9 +608,13 @@ FreqAnalysisMonthly <- function(input, vday, index){
 				ts.zoo <- zoo(input$Data[[XBNyears[[i]]]][[k]]$Discharge_maf, input$Data[[XBNyears[[i]]]][[k]]$Date)
 				for(n in 1:z){
 					ts.zoo.roll <- rollapply(ts.zoo, vday[[n]], mean, fill=NA, align=c("center"))
+					if(length(coredata(ts.zoo.roll[which.max(ts.zoo.roll)]))==0){
+						daysmaxXBN[[n]][[k]]$Discharge_maf[[i]] <- NA
+						daysmaxXBN[[n]][[k]]$Date[[i]]<- NA
+					} else {
 					daysmaxXBN[[n]][[k]]$Discharge_maf[[i]]<- coredata(ts.zoo.roll[which.max(ts.zoo.roll)])
 					daysmaxXBN[[n]][[k]]$Date[[i]]<- index(ts.zoo.roll[which.max(ts.zoo.roll)])
-					
+				}
 				}
 			}
 		}
@@ -631,9 +681,13 @@ FreqAnalysisMonthly <- function(input, vday, index){
 				ts.zoo <- zoo(input$Data[[XANyears[[i]]]][[k]]$Discharge_maf, input$Data[[XANyears[[i]]]][[k]]$Date)
 				for(n in 1:z){
 					ts.zoo.roll <- rollapply(ts.zoo, vday[[n]], mean, fill=NA, align=c("center"))
+					if(length(coredata(ts.zoo.roll[which.max(ts.zoo.roll)]))==0){
+						daysmaxXAN[[n]][[k]]$Discharge_maf[[i]] <- NA
+						daysmaxXAN[[n]][[k]]$Date[[i]]<- NA
+					} else {
 					daysmaxXAN[[n]][[k]]$Discharge_maf[[i]]<- coredata(ts.zoo.roll[which.max(ts.zoo.roll)])
 					daysmaxXAN[[n]][[k]]$Date[[i]]<- index(ts.zoo.roll[which.max(ts.zoo.roll)])
-					
+					}
 				}
 			}
 		}
