@@ -57,4 +57,14 @@ names(get(paste("L",basins[[n]],sep=""))) <- get(basins[[n]])
 }
 basins <- c("SHASTA","SCOTT","TRINITY","EEL","SACRAMENTO","MCCLOUD",  "PIT",   "STONYCR",   "FEATHER",   "YUBA",   "AMERICAN",   "MOKELUMNE",   "STANISLAUS",   "TUOLUMNE",   "MERCED", "SANJOAQUIN",   "KINGS",   "KAWEAH",   	"TULE", "KERN", "SUSAN",  "TRUCKEE",   "LAKETAHOE",   "WALKER",   "MONOLAKE",   "OWENS")
 
+LAMERICAN <- vector("list", length=length(AMERICAN))
+names(LAMERICAN) <- AMERICAN
+for(i in 1:length(AMERICAN)){
+	LAMERICAN[[i]] <- CDECsnowQuery(AMERICAN[[i]],1900,2015)
+}
 
+LAMERICAN55 <- vector("list", length=length(AMERICAN))
+names(LAMERICAN55) <- AMERICAN
+for(i in 1:length(AMERICAN)){
+	LAMERICAN55[[i]] <- CDECsnowQuery(AMERICAN[[i]],1955,2015)
+}
