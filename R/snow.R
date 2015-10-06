@@ -68,3 +68,215 @@ names(LAMERICAN55) <- AMERICAN
 for(i in 1:length(AMERICAN)){
 	LAMERICAN55[[i]] <- CDECsnowQuery(AMERICAN[[i]],1955,2015)
 }
+
+MKTSnowAmerican_DEC55 <- data.frame(tau=rep(NA, length(LAMERICAN55)), pvalue=rep(NA, length(LAMERICAN55)), gauge=rep(NA, length(LAMERICAN55)), n=rep(NA, length(LAMERICAN55)), st_yr=rep(NA, length(LAMERICAN55)), end_yr=rep(NA, length(LAMERICAN55)))
+for (i in 1:length(LAMERICAN55)){
+	n <- length(which(LAMERICAN55[[i]]$month == "December"))
+	if( n >5){
+		a <- MannKendall(LAMERICAN55[[i]]$SWE[which(LAMERICAN55[[i]]$month == "December")])
+		MKTSnowAmerican_DEC55$tau[[i]] <- a$tau
+		MKTSnowAmerican_DEC55$pvalue[[i]] <- a$sl
+		MKTSnowAmerican_DEC55$gauge[[i]] <- names(LAMERICAN55)[[i]]
+		MKTSnowAmerican_DEC55$n[[i]] <- n
+		MKTSnowAmerican_DEC55$st_yr[[i]] <- LAMERICAN55[[i]]$year[[which(LAMERICAN55[[i]]$month == "December")[[1]]]]
+		MKTSnowAmerican_DEC55$end_yr[[i]] <- LAMERICAN55[[i]]$year[[which(LAMERICAN55[[i]]$month == "December")[[length(which(LAMERICAN55[[i]]$month == "December"))]]]]
+	} else {
+		MKTSnowAmerican_DEC55$n[[i]] <- n
+	}
+}
+
+
+MKTSnowAmerican_JAN55 <- data.frame(tau=rep(NA, length(LAMERICAN55)), pvalue=rep(NA, length(LAMERICAN55)), gauge=rep(NA, length(LAMERICAN55)), n=rep(NA, length(LAMERICAN55)), st_yr=rep(NA, length(LAMERICAN55)), end_yr=rep(NA, length(LAMERICAN55)))
+for (i in 1:length(LAMERICAN55)){
+	n <- length(which(LAMERICAN55[[i]]$month == "January"))
+	if( n >5){
+		a <- MannKendall(LAMERICAN55[[i]]$SWE[which(LAMERICAN55[[i]]$month == "January")])
+		MKTSnowAmerican_JAN55$tau[[i]] <- a$tau
+		MKTSnowAmerican_JAN55$pvalue[[i]] <- a$sl
+		MKTSnowAmerican_JAN55$gauge[[i]] <- names(LAMERICAN55)[[i]]
+		MKTSnowAmerican_JAN55$n[[i]] <- n
+		MKTSnowAmerican_JAN55$st_yr[[i]] <- LAMERICAN55[[i]]$year[[which(LAMERICAN55[[i]]$month == "January")[[1]]]]
+		MKTSnowAmerican_JAN55$end_yr[[i]] <- LAMERICAN55[[i]]$year[[which(LAMERICAN55[[i]]$month == "January")[[length(which(LAMERICAN55[[i]]$month == "January"))]]]]
+	} else {
+		MKTSnowAmerican_JAN55$n[[i]] <- n
+	}
+}
+
+MKTSnowAmerican_FEB55 <- data.frame(tau=rep(NA, length(LAMERICAN55)), pvalue=rep(NA, length(LAMERICAN55)), gauge=rep(NA, length(LAMERICAN55)), n=rep(NA, length(LAMERICAN55)), st_yr=rep(NA, length(LAMERICAN55)), end_yr=rep(NA, length(LAMERICAN55)))
+for (i in 1:length(LAMERICAN55)){
+	n <- length(which(LAMERICAN55[[i]]$month == "February"))
+	if( n >5){
+		a <- MannKendall(LAMERICAN55[[i]]$SWE[which(LAMERICAN55[[i]]$month == "February")])
+		MKTSnowAmerican_FEB55$tau[[i]] <- a$tau
+		MKTSnowAmerican_FEB55$pvalue[[i]] <- a$sl
+		MKTSnowAmerican_FEB55$gauge[[i]] <- names(LAMERICAN55)[[i]]
+		MKTSnowAmerican_FEB55$n[[i]] <- n
+		MKTSnowAmerican_FEB55$st_yr[[i]] <- LAMERICAN55[[i]]$year[[which(LAMERICAN55[[i]]$month == "February")[[1]]]]
+		MKTSnowAmerican_FEB55$end_yr[[i]] <- LAMERICAN55[[i]]$year[[which(LAMERICAN55[[i]]$month == "February")[[length(which(LAMERICAN55[[i]]$month == "February"))]]]]
+	} else {
+		MKTSnowAmerican_FEB55$n[[i]] <- n
+	}
+}
+
+MKTSnowAmerican_MAR55 <- data.frame(tau=rep(NA, length(LAMERICAN55)), pvalue=rep(NA, length(LAMERICAN55)), gauge=rep(NA, length(LAMERICAN55)), n=rep(NA, length(LAMERICAN55)), st_yr=rep(NA, length(LAMERICAN55)), end_yr=rep(NA, length(LAMERICAN55)))
+for (i in 1:length(LAMERICAN55)){
+	n <- length(which(LAMERICAN55[[i]]$month == "March"))
+	if( n >5){
+		a <- MannKendall(LAMERICAN55[[i]]$SWE[which(LAMERICAN55[[i]]$month == "March")])
+		MKTSnowAmerican_MAR55$tau[[i]] <- a$tau
+		MKTSnowAmerican_MAR55$pvalue[[i]] <- a$sl
+		MKTSnowAmerican_MAR55$gauge[[i]] <- names(LAMERICAN55)[[i]]
+		MKTSnowAmerican_MAR55$n[[i]] <- n
+		MKTSnowAmerican_MAR55$st_yr[[i]] <- LAMERICAN55[[i]]$year[[which(LAMERICAN55[[i]]$month == "March")[[1]]]]
+		MKTSnowAmerican_MAR55$end_yr[[i]] <- LAMERICAN55[[i]]$year[[which(LAMERICAN55[[i]]$month == "March")[[length(which(LAMERICAN55[[i]]$month == "March"))]]]]
+	} else {
+		MKTSnowAmerican_MAR55$n[[i]] <- n
+	}
+}
+
+
+MKTSnowAmerican_APR55 <- data.frame(tau=rep(NA, length(LAMERICAN55)), pvalue=rep(NA, length(LAMERICAN55)), gauge=rep(NA, length(LAMERICAN55)), n=rep(NA, length(LAMERICAN55)), st_yr=rep(NA, length(LAMERICAN55)), end_yr=rep(NA, length(LAMERICAN55)))
+for (i in 1:length(LAMERICAN55)){
+	n <- length(which(LAMERICAN55[[i]]$month == "April"))
+	if( n >5){
+		a <- MannKendall(LAMERICAN55[[i]]$SWE[which(LAMERICAN55[[i]]$month == "April")])
+		MKTSnowAmerican_APR55$tau[[i]] <- a$tau
+		MKTSnowAmerican_APR55$pvalue[[i]] <- a$sl
+		MKTSnowAmerican_APR55$gauge[[i]] <- names(LAMERICAN55)[[i]]
+		MKTSnowAmerican_APR55$n[[i]] <- n
+		MKTSnowAmerican_APR55$st_yr[[i]] <- LAMERICAN55[[i]]$year[[which(LAMERICAN55[[i]]$month == "April")[[1]]]]
+		MKTSnowAmerican_APR55$end_yr[[i]] <- LAMERICAN55[[i]]$year[[which(LAMERICAN55[[i]]$month == "April")[[length(which(LAMERICAN55[[i]]$month == "April"))]]]]
+	} else {
+		MKTSnowAmerican_APR55$n[[i]] <- n
+	}
+}
+
+
+MKTSnowAmerican_MAY55 <- data.frame(tau=rep(NA, length(LAMERICAN55)), pvalue=rep(NA, length(LAMERICAN55)), gauge=rep(NA, length(LAMERICAN55)), n=rep(NA, length(LAMERICAN55)), st_yr=rep(NA, length(LAMERICAN55)), end_yr=rep(NA, length(LAMERICAN55)))
+for (i in 1:length(LAMERICAN55)){
+	n <- length(which(LAMERICAN55[[i]]$month == "May"))
+	if( n >5){
+		a <- MannKendall(LAMERICAN55[[i]]$SWE[which(LAMERICAN55[[i]]$month == "May")])
+		MKTSnowAmerican_MAY55$tau[[i]] <- a$tau
+		MKTSnowAmerican_MAY55$pvalue[[i]] <- a$sl
+		MKTSnowAmerican_MAY55$gauge[[i]] <- names(LAMERICAN55)[[i]]
+		MKTSnowAmerican_MAY55$n[[i]] <- n
+		MKTSnowAmerican_MAY55$st_yr[[i]] <- LAMERICAN55[[i]]$year[[which(LAMERICAN55[[i]]$month == "May")[[1]]]]
+		MKTSnowAmerican_MAY55$end_yr[[i]] <- LAMERICAN55[[i]]$year[[which(LAMERICAN55[[i]]$month == "May")[[length(which(LAMERICAN55[[i]]$month == "May"))]]]]
+	} else {
+		MKTSnowAmerican_MAY55$n[[i]] <- n
+	}
+}
+
+
+MKTSnowAmerican_DEC <- data.frame(tau=rep(NA, length(LAMERICAN)), pvalue=rep(NA, length(LAMERICAN)), gauge=rep(NA, length(LAMERICAN)), n=rep(NA, length(LAMERICAN)), st_yr=rep(NA, length(LAMERICAN)), end_yr=rep(NA, length(LAMERICAN)))
+for (i in 1:length(LAMERICAN)){
+	n <- length(which(LAMERICAN[[i]]$month == "December"))
+	if( n >5){
+		a <- MannKendall(LAMERICAN[[i]]$SWE[which(LAMERICAN[[i]]$month == "December")])
+		MKTSnowAmerican_DEC$tau[[i]] <- a$tau
+		MKTSnowAmerican_DEC$pvalue[[i]] <- a$sl
+		MKTSnowAmerican_DEC$gauge[[i]] <- names(LAMERICAN)[[i]]
+		MKTSnowAmerican_DEC$n[[i]] <- n
+		MKTSnowAmerican_DEC$st_yr[[i]] <- LAMERICAN[[i]]$year[[which(LAMERICAN[[i]]$month == "December")[[1]]]]
+		MKTSnowAmerican_DEC$end_yr[[i]] <- LAMERICAN[[i]]$year[[which(LAMERICAN[[i]]$month == "December")[[length(which(LAMERICAN[[i]]$month == "December"))]]]]
+	} else {
+		MKTSnowAmerican_DEC$n[[i]] <- n
+	}
+}
+
+
+MKTSnowAmerican_JAN <- data.frame(tau=rep(NA, length(LAMERICAN)), pvalue=rep(NA, length(LAMERICAN)), gauge=rep(NA, length(LAMERICAN)), n=rep(NA, length(LAMERICAN)), st_yr=rep(NA, length(LAMERICAN)), end_yr=rep(NA, length(LAMERICAN)))
+for (i in 1:length(LAMERICAN)){
+	n <- length(which(LAMERICAN[[i]]$month == "January"))
+	if( n >5){
+		a <- MannKendall(LAMERICAN[[i]]$SWE[which(LAMERICAN[[i]]$month == "January")])
+		MKTSnowAmerican_JAN$tau[[i]] <- a$tau
+		MKTSnowAmerican_JAN$pvalue[[i]] <- a$sl
+		MKTSnowAmerican_JAN$gauge[[i]] <- names(LAMERICAN)[[i]]
+		MKTSnowAmerican_JAN$n[[i]] <- n
+		MKTSnowAmerican_JAN$st_yr[[i]] <- LAMERICAN[[i]]$year[[which(LAMERICAN[[i]]$month == "January")[[1]]]]
+		MKTSnowAmerican_JAN$end_yr[[i]] <- LAMERICAN[[i]]$year[[which(LAMERICAN[[i]]$month == "January")[[length(which(LAMERICAN[[i]]$month == "January"))]]]]
+	} else {
+		MKTSnowAmerican_JAN$n[[i]] <- n
+	}
+}
+
+MKTSnowAmerican_FEB <- data.frame(tau=rep(NA, length(LAMERICAN)), pvalue=rep(NA, length(LAMERICAN)), gauge=rep(NA, length(LAMERICAN)), n=rep(NA, length(LAMERICAN)), st_yr=rep(NA, length(LAMERICAN)), end_yr=rep(NA, length(LAMERICAN)))
+for (i in 1:length(LAMERICAN)){
+	n <- length(which(LAMERICAN[[i]]$month == "February"))
+	if( n >5){
+		a <- MannKendall(LAMERICAN[[i]]$SWE[which(LAMERICAN[[i]]$month == "February")])
+		MKTSnowAmerican_FEB$tau[[i]] <- a$tau
+		MKTSnowAmerican_FEB$pvalue[[i]] <- a$sl
+		MKTSnowAmerican_FEB$gauge[[i]] <- names(LAMERICAN)[[i]]
+		MKTSnowAmerican_FEB$n[[i]] <- n
+		MKTSnowAmerican_FEB$st_yr[[i]] <- LAMERICAN[[i]]$year[[which(LAMERICAN[[i]]$month == "February")[[1]]]]
+		MKTSnowAmerican_FEB$end_yr[[i]] <- LAMERICAN[[i]]$year[[which(LAMERICAN[[i]]$month == "February")[[length(which(LAMERICAN[[i]]$month == "February"))]]]]
+	} else {
+		MKTSnowAmerican_FEB$n[[i]] <- n
+	}
+}
+
+MKTSnowAmerican_MAR <- data.frame(tau=rep(NA, length(LAMERICAN)), pvalue=rep(NA, length(LAMERICAN)), gauge=rep(NA, length(LAMERICAN)), n=rep(NA, length(LAMERICAN)), st_yr=rep(NA, length(LAMERICAN)), end_yr=rep(NA, length(LAMERICAN)))
+for (i in 1:length(LAMERICAN)){
+	n <- length(which(LAMERICAN[[i]]$month == "March"))
+	if( n >5){
+		a <- MannKendall(LAMERICAN[[i]]$SWE[which(LAMERICAN[[i]]$month == "March")])
+		MKTSnowAmerican_MAR$tau[[i]] <- a$tau
+		MKTSnowAmerican_MAR$pvalue[[i]] <- a$sl
+		MKTSnowAmerican_MAR$gauge[[i]] <- names(LAMERICAN)[[i]]
+		MKTSnowAmerican_MAR$n[[i]] <- n
+		MKTSnowAmerican_MAR$st_yr[[i]] <- LAMERICAN[[i]]$year[[which(LAMERICAN[[i]]$month == "March")[[1]]]]
+		MKTSnowAmerican_MAR$end_yr[[i]] <- LAMERICAN[[i]]$year[[which(LAMERICAN[[i]]$month == "March")[[length(which(LAMERICAN[[i]]$month == "March"))]]]]
+	} else {
+		MKTSnowAmerican_MAR$n[[i]] <- n
+	}
+}
+
+
+MKTSnowAmerican_APR <- data.frame(tau=rep(NA, length(LAMERICAN)), pvalue=rep(NA, length(LAMERICAN)), gauge=rep(NA, length(LAMERICAN)), n=rep(NA, length(LAMERICAN)), st_yr=rep(NA, length(LAMERICAN)), end_yr=rep(NA, length(LAMERICAN)))
+for (i in 1:length(LAMERICAN)){
+	n <- length(which(LAMERICAN[[i]]$month == "April"))
+	if( n >5){
+		a <- MannKendall(LAMERICAN[[i]]$SWE[which(LAMERICAN[[i]]$month == "April")])
+		MKTSnowAmerican_APR$tau[[i]] <- a$tau
+		MKTSnowAmerican_APR$pvalue[[i]] <- a$sl
+		MKTSnowAmerican_APR$gauge[[i]] <- names(LAMERICAN)[[i]]
+		MKTSnowAmerican_APR$n[[i]] <- n
+		MKTSnowAmerican_APR$st_yr[[i]] <- LAMERICAN[[i]]$year[[which(LAMERICAN[[i]]$month == "April")[[1]]]]
+		MKTSnowAmerican_APR$end_yr[[i]] <- LAMERICAN[[i]]$year[[which(LAMERICAN[[i]]$month == "April")[[length(which(LAMERICAN[[i]]$month == "April"))]]]]
+	} else {
+		MKTSnowAmerican_APR$n[[i]] <- n
+	}
+}
+
+
+MKTSnowAmerican_MAY <- data.frame(tau=rep(NA, length(LAMERICAN)), pvalue=rep(NA, length(LAMERICAN)), gauge=rep(NA, length(LAMERICAN)), n=rep(NA, length(LAMERICAN)), st_yr=rep(NA, length(LAMERICAN)), end_yr=rep(NA, length(LAMERICAN)))
+for (i in 1:length(LAMERICAN)){
+	n <- length(which(LAMERICAN[[i]]$month == "May"))
+	if( n >5){
+		a <- MannKendall(LAMERICAN[[i]]$SWE[which(LAMERICAN[[i]]$month == "May")])
+		MKTSnowAmerican_MAY$tau[[i]] <- a$tau
+		MKTSnowAmerican_MAY$pvalue[[i]] <- a$sl
+		MKTSnowAmerican_MAY$gauge[[i]] <- names(LAMERICAN)[[i]]
+		MKTSnowAmerican_MAY$n[[i]] <- n
+		MKTSnowAmerican_MAY$st_yr[[i]] <- LAMERICAN[[i]]$year[[which(LAMERICAN[[i]]$month == "May")[[1]]]]
+		MKTSnowAmerican_MAY$end_yr[[i]] <- LAMERICAN[[i]]$year[[which(LAMERICAN[[i]]$month == "May")[[length(which(LAMERICAN[[i]]$month == "May"))]]]]
+	} else {
+		MKTSnowAmerican_MAY$n[[i]] <- n
+	}
+}
+
+write.csv(MKTSnowAmerican_JAN,file="C:\\Users\\tiffn_000\\Documents\\Data\\American\\MKTSnowAmerican_JAN.csv")
+write.csv(MKTSnowAmerican_JAN55,file="C:\\Users\\tiffn_000\\Documents\\Data\\American\\MKTSnowAmerican_JAN55.csv")
+write.csv(MKTSnowAmerican_DEC,file="C:\\Users\\tiffn_000\\Documents\\Data\\American\\MKTSnowAmerican_DEC.csv")
+write.csv(MKTSnowAmerican_DEC55,file="C:\\Users\\tiffn_000\\Documents\\Data\\American\\MKTSnowAmerican_DEC55.csv")
+write.csv(MKTSnowAmerican_FEB,file="C:\\Users\\tiffn_000\\Documents\\Data\\American\\MKTSnowAmerican_FEB.csv")
+write.csv(MKTSnowAmerican_FEB55,file="C:\\Users\\tiffn_000\\Documents\\Data\\American\\MKTSnowAmerican_FEB55.csv")
+write.csv(MKTSnowAmerican_MAR,file="C:\\Users\\tiffn_000\\Documents\\Data\\American\\MKTSnowAmerican_MAR.csv")
+write.csv(MKTSnowAmerican_MAR55,file="C:\\Users\\tiffn_000\\Documents\\Data\\American\\MKTSnowAmerican_MAR55.csv")
+write.csv(MKTSnowAmerican_APR,file="C:\\Users\\tiffn_000\\Documents\\Data\\American\\MKTSnowAmerican_APR.csv")
+write.csv(MKTSnowAmerican_APR55,file="C:\\Users\\tiffn_000\\Documents\\Data\\American\\MKTSnowAmerican_APR55.csv")
+write.csv(MKTSnowAmerican_MAY,file="C:\\Users\\tiffn_000\\Documents\\Data\\American\\MKTSnowAmerican_MAY.csv")
+write.csv(MKTSnowAmerican_MAY55,file="C:\\Users\\tiffn_000\\Documents\\Data\\American\\MKTSnowAmerican_MAY55.csv")
