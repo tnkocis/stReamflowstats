@@ -4,8 +4,8 @@
 ###############################################################################
 library(EcoHydRology)
 
-streamflow <- american$`11446500`$Winter_3mon$Data[[91]]$Discharge_cfs
-streamflowdate <- american$`11446500`$Winter_3mon$Data[[91]]$Date
+streamflow <- american$`11446500`$Winter_3mon$Data[[1]]$Discharge_cfs
+streamflowdate <- american$`11446500`$Winter_3mon$Data[[1]]$Date
 baseflowtest <- BaseflowSeparation(streamflow, filter_parameter = 0.9, passes = 1)
 floodflow <- streamflow - baseflowtest$bt 
 zeroline <- rep(0,length(american$`11446500`$Winter_3mon$Data[[4]]$Date))
@@ -53,7 +53,7 @@ lines(american$`11446500`$Winter_3mon$All$Data$Date, line)
 lines(american$`11446500`$Winter_3mon$All$Data$Date, line2)
 
 
-peaks <- function(input, width, threshold,thresholdname, mastertime){
+peaks <- function(input, width, threshold,thresholdname, mastertime, Index){
 	if(!require(zoo)){
 		install.packages("zoo")
 		library(zoo)
@@ -74,6 +74,13 @@ peaks <- function(input, width, threshold,thresholdname, mastertime){
 	  numpeaks <- sum(peaks,na.rm=TRUE)
 	  peakloc <- which(peaks==TRUE)
 	  threshlog <- input$Discharge_cfs >= threshold
+	  mon <- format(input$Date,"%m")
+	  yearchr <- paste(as.numeric(format(tail(input$Date,1),"%Y"))-1,"-",as.numeric(format(tail(input$Date,1),"%Y")))
+	  yearindex <- Index$Index[[which(Index$Year==yearchr)]]
+#	  if(mastertime == "3mon"){
+#		} else {
+#			stats <- "mastertime error"
+#		}
 	  if(numpeaks != 0){
 		  duration <- function(peakflows,loc){
 			  lengthbeforepeak <- loc-1
@@ -143,7 +150,8 @@ peaks <- function(input, width, threshold,thresholdname, mastertime){
 		  
 		  summary <- data.frame(peak_date=datepeaks, peak_flow=peakflow, thres_value=threshold, thres=thresholdname,
 						  start=rep(NA,length(datepeaks)),end=rep(NA,length(datepeaks)),
-										  duration=rep(NA, length(datepeaks)),vol_acft_event=rep(NA, length(datepeaks)), year=rep(NA, length(datepeaks)))
+										  duration=rep(NA, length(datepeaks)),vol_acft_event=rep(NA, length(datepeaks)), year=rep(NA, length(datepeaks)),
+										  yeartype_index=rep(NA, length(datepeaks)))
 		eventvolume <- function(startloc, endloc, discharge){
 			if(is.na(startloc)| is.na(endloc)){
 				eventvol  <- NA
@@ -164,7 +172,8 @@ peaks <- function(input, width, threshold,thresholdname, mastertime){
 					  summary$end[[i]] <- NA 
 				  } else {summary$end[[i]] <- input$Date[dur$end]}
 				  summary$duration[[i]] <- dur$duration
-			  	summary$year[[i]] <- format(tail(input$Date,1),"%Y")
+			  	summary$year[[i]] <- as.numeric(format(tail(input$Date,1),"%Y"))
+				summary$yeartype_index[[i]] <- yearindex
 		  }
 		  
 	
@@ -176,7 +185,42 @@ peaks <- function(input, width, threshold,thresholdname, mastertime){
 			  if(length(summary$peak_flow)==0){
 				  summary <- data.frame(peak_date=c(NA), peak_flow=c(NA), thres_value=c(NA), thres=c(NA),
 						  start=c(NA),end=c(NA),
-						  duration=c(NA),vol_acft_event=c(NA), year=format(tail(input$Date,1),"%Y"))
+						  duration=c(NA),vol_acft_event=c(NA), year=as.numeric(format(tail(input$Date,1),"%Y")), yeartype_index=yearindex)
+			  }
+			  firstdate <- as.Date(summary$start[[1]])
+			  enddate <- as.Date(tail(summary$end,1))
+			  if(is.na(firstdate)|is.na(enddate)){
+						  stats <- data.frame(TotVolAbv_acft=c(0), TotDaysAbv = c(0), 
+								  numpeaks = c(0), mean_peakflow = c(NA),
+								  year=as.numeric(format(tail(input$Date,1),"%Y")), yeartype_index=yearindex)
+			  }else {
+				  daterangeloc <- which(input$Date==firstdate):which(input$Date==enddate)
+				  peaks3mon <- peaks[daterangeloc]
+				  numpeaks3mon <- sum(peaks3mon, na.rm=TRUE)
+				  threshlog3mon <- threshlog[daterangeloc]
+				  dischrange <- input$Discharge_cfs[daterangeloc]
+				  if (numpeaks3mon == 0 | is.na(numpeaks3mon)){
+					  peakflow3mon <- NA
+				  } else {
+					  peakflow3mon <- dischrange[which(peaks3mon==TRUE)]
+				  }
+				  if(all(is.na(threshlog))){
+					  totaldaysabv <- NA
+				  } else {totaldaysabv <- sum(threshlog3mon, na.rm=TRUE)}
+				  if(all(is.na(threshlog))){
+					  totalvolabv <- NA
+				  }else{ 
+					  totalvolabv <- sum(dischrange[threshlog3mon], na.rm=TRUE)*86400*2.29568411e-5
+				  }
+				  if(all(is.na(peakflow))){
+					  avgpeakflow <-NA
+				  } else {
+					  avgpeakflow <- mean(peakflow3mon, na.rm=TRUE)
+				  }
+
+				  stats <- data.frame(TotVolAbv_acft=totalvolabv, TotDaysAbv = totaldaysabv, 
+						  numpeaks = numpeaks3mon, mean_peakflow = avgpeakflow,
+						  year=as.numeric(format(tail(input$Date,1),"%Y")), yeartype_index=yearindex)
 			  }
 		  } else {
 			  stop("mastertime error")
@@ -184,15 +228,51 @@ peaks <- function(input, width, threshold,thresholdname, mastertime){
 	} else {
 		summary <- data.frame(peak_date=c(NA), peak_flow=c(NA), thres_value=c(NA), thres=c(NA),
 					  start=c(NA),end=c(NA),
-					  duration=c(NA),vol_acft_event=c(NA), year=format(tail(input$Date,1),"%Y"))
+					  duration=c(NA),vol_acft_event=c(NA), year=as.numeric(format(tail(input$Date,1),"%Y")), yeartype_index=yearindex)
+		stats <- data.frame(TotVolAbv_acft=c(0), TotDaysAbv = c(0), 
+					  numpeaks = c(0), mean_peakflow = c(NA),
+					  year=as.numeric(format(tail(input$Date,1),"%Y")), yeartype_index=yearindex)
 	}
-	  return(summary)
+	  return(list(summary=summary, stats=stats))
 }
 
 peakflows <- vector("list", length=length(american$`11446500`$Winter_6mon$Data))
 names(peakflows) <- names(american$`11446500`$Winter_6mon$Data)
 for(i in 1:length(american$`11446500`$Winter_6mon$Data)){
-	peakflows[[i]] <-  peaks(input=american$`11446500`$Winter_6mon$Data[[i]],width=3, threshold=x90_3mon[["95%"]], thresholdname="95%", mastertime="3mon")
-	
+	peakflows[[i]] <-  peaks(input=american$`11446500`$Winter_6mon$Data[[i]],width=3, threshold=x90_3mon[["90%"]], thresholdname="95%", mastertime="3mon", Index=american$`11446500`$Index)
 }
+peakflowsstatslist <- vector("list", length(peakflows))
+for(i in 1:length(peakflows)){
+	peakflowsstatslist[[i]] <- peakflows[[i]][[2]]
+}
+peakflowstats <- do.call(rbind.data.frame,peakflowsstatslist)
+peakflowstats$color <- rep(NA, length(peakflowstats$year))
+peakflowstats$color[which(peakflowstats$yeartype_index==1)] <- "red"
+peakflowstats$color[which(peakflowstats$yeartype_index==2)] <- "orange"
+peakflowstats$color[which(peakflowstats$yeartype_index==3)] <- "yellow"
+peakflowstats$color[which(peakflowstats$yeartype_index==4)] <- "green"
+peakflowstats$color[which(peakflowstats$yeartype_index==5)] <- "blue"
+
+peakflowstats1970 <- peakflowstats[peakflowstats$year >=1970,]
+peakflowstatspreimp <-  peakflowstats[peakflowstats$year <1970,]
+plot(peakflowstats$TotDaysAbv,peakflowstats$TotVolAbv_acft, col=peakflowstats$color)
+plot(peakflowstats$TotDaysAbv,peakflowstats$numpeaks, col=peakflowstats$color)
+plot(peakflowstats$TotVolAbv_acft,peakflowstats$numpeaks, col=peakflowstats$color)
+plot(peakflowstats$year,peakflowstats$TotVolAbv_acft, col=peakflowstats$color)
+
+
+plot(peakflowstats1970$TotDaysAbv,peakflowstats1970$TotVolAbv_acft, col=peakflowstats1970$color)
+plot(peakflowstats1970$TotDaysAbv,peakflowstats1970$numpeaks, col=peakflowstats1970$color)
+plot(peakflowstats1970$TotVolAbv_acft,peakflowstats1970$numpeaks, col=peakflowstats1970$color)
+plot(peakflowstats1970$year,peakflowstats1970$TotVolAbv_acft, col=peakflowstats1970$color)
+
+
+plot(peakflowstatspreimp$TotDaysAbv,peakflowstatspreimp$TotVolAbv_acft, col=peakflowstatspreimp$color)
+plot(peakflowstatspreimp$TotDaysAbv,peakflowstatspreimp$numpeaks, col=peakflowstatspreimp$color)
+plot(peakflowstatspreimp$TotVolAbv_acft,peakflowstatspreimp$numpeaks, col=peakflowstatspreimp$color)
+plot(peakflowstatspreimp$year,peakflowstatspreimp$TotVolAbv_acft, col=peakflowstatspreimp$color)
+
+
+
+
 peakstest <- peaks(input=american$`11446500`$Winter_6mon$Data[[3]],width=3, threshold=x90_3mon[["95%"]], thresholdname="95%", mastertime="3mon")
