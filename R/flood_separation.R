@@ -259,20 +259,62 @@ plot(peakflowstats$TotDaysAbv,peakflowstats$TotVolAbv_acft, col=peakflowstats$co
 plot(peakflowstats$TotDaysAbv,peakflowstats$numpeaks, col=peakflowstats$color)
 plot(peakflowstats$TotVolAbv_acft,peakflowstats$numpeaks, col=peakflowstats$color)
 plot(peakflowstats$year,peakflowstats$TotVolAbv_acft, col=peakflowstats$color)
+pdf(file="C:\\Users\\tiffn_000\\Desktop\\Figures\\stats.pdf", width=11, height=8.5)
+par(mfrow=c(2,3))
+plot(peakflowstats1970$TotDaysAbv,peakflowstats1970$TotVolAbv_acft, bg=peakflowstats1970$color, pch=24, xlim=c(0,60), ylim=c(0,3000000),
+		xlab="Total Days Above", ylab="Total Volume Above (acft)")
+points(peakflowstatspreimp$TotDaysAbv,peakflowstatspreimp$TotVolAbv_acft, col=peakflowstatspreimp$color)
 
+plot(peakflowstats1970$TotDaysAbv,peakflowstats1970$numpeaks, bg=peakflowstats1970$color, pch=24, xlim=c(0,60), ylim=c(0,10),
+		xlab="Total Days Above", ylab="Number of Peaks")
+points(peakflowstatspreimp$TotDaysAbv,peakflowstatspreimp$numpeaks, col=peakflowstatspreimp$color)
 
-plot(peakflowstats1970$TotDaysAbv,peakflowstats1970$TotVolAbv_acft, col=peakflowstats1970$color)
-plot(peakflowstats1970$TotDaysAbv,peakflowstats1970$numpeaks, col=peakflowstats1970$color)
-plot(peakflowstats1970$TotVolAbv_acft,peakflowstats1970$numpeaks, col=peakflowstats1970$color)
-plot(peakflowstats1970$year,peakflowstats1970$TotVolAbv_acft, col=peakflowstats1970$color)
+plot(peakflowstats1970$TotVolAbv_acft,peakflowstats1970$numpeaks, bg=peakflowstats1970$color,pch=24, xlim=c(0,3000000), ylim=c(0,10),
+		xlab="Total Volume Above (acft)", ylab="Number of Peaks")
+points(peakflowstatspreimp$TotVolAbv_acft,peakflowstatspreimp$numpeaks, col=peakflowstatspreimp$color)
 
+plot(peakflowstats1970$year,peakflowstats1970$TotVolAbv_acft, bg=peakflowstats1970$color,pch=24, xlim=c(1900,2015), ylim=c(0,3000000),
+		xlab="Year", ylab="Total Volume Above (acft)")
+points(peakflowstatspreimp$year,peakflowstatspreimp$TotVolAbv_acft, col=peakflowstatspreimp$color)
 
-plot(peakflowstatspreimp$TotDaysAbv,peakflowstatspreimp$TotVolAbv_acft, col=peakflowstatspreimp$color)
-plot(peakflowstatspreimp$TotDaysAbv,peakflowstatspreimp$numpeaks, col=peakflowstatspreimp$color)
+plot(peakflowstats1970$year,peakflowstats1970$numpeaks, bg=peakflowstats1970$color,pch=24, xlim=c(1900,2015), ylim=c(0,10),
+		xlab="Year", ylab="Number of Peaks")
+points(peakflowstatspreimp$year,peakflowstatspreimp$numpeaks, col=peakflowstatspreimp$color)
+
+plot(peakflowstats1970$year,peakflowstats1970$TotDaysAbv, bg=peakflowstats1970$color,pch=24, xlim=c(1900,2015), ylim=c(0,60),
+		xlab="Year", ylab="Total Days Above")
+points(peakflowstatspreimp$year,peakflowstatspreimp$TotDaysAbv, col=peakflowstatspreimp$color)
+dev.off()
+
+points(peakflowstatspreimp$TotDaysAbv,peakflowstatspreimp$TotVolAbv_acft, col=peakflowstatspreimp$color, xlim=c(0,60), ylim=c(0,2500000))
+points(peakflowstatspreimp$TotDaysAbv,peakflowstatspreimp$numpeaks, col=peakflowstatspreimp$color,xlim=c(0,60), ylim=c(0,10))
 plot(peakflowstatspreimp$TotVolAbv_acft,peakflowstatspreimp$numpeaks, col=peakflowstatspreimp$color)
 plot(peakflowstatspreimp$year,peakflowstatspreimp$TotVolAbv_acft, col=peakflowstatspreimp$color)
 
-
-
-
 peakstest <- peaks(input=american$`11446500`$Winter_6mon$Data[[3]],width=3, threshold=x90_3mon[["95%"]], thresholdname="95%", mastertime="3mon")
+
+#baseflow flood separation##
+library(hydrostats)
+library(zoo)
+
+mov_discharge <- rollapply(american$`11446500`$Winter_3mon$Data[[91]]$Discharge_cfs, 3, function(x) mean(x, na.rm=TRUE),
+		align = "center", fill=NA)
+mov_disch <- data.frame(Q=mov_discharge, Date=american$`11446500`$Winter_3mon$Data[[1]]$Date)
+streamflow <- american$`11446500`$Winter_3mon$Data[[91]]$Discharge_cfs
+streamflowdate <- american$`11446500`$Winter_3mon$Data[[91]]$Date
+baseflowtest <- baseflows(mov_disch, a = 0.82, n.reflected = 30, ts="daily")
+
+floodflow <- american$`11446500`$Winter_3mon$Data[[91]]$Discharge_cfs - baseflowtest$bf
+zeroline <- rep(0,length(american$`11446500`$Winter_3mon$Data[[4]]$Date))
+x90line <- rep(x90_3mon[["90%"]],length(american$`11446500`$Winter_3mon$Data[[4]]$Date))
+x95line <- rep(x90_3mon[["95%"]],length(american$`11446500`$Winter_3mon$Data[[4]]$Date))
+x80line <- rep(x90_3mon[["80%"]],length(american$`11446500`$Winter_3mon$Data[[4]]$Date))
+
+par(mfrow=c(1,1))
+plot(baseflowtest$Date, streamflow, type="l",ylim=c(0,5000))
+lines(baseflowtest$Date, baseflowtest$bf)
+lines(baseflowtest$Date, floodflow)
+lines(baseflowtest$Date, zeroline, col="red")
+lines(baseflowtest$Date, x90line, col="red")
+lines(baseflowtest$Date, x95line, col="red")
+lines(streamflowdate, x80line, col="red")
