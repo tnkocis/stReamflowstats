@@ -318,3 +318,11 @@ lines(baseflowtest$Date, zeroline, col="red")
 lines(baseflowtest$Date, x90line, col="red")
 lines(baseflowtest$Date, x95line, col="red")
 lines(streamflowdate, x80line, col="red")
+
+peakflowssummarylist <- vector("list", length(peakflows))
+for(i in 1:length(peakflows)){
+	peakflowssummarylist[[i]] <- peakflows[[i]][[1]]
+}
+peakflowsummary <- do.call(rbind.data.frame,peakflowssummarylist)
+
+peakflowavgsummary <- data.frame(avg)
