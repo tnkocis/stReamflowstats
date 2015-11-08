@@ -708,6 +708,160 @@ hypeakplots <- function(input){
 			plotjunprop,plotjulprop,plotaugprop,plotsepprop)
 	names(propplots)<-c("OCT","NOV","DEC","JAN","FEB","MAR","APR","MAY","JUN","JUL","AUG","SEP")
 	
-	return(list(numplots=numplots, propplots=propplots))
+	djflog <- pkdatem=="12" |pkdatem=="01"|pkdatem=="02"
+	mamlog <- pkdatem=="03" |pkdatem=="04"|pkdatem=="05"
+	jjalog <- pkdatem=="06" |pkdatem=="07"|pkdatem=="08"
+	sonlog <- pkdatem=="09" |pkdatem=="10"|pkdatem=="11"
+
+	
+	djfcount <- sum( djflog , na.rm=TRUE)
+	mamcount <- sum( mamlog , na.rm=TRUE)
+	jjacount <- sum( jjalog , na.rm=TRUE)
+	soncount <- sum( sonlog , na.rm=TRUE)
+	
+	djfdf <- data.frame(st_hy_year=yrseq, numpeaks_djf=rep(NA,length(yrseq)),totpeaks_yr=rep(NA,length(yrseq)),
+			prop_peaks_djf=rep(NA,length(yrseq)))
+	for(i in 1:(length(yrseq)-1)){
+		djfdf$numpeaks_djf[[i]] <- sum((pkdatem=="12"&pkdatey==yrseq[[i]])|(pkdatem=="01"&pkdatey==yrseq[[i+1]])|(pkdatem=="02"&pkdatey==yrseq[[i+1]]), na.rm=TRUE)
+		djfdf$totpeaks_yr[[i]] <- sum((pkdatem>="10"&pkdatey==yrseq[[i]])|(pkdatem<"10"&pkdatey==yrseq[[i+1]]),na.rm=TRUE)
+		if(djfdf$numpeaks_djf[[i]]==0&djfdf$totpeaks_yr[[i]]==0){
+			djfdf$prop_peaks_djf[[i]] <- 0
+		}else {
+			djfdf$prop_peaks_djf[[i]] <- djfdf$numpeaks_djf[[i]]/djfdf$totpeaks_yr[[i]]
+		}
+	}
+	
+	mamdf <- data.frame(st_hy_year=yrseq, numpeaks_mam=rep(NA,length(yrseq)),totpeaks_yr=rep(NA,length(yrseq)),
+			prop_peaks_mam=rep(NA,length(yrseq)))
+	for(i in 1:(length(yrseq)-1)){
+		mamdf$numpeaks_mam[[i]] <- sum((pkdatem=="03"&pkdatey==yrseq[[i+1]])|(pkdatem=="04"&pkdatey==yrseq[[i+1]])|(pkdatem=="05"&pkdatey==yrseq[[i+1]]), na.rm=TRUE)
+		mamdf$totpeaks_yr[[i]] <- sum((pkdatem>="10"&pkdatey==yrseq[[i]])|(pkdatem<"10"&pkdatey==yrseq[[i+1]]),na.rm=TRUE)
+		if(mamdf$numpeaks_mam[[i]]==0&mamdf$totpeaks_yr[[i]]==0){
+			mamdf$prop_peaks_mam[[i]] <- 0
+		}else {
+			mamdf$prop_peaks_mam[[i]] <- mamdf$numpeaks_mam[[i]]/mamdf$totpeaks_yr[[i]]
+		}
+	}
+	
+	jjadf <- data.frame(st_hy_year=yrseq, numpeaks_jja=rep(NA,length(yrseq)),totpeaks_yr=rep(NA,length(yrseq)),
+			prop_peaks_jja=rep(NA,length(yrseq)))
+	for(i in 1:(length(yrseq)-1)){
+		jjadf$numpeaks_jja[[i]] <- sum((pkdatem=="06"&pkdatey==yrseq[[i+1]])|(pkdatem=="07"&pkdatey==yrseq[[i+1]])|(pkdatem=="08"&pkdatey==yrseq[[i+1]]), na.rm=TRUE)
+		jjadf$totpeaks_yr[[i]] <- sum((pkdatem>="10"&pkdatey==yrseq[[i]])|(pkdatem<"10"&pkdatey==yrseq[[i+1]]),na.rm=TRUE)
+		if(jjadf$numpeaks_jja[[i]]==0&jjadf$totpeaks_yr[[i]]==0){
+			jjadf$prop_peaks_jja[[i]] <- 0
+		}else {
+			jjadf$prop_peaks_jja[[i]] <- jjadf$numpeaks_jja[[i]]/jjadf$totpeaks_yr[[i]]
+		}
+	}
+	
+	ndjdf <- data.frame(st_hy_year=yrseq, numpeaks_ndj=rep(NA,length(yrseq)),totpeaks_yr=rep(NA,length(yrseq)),
+			prop_peaks_ndj=rep(NA,length(yrseq)))
+	for(i in 1:(length(yrseq)-1)){
+		ndjdf$numpeaks_ndj[[i]] <- sum((pkdatem=="11"&pkdatey==yrseq[[i]])|(pkdatem=="12"&pkdatey==yrseq[[i]])|(pkdatem=="01"&pkdatey==yrseq[[i+1]]), na.rm=TRUE)
+		ndjdf$totpeaks_yr[[i]] <- sum((pkdatem>="10"&pkdatey==yrseq[[i]])|(pkdatem<"10"&pkdatey==yrseq[[i+1]]),na.rm=TRUE)
+		if(ndjdf$numpeaks_ndj[[i]]==0&ndjdf$totpeaks_yr[[i]]==0){
+			ndjdf$prop_peaks_ndj[[i]] <- 0
+		}else {
+			ndjdf$prop_peaks_ndj[[i]] <- ndjdf$numpeaks_ndj[[i]]/ndjdf$totpeaks_yr[[i]]
+		}
+	}
+	fmadf <- data.frame(st_hy_year=yrseq, numpeaks_fma=rep(NA,length(yrseq)),totpeaks_yr=rep(NA,length(yrseq)),
+			prop_peaks_fma=rep(NA,length(yrseq)))
+	for(i in 1:(length(yrseq)-1)){
+		fmadf$numpeaks_fma[[i]] <- sum((pkdatem=="02"&pkdatey==yrseq[[i+1]])|(pkdatem=="03"&pkdatey==yrseq[[i+1]])|(pkdatem=="04"&pkdatey==yrseq[[i+1]]), na.rm=TRUE)
+		fmadf$totpeaks_yr[[i]] <- sum((pkdatem>="10"&pkdatey==yrseq[[i]])|(pkdatem<"10"&pkdatey==yrseq[[i+1]]),na.rm=TRUE)
+		if(fmadf$numpeaks_fma[[i]]==0&fmadf$totpeaks_yr[[i]]==0){
+			fmadf$prop_peaks_fma[[i]] <- 0
+		}else {
+			fmadf$prop_peaks_fma[[i]] <- fmadf$numpeaks_fma[[i]]/fmadf$totpeaks_yr[[i]]
+		}
+	}
+	
+	plotdjfnum <- ggplot(data=djfdf,mapping=aes(x=st_hy_year,y=numpeaks_djf))+
+			geom_bar(stat="identity", color="blue")+ ggtitle("djf") + xlab("Year [Hydrologic (Y-Y+1)])") + ylab("Number of Peaks Above 90%") +
+			ylim(c(0,100))
+	plotmamnum <- ggplot(data=mamdf,mapping=aes(x=st_hy_year,y=numpeaks_mam))+
+			geom_bar(stat="identity", color="blue")+ ggtitle("mam") + xlab("Year [Hydrologic (Y-Y+1)])") + ylab("Number of Peaks Above 90%") +
+			ylim(c(0,100))
+	plotjjanum <- ggplot(data=jjadf,mapping=aes(x=st_hy_year,y=numpeaks_jja))+
+			geom_bar(stat="identity", color="blue")+ ggtitle("jja") + xlab("Year [Hydrologic (Y-Y+1)])") + ylab("Number of Peaks Above 90%") +
+			ylim(c(0,100))
+	plotndjnum <- ggplot(data=ndjdf,mapping=aes(x=st_hy_year,y=numpeaks_ndj))+
+			geom_bar(stat="identity", color="blue")+ ggtitle("ndj") + xlab("Year [Hydrologic (Y-Y+1)])") + ylab("Number of Peaks Above 90%") +
+			ylim(c(0,100))
+	plotfmanum <- ggplot(data=fmadf,mapping=aes(x=st_hy_year,y=numpeaks_fma))+
+			geom_bar(stat="identity", color="blue")+ ggtitle("fma") + xlab("Year [Hydrologic (Y-Y+1)])") + ylab("Number of Peaks Above 90%") +
+			ylim(c(0,100))
+
+	plotdjfprop <- ggplot(data=djfdf,mapping=aes(x=st_hy_year,y=prop_peaks_djf))+
+			geom_bar(stat="identity", color="blue")+ ggtitle("djf") + xlab("Year [Hydrologic (Y-Y+1)])") + ylab("Number of Peaks Above 90%") +
+			ylim(c(0,1))
+	plotmamprop <- ggplot(data=mamdf,mapping=aes(x=st_hy_year,y=prop_peaks_mam))+
+			geom_bar(stat="identity", color="blue")+ ggtitle("mam") + xlab("Year [Hydrologic (Y-Y+1)])") + ylab("Number of Peaks Above 90%") +
+			ylim(c(0,1))
+	plotjjaprop <- ggplot(data=jjadf,mapping=aes(x=st_hy_year,y=prop_peaks_jja))+
+			geom_bar(stat="identity", color="blue")+ ggtitle("jja") + xlab("Year [Hydrologic (Y-Y+1)])") + ylab("Number of Peaks Above 90%") +
+			ylim(c(0,1))
+	plotndjprop <- ggplot(data=ndjdf,mapping=aes(x=st_hy_year,y=prop_peaks_ndj))+
+			geom_bar(stat="identity", color="blue")+ ggtitle("ndj") + xlab("Year [Hydrologic (Y-Y+1)])") + ylab("Number of Peaks Above 90%") +
+			ylim(c(0,1))
+	plotfmaprop <- ggplot(data=fmadf,mapping=aes(x=st_hy_year,y=prop_peaks_fma))+
+			geom_bar(stat="identity", color="blue")+ ggtitle("fma") + xlab("Year [Hydrologic (Y-Y+1)])") + ylab("Number of Peaks Above 90%") +
+			ylim(c(0,1))
+	
+	trinumplots <- list(plotdjfnum,plotmamnum,plotjjanum,plotndjnum,plotfmanum)
+	tripropplots <- list(plotdjfprop,plotmamprop,plotjjaprop,plotndjprop,plotfmaprop)
+	
+	
+	
+	#####decades#######
+	totalnumyrs <- 2015-as.numeric(startyear)
+	numdecades <- floor(totalnumyrs/10)
+	decadesyrseq <- seq(as.numeric(startyear),length.out=(numdecades+1), by=10)
+	decades <- vector("list", length(numdecades))
+	monlist <- c("10","11","12","01","02","03","04","05","06","07","08","09")
+	
+	for(i in 1:numdecades){
+		decades[[i]] <- data.frame(stdecade=decadesyrseq[[i]], mon=rep(NA,12), numpeaks=rep(NA,12),totpeaks=rep(NA,12),
+				prop_peaks=rep(NA,12), plotorder=seq(1,12,1))
+		for(n in 1:length(monlist)){
+			decades[[i]]$mon[[n]] <- monlist[[n]]
+			decades[[i]]$numpeaks[[n]] <- sum(pkdatem==monlist[[n]]&(pkdatey>=decadesyrseq[[i]]&pkdatey<decadesyrseq[[i+1]]), na.rm=TRUE)
+			decades[[i]]$totpeaks[[n]] <- sum((pkdatem>="10"&pkdatey>=decadesyrseq[[i]]&pkdatey<(decadesyrseq[[i+1]]))|(pkdatem<"10"&pkdatey>decadesyrseq[[i]]&pkdatey<=decadesyrseq[[i+1]]), na.rm=TRUE)
+			if(decades[[i]]$numpeaks[[n]]==0&decades[[i]]$totpeaks[[n]]==0){
+				decades[[i]]$prop_peaks[[n]] <- 0
+			} else {
+				decades[[i]]$prop_peaks[[n]] <- decades[[i]]$numpeaks[[n]]/decades[[i]]$totpeaks[[n]]
+			}
+			
+		}
+		names(decades)[[i]] <- paste(decadesyrseq[[i]],"-",decadesyrseq[[i+1]], sep="")
+	}
+	
+	
+return(list(numplotsmon=numplots, propplotsmon=propplots, trinumplots=trinumplots, tripropplots=tripropplots))
+}
+colors <- c("black","red","orange","darkgoldenrod1","yellow","yellowgreen","green","cyan4","blue","purple","purple4","hotpink")
+#colors <- c(rep("black",5),"green",rep("red",5))
+#colors <- c(rep(153,6),rep(34,5))
+monlist <- c("10","11","12","01","02","03","04","05","06","07","08","09")
+
+plot(decades$`1904-1914`$plotorder,decades$`1904-1914`$prop_peaks,ylim=c(0,0.6),
+		xaxt="n", xlab="Month", ylab=" number of peaks as a fraction of total peaks per decade",type="l")
+axis(1,at=decades$`1904-1914`$plotorder, labels=monlist)
+legend("right",legend=names(decades),lty=rep(1,length(colors)),col=colors, inset=0.05 )
+for(i in 1:11){
+	lines(decades[[i]]$plotorder,decades[[i]]$prop_peaks, col=colors[[i]])
 }
 
+pdf(file="C:\\Users\\tiffn_000\\Desktop\\Figures\\peaksmultiplot4.pdf", width=6, height = 44)
+par(mfrow=c(11,1))
+for(i in 1:11){
+	plot(decades[[i]]$plotorder,decades[[i]]$prop_peaks,ylim=c(0,0.6),
+			xaxt="n", xlab="Month", ylab=" number of peaks as a fraction of total peaks per decade",
+			type="l", main=names(decades)[[i]], col=colors[[i]])
+	axis(1,at=decades[[i]]$plotorder, labels=monlist)
+	abline(v=c(2,7))
+}
+dev.off()
