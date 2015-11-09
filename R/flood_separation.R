@@ -947,6 +947,10 @@ pdf(file=paste("C:\\Users\\tiffn_000\\Desktop\\Figures\\",names(american)[[9]],"
 plotstest$decadesplot
 dev.off()
 
+plotstest <- hypeakplots(peakflowsummaryhy90, names(american)[[9]])
+pdf(file=paste("C:\\Users\\tiffn_000\\Desktop\\Figures\\",names(american)[[9]],"_areaMONplot.pdf",sep=""), width=8.5, height=11)
+plotstest$monplot
+dev.off()
 
 
 
