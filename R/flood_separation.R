@@ -285,7 +285,46 @@ peaks <- function(input, width, threshold,thresholdname, mastertime, Index){
 					  numpeaks = c(0), mean_peakflow = c(0),total_peakflow=c(0),
 					  year=as.numeric(format(tail(input$Date,1),"%Y")), yeartype_index=yearindex)
 	}
-	  return(list(summary=summary, stats=stats))
+	if(mastertime=="hy"){
+		monthly_stats <- data.frame(month=rep(NA,12),TotVolAbv_acft=rep(NA,12), TotDaysAbv=rep(NA,12),sthyyear=rep(NA,12), threshold=rep(threshold,12))
+		months <- c("10","11","12","01","02","03","04","05","06","07","08","09")
+		for(i in 1:length(months)){
+			monlog <- format(input$Date,"%m")==months[[i]]
+			dischmon <- input$Discharge_cfs[monlog]
+			thresmonlog <- dischmon >= threshold
+			monthly_stats$month[[i]] <- months[[i]]
+			monthly_stats$TotDaysAbv[[i]] <-  sum(thresmonlog, na.rm=TRUE)
+			vols <- dischmon[thresmonlog]
+			if(length(vols)==0){
+				monthly_stats$TotVolAbv_acft[[i]] <- 0
+			} else {
+				monthly_stats$TotVolAbv_acft[[i]] <-sum(vols,na.rm=TRUE)*86400*2.29568411e-5
+			}
+			monthly_stats$sthyyear[[i]] <- as.numeric(format(input$Date,"%Y"))[[1]]
+		}
+
+	} else if(mastertime=="3mon"){
+		monthly_stats <- data.frame(month=rep(NA,3),TotVolAbv_acft=rep(NA,3), TotDaysAbv=rep(NA,3),sthyyear=rep(NA,3), threshold=rep(threshold,3))
+		months <- c("12","01","02")
+		for(i in 1:length(months)){
+			monlog <- format(input$Date,"%m")==months[[i]]
+			dischmon <- input$Discharge_cfs[monlog]
+			thresmonlog <- dischmon >= threshold
+			monthly_stats$month[[i]] <- months[[i]]
+			monthly_stats$TotDaysAbv[[i]] <-  sum(thresmonlog, na.rm=TRUE)
+			vols <- dischmon[thresmonlog]
+			if(length(vols)==0){
+				monthly_stats$TotVolAbv_acft[[i]] <- 0
+			} else {
+				monthly_stats$TotVolAbv_acft[[i]] <-sum(vols,na.rm=TRUE)*86400*2.29568411e-5
+			}
+			monthly_stats$sthyyear[[i]] <- as.numeric(format(input$Date,"%Y"))[[1]]
+		}
+	} else {
+		stop("mastertime error")
+	}
+
+	  return(list(summary=summary, stats=stats, monthly_stats=monthly_stats))
 }
 
 peakflows <- vector("list", length=length(american$`11446500`$Winter_6mon$Data))
@@ -420,6 +459,12 @@ for(i in 1:length(peakflowshy90)){
 }
 peakflowsummaryhy90 <- do.call(rbind.data.frame,peakflowssummarylisthy90)
 
+peakflowsmonthly_statslisthy90 <- vector("list", length(peakflowshy90))
+for(i in 1:length(peakflowshy90)){
+	peakflowsmonthly_statslisthy90[[i]] <- peakflowshy90[[i]][[3]]
+}
+peakflowsmonthly_statshy90 <- do.call(rbind.data.frame,peakflowsmonthly_statslisthy90)
+
 peakflowstatshy90$volday_is_zero <- rep(NA, length(peakflowstatshy90$TotDaysAbv))
 for(i in 1:length(peakflowstatshy90$TotDaysAbv)){
 	if(peakflowstatshy90$TotDaysAbv[[i]]==0){
@@ -443,6 +488,29 @@ lines(peakflowstatshy90$year[peakflowstatshy90$TotVolAbv_acft != 0],volpredicthy
 plot(peakflowstatshy90$year,peakflowstatshy90$volday_is_zero_cumsum, xlab="Year", ylab="Cumulative Number of Years With Zero Flow Above 90%")
 lines(peakflowstatshy90$year[peakflowstatshy90$year<1957],prezeropredicthy90)
 lines(peakflowstatshy90$year[peakflowstatshy90$year>1956],postzeropredicthy90)
+dev.off()
+
+plotstest <- hypeakplots(peakflowsummaryhy90, names(american)[[11]])
+pdf(file=paste("C:\\Users\\tiffn_000\\Desktop\\Figures\\",names(american)[[11]],"_areaplot.pdf",sep=""), width=8.5, height=11)
+plotstest$decadesplot
+dev.off()
+plotstestmon <- hypeakplotsstats(peakflowsmonthly_statshy90, names(american)[[11]])
+pdf(file=paste("C:\\Users\\tiffn_000\\Desktop\\Figures\\",names(american)[[11]],"_areaplot_Daysabove.pdf",sep=""), width=8.5, height=11)
+plotstestmon$decades_plotdays
+dev.off()
+pdf(file=paste("C:\\Users\\tiffn_000\\Desktop\\Figures\\",names(american)[[11]],"_areaplot_volabove.pdf",sep=""), width=8.5, height=11)
+plotstestmon$decades_plotvol
+dev.off()
+
+
+png(file=paste("C:\\Users\\tiffn_000\\Desktop\\Figures\\",names(american)[[11]],"_areaplot.png",sep=""), width=8.5, height=11, units="in", res=600)
+plotstest$decadesplot
+dev.off()
+png(file=paste("C:\\Users\\tiffn_000\\Desktop\\Figures\\",names(american)[[11]],"_areaplot_Daysabove.png",sep=""), width=8.5, height=11, units="in", res=600)
+plotstestmon$decades_plotdays
+dev.off()
+png(file=paste("C:\\Users\\tiffn_000\\Desktop\\Figures\\",names(american)[[11]],"_areaplot_volabove.png",sep=""), width=8.5, height=11, units="in", res=600)
+plotstestmon$decades_plotvol
 dev.off()
 
 #input i speakflowsummary df#
@@ -888,8 +956,69 @@ hypeakplots <- function(input,gauge){
 			geom_area(aes(fill=factor(plotorder)),color="black",position="fill") + scale_x_reverse(name="Decade", breaks=unique(decades_merge$stdecade))+ coord_flip() +
 			scale_fill_manual(name="Month",values=colgrad, labels=leglabels) + ylab("Number of Peaks as a Fraction of Total Peaks Per Decade")+
 			ggtitle(paste("USGS",gauge,sep=""))
+	
 			
-return(list(numplotsmon=numplots, propplotsmon=propplots, trinumplots=trinumplots, tripropplots=tripropplots, decadesplot = decades_plot, monplot=mon_plot))
+return(list(numplotsmon=numplots, propplotsmon=propplots, trinumplots=trinumplots, tripropplots=tripropplots, decadesplot = decades_plot, monplot=mon_plot, decades_merge=decades_merge))
+}
+
+hypeakplotsstats <- function(inputstats, gauge){
+	library(ggplot2)
+	startyear <- inputstats$sthyyear[[1]]
+	startmon <- inputstats$month[[1]]
+	endyear <- tail(inputstats$sthyyear,1)
+	endmon <- tail(inputstats$month,1)
+	
+	yrseq <- unique(inputstats$sthyyear)
+	
+	pkdatem <- inputstats$month
+	pkdatey <- inputstats$sthyyear
+	totalnumyrs <- 2015-as.numeric(startyear)
+	numdecades <- floor(totalnumyrs/10)
+	decadesyrseq <- seq(as.numeric(startyear),length.out=(numdecades+1), by=10)
+	decades <- vector("list", length(numdecades))
+	monlist <- c("10","11","12","01","02","03","04","05","06","07","08","09")
+	
+	for(i in 1:numdecades){
+		decades[[i]] <- data.frame(stdecade=decadesyrseq[[i]], mon=rep(NA,12), daysabv=rep(NA,12),totdaysabv=rep(NA,12),
+				volabv_acft=rep(NA,12), totvolabv_acft=rep(NA,12),
+				prop_days=rep(NA,12),prop_vol=rep(NA,12), plotorder=seq(1,12,1))
+		for(n in 1:length(monlist)){
+			decades[[i]]$mon[[n]] <- monlist[[n]]
+			decades[[i]]$daysabv[[n]] <- sum(inputstats$TotDaysAbv[(pkdatem==monlist[[n]]&(pkdatey>=decadesyrseq[[i]]&pkdatey<decadesyrseq[[i+1]]))], na.rm=TRUE)
+			decades[[i]]$totdaysabv[[n]] <- sum(inputstats$TotDaysAbv[(pkdatey>=decadesyrseq[[i]]&pkdatey<(decadesyrseq[[i+1]]))], na.rm=TRUE)
+			decades[[i]]$volabv_acft[[n]] <- sum(inputstats$TotVolAbv_acft[(pkdatem==monlist[[n]]&(pkdatey>=decadesyrseq[[i]]&pkdatey<decadesyrseq[[i+1]]))], na.rm=TRUE)
+			decades[[i]]$totvolabv_acft[[n]] <- sum(inputstats$TotVolAbv_acft[(pkdatey>=decadesyrseq[[i]]&pkdatey<(decadesyrseq[[i+1]]))], na.rm=TRUE)
+			if(decades[[i]]$daysabv[[n]]==0&decades[[i]]$totdaysabv[[n]]==0){
+				decades[[i]]$prop_days[[n]] <- 0
+			} else {
+				decades[[i]]$prop_days[[n]] <- decades[[i]]$daysabv[[n]]/decades[[i]]$totdaysabv[[n]]
+			}
+			if(decades[[i]]$volabv_acft[[n]]==0&decades[[i]]$totvolabv_acft[[n]]==0){
+				decades[[i]]$prop_vol[[n]] <- 0
+			} else {
+				decades[[i]]$prop_vol[[n]] <- decades[[i]]$volabv_acft[[n]]/decades[[i]]$totvolabv_acft[[n]]
+			}
+			
+		}
+		names(decades)[[i]] <- paste(decadesyrseq[[i]],"-",decadesyrseq[[i+1]], sep="")
+	}
+	
+	colgrad <- c(	"#CAC393","#548DA6","#0067B2",
+			"#0BA5BB","#18C3A4","#25CB7B","#34D356",
+			"#51DC43","#8CE454","#C3EC65","#F4F478","#FDDA8C")
+	leglabels <- c("OCT","NOV","DEC","JAN","FEB","MAR","APR","MAY","JUN","JUL","AUG","SEP")
+	decades_merge <- do.call(rbind.data.frame,decades)
+	decades_merge$plotyear <- decades_merge$stdecade+5
+	
+	decades_plotdays <- ggplot(data=decades_merge,mapping=aes(x=plotyear,y=prop_days))+
+			geom_area(aes(fill=factor(plotorder)),color="black",position="fill") + scale_x_reverse(name="Decade", breaks=unique(decades_merge$stdecade))+ coord_flip() +
+			scale_fill_manual(name="Month",values=colgrad, labels=leglabels) + ylab("Number of Days Above 90% as a Fraction of Total Days Above 90% Per Decade")+
+			ggtitle(paste("USGS",gauge,sep=""))
+	decades_plotvol <- ggplot(data=decades_merge,mapping=aes(x=plotyear,y=prop_vol))+
+			geom_area(aes(fill=factor(plotorder)),color="black",position="fill") + scale_x_reverse(name="Decade", breaks=unique(decades_merge$stdecade))+ coord_flip() +
+			scale_fill_manual(name="Month",values=colgrad, labels=leglabels) + ylab("Volume Above 90% as a Fraction of Total Volume Above 90% Per Decade")+
+			ggtitle(paste("USGS",gauge,sep=""))
+	return(list(decades_plotdays=decades_plotdays, decades_plotvol=decades_plotvol))
 }
 
 plotstest <- hypeakplots(peakflowsummaryhy90, names(american)[[11]])
@@ -924,6 +1053,12 @@ for(i in 1:length(peakflowstatshy90$TotDaysAbv)){
 }
 peakflowstatshy90$volday_is_zero_cumsum <- cumsum(peakflowstatshy90$volday_is_zero)
 
+peakflowsmonthly_statslisthy90 <- vector("list", length(peakflowshy90))
+for(i in 1:length(peakflowshy90)){
+	peakflowsmonthly_statslisthy90[[i]] <- peakflowshy90[[i]][[3]]
+}
+peakflowsmonthly_statshy90 <- do.call(rbind.data.frame,peakflowsmonthly_statslisthy90)
+
 gmtesthy90 <- glm(peakflowstatshy90$TotVolAbv_acft[peakflowstatshy90$TotVolAbv_acft != 0]~peakflowstatshy90$year[peakflowstatshy90$TotVolAbv_acft != 0], family=gaussian)
 volpredicthy90 <- predict(gmtesthy90)
 glmzeroprehy90 <- glm(peakflowstatshy90$volday_is_zero_cumsum[peakflowstatshy90$year<1974]~peakflowstatshy90$year[peakflowstatshy90$year<1974], family=gaussian)
@@ -943,15 +1078,31 @@ dev.off()
 
 
 plotstest <- hypeakplots(peakflowsummaryhy90, names(american)[[9]])
-pdf(file=paste("C:\\Users\\tiffn_000\\Desktop\\Figures\\",names(american)[[9]],"_areaplot.pdf",sep=""), width=8.5, height=11)
-plotstest$decadesplot
-dev.off()
-
-plotstest <- hypeakplots(peakflowsummaryhy90, names(american)[[9]])
 pdf(file=paste("C:\\Users\\tiffn_000\\Desktop\\Figures\\",names(american)[[9]],"_areaMONplot.pdf",sep=""), width=8.5, height=11)
 plotstest$monplot
 dev.off()
 
+pdf(file=paste("C:\\Users\\tiffn_000\\Desktop\\Figures\\",names(american)[[9]],"_areaplot.pdf",sep=""), width=8.5, height=11)
+plotstest$decadesplot
+dev.off()
+
+
+plotstestmon <- hypeakplotsstats(peakflowsmonthly_statshy90, names(american)[[9]])
+pdf(file=paste("C:\\Users\\tiffn_000\\Desktop\\Figures\\",names(american)[[9]],"_areaplot_Daysabove.pdf",sep=""), width=8.5, height=11)
+plotstestmon$decades_plotdays
+dev.off()
+pdf(file=paste("C:\\Users\\tiffn_000\\Desktop\\Figures\\",names(american)[[9]],"_areaplot_volabove.pdf",sep=""), width=8.5, height=11)
+plotstestmon$decades_plotvol
+dev.off()
+png(file=paste("C:\\Users\\tiffn_000\\Desktop\\Figures\\",names(american)[[9]],"_areaplot.png",sep=""), width=8.5, height=11, units="in", res=600)
+plotstest$decadesplot
+dev.off()
+png(file=paste("C:\\Users\\tiffn_000\\Desktop\\Figures\\",names(american)[[9]],"_areaplot_Daysabove.png",sep=""), width=8.5, height=11, units="in", res=600)
+plotstestmon$decades_plotdays
+dev.off()
+png(file=paste("C:\\Users\\tiffn_000\\Desktop\\Figures\\",names(american)[[9]],"_areaplot_volabove.png",sep=""), width=8.5, height=11, units="in", res=600)
+plotstestmon$decades_plotvol
+dev.off()
 
 
 ############
