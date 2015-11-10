@@ -69,9 +69,9 @@ peaks <- function(input, width, threshold,thresholdname, mastertime, Index){
 	  peaks <- rollapply(input$Discharge_cfs, width, function(x) which.max(x) == mid, 
 				    align = "center", fill=NA)
 	  peaks[input$Discharge_cfs < threshold] <-  FALSE
+	  numpeaks <- sum(peaks,na.rm=TRUE)
 	  datepeaks <- input$Date[which(peaks==TRUE)]
 	  peakflow <- input$Discharge_cfs[which(peaks==TRUE)]
-	  numpeaks <- sum(peaks,na.rm=TRUE)
 	  peakloc <- which(peaks==TRUE)
 	  threshlog <- input$Discharge_cfs >= threshold
 	  mon <- format(input$Date,"%m")
@@ -172,7 +172,7 @@ peaks <- function(input, width, threshold,thresholdname, mastertime, Index){
 					  summary$end[[i]] <- NA 
 				  } else {summary$end[[i]] <- input$Date[dur$end]}
 				  summary$duration[[i]] <- dur$duration
-			  	summary$year[[i]] <- as.numeric(format(tail(input$Date,1),"%Y"))
+			  	summary$year[[i]] <- as.numeric(format(head(input$Date,1),"%Y"))
 				summary$yeartype_index[[i]] <- yearindex
 		  }
 		  
@@ -185,14 +185,14 @@ peaks <- function(input, width, threshold,thresholdname, mastertime, Index){
 			  if(length(summary$peak_flow)==0){
 				  summary <- data.frame(peak_date=c(NA), peak_flow=c(NA), thres_value=c(NA), thres=c(NA),
 						  start=c(NA),end=c(NA),
-						  duration=c(NA),vol_acft_event=c(NA), year=as.numeric(format(tail(input$Date,1),"%Y")), yeartype_index=yearindex)
+						  duration=c(NA),vol_acft_event=c(NA), year=as.numeric(format(head(input$Date,1),"%Y")), yeartype_index=yearindex)
 			  }
 			  firstdate <- as.Date(summary$start[[1]])
 			  enddate <- as.Date(tail(summary$end,1))
 			  if(is.na(firstdate)|is.na(enddate)){
 						  stats <- data.frame(TotVolAbv_acft=c(0), TotDaysAbv = c(0), 
 								  numpeaks = c(0), mean_peakflow = c(0), total_peakflow = c(0),
-								  year=as.numeric(format(tail(input$Date,1),"%Y")), yeartype_index=yearindex)
+								  year=as.numeric(format(head(input$Date,1),"%Y")), yeartype_index=yearindex)
 			  }else {
 				  daterangeloc <- which(input$Date==firstdate):which(input$Date==enddate)
 				  peaks3mon <- peaks[daterangeloc]
@@ -225,21 +225,21 @@ peaks <- function(input, width, threshold,thresholdname, mastertime, Index){
 
 				  stats <- data.frame(TotVolAbv_acft=totalvolabv, TotDaysAbv = totaldaysabv, 
 						  numpeaks = numpeaks3mon, mean_peakflow = avgpeakflow, total_peakflow=total_peakflow,
-						  year=as.numeric(format(tail(input$Date,1),"%Y")), yeartype_index=yearindex)
+						  year=as.numeric(format(head(input$Date,1),"%Y")), yeartype_index=yearindex)
 			  }
 		  } else if(mastertime=="hy"){
 			  summary <- summary
 			  if(length(summary$peak_flow)==0){
 				  summary <- data.frame(peak_date=c(NA), peak_flow=c(NA), thres_value=c(NA), thres=c(NA),
 						  start=c(NA),end=c(NA),
-						  duration=c(NA),vol_acft_event=c(NA), year=as.numeric(format(tail(input$Date,1),"%Y")), yeartype_index=yearindex)
+						  duration=c(NA),vol_acft_event=c(NA), year=as.numeric(format(head(input$Date,1),"%Y")), yeartype_index=yearindex)
 			  }
 			  firstdate <- as.Date(summary$start[[1]])
 			  enddate <- as.Date(tail(summary$end,1))
 			  if(is.na(firstdate)|is.na(enddate)){
 				  stats <- data.frame(TotVolAbv_acft=c(0), TotDaysAbv = c(0), 
 						  numpeaks = c(0), mean_peakflow = c(0), total_peakflow = c(0),
-						  year=as.numeric(format(tail(input$Date,1),"%Y")), yeartype_index=yearindex)
+						  year=as.numeric(format(head(input$Date,1),"%Y")), yeartype_index=yearindex)
 			  }else {
 				  daterangeloc <- which(input$Date==firstdate):which(input$Date==enddate)
 				  peakshy <- peaks[daterangeloc]
@@ -272,7 +272,7 @@ peaks <- function(input, width, threshold,thresholdname, mastertime, Index){
 				  
 				  stats <- data.frame(TotVolAbv_acft=totalvolabv, TotDaysAbv = totaldaysabv, 
 						  numpeaks = numpeakshy, mean_peakflow = avgpeakflow, total_peakflow=total_peakflow,
-						  year=as.numeric(format(tail(input$Date,1),"%Y")), yeartype_index=yearindex)
+						  year=as.numeric(format(head(input$Date,1),"%Y")), yeartype_index=yearindex)
 			  }
 		  }else {
 			  stop("mastertime error")
@@ -280,10 +280,10 @@ peaks <- function(input, width, threshold,thresholdname, mastertime, Index){
 	} else {
 		summary <- data.frame(peak_date=c(NA), peak_flow=c(NA), thres_value=c(NA), thres=c(NA),
 					  start=c(NA),end=c(NA),
-					  duration=c(NA),vol_acft_event=c(NA), year=as.numeric(format(tail(input$Date,1),"%Y")), yeartype_index=yearindex)
+					  duration=c(NA),vol_acft_event=c(NA), year=as.numeric(format(head(input$Date,1),"%Y")), yeartype_index=yearindex)
 		stats <- data.frame(TotVolAbv_acft=c(0), TotDaysAbv = c(0), 
 					  numpeaks = c(0), mean_peakflow = c(0),total_peakflow=c(0),
-					  year=as.numeric(format(tail(input$Date,1),"%Y")), yeartype_index=yearindex)
+					  year=as.numeric(format(head(input$Date,1),"%Y")), yeartype_index=yearindex)
 	}
 	if(mastertime=="hy"){
 		monthly_stats <- data.frame(month=rep(NA,12),TotVolAbv_acft=rep(NA,12), TotDaysAbv=rep(NA,12),sthyyear=rep(NA,12), threshold=rep(threshold,12))
@@ -516,7 +516,7 @@ dev.off()
 #input i speakflowsummary df#
 hypeakplots <- function(input,gauge){
 	library(ggplot2)
-	startyear <- format(input$peak_date[[1]],"%Y")
+	startyear <- input$year[[1]]
 	startmon <- format(input$peak_date[[1]],"%m")
 	endyear <- format(tail(input$peak_date,1),"%Y")
 	endmon <- format(tail(input$peak_date,1),"%m")
