@@ -21,3 +21,11 @@ for(i in 1:length(impfiles)){
 }
 
 impairmentsdf <- do.call(rbind.data.frame,impairments)
+
+damsearch <- function(input, damdf){
+	gauge <- input[[1]]$site_no[[1]]
+	damsgauge <- damdf[which(damdf$downstreamgauge==gauge),]
+	return(damsgauge)
+}
+
+noimp <- impairmentsdf$downstreamgauge[is.na(impairmentsdf$DSTR_GAUGE)]
