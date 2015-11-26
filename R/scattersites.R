@@ -115,11 +115,11 @@ for(k in 1:length(scatter)){
 	}
 	scatter_peakflowsdf[[k]]$pfstatsdf$volday_is_zero_cumsum <- cumsum(scatter_peakflowsdf[[k]]$pfstatsdf$volday_is_zero)	
 }
-names(scatter_peakflowsdf)<- scatter_g
-names(scatter_peakflows)<- scatter_g
-names(scatter_peakflowstats)<- scatter_g
-names(scatter_peakflowsummary)<- scatter_g
-names(scatter_peakflowmonthlystats)<- scatter_g
+names(scatter_peakflowsdf)<- names(scatter)
+names(scatter_peakflows)<- names(scatter)
+names(scatter_peakflowstats)<- names(scatter)
+names(scatter_peakflowsummary)<- names(scatter)
+names(scatter_peakflowmonthlystats)<- names(scatter)
 
 for(k in 1:length(scatter)){
 	damsunique <- data.frame(year=unique(scatter[[k]]$dams$YEAR_BUILT), totalcapacity_yr = rep(NA,length(unique(scatter[[k]]$dams$YEAR_BUILT))))
@@ -187,5 +187,114 @@ unimp <- c(11189500,
 
 unimp_edit <- read.csv("C:\\Users\\tiffn_000\\Documents\\GIS\\scatter_sites\\scatter_sites_unimp_edited2.csv")
 
-
+unimp2 <- c(
+		11189500,
+		11230500,
+		11231500,
+		11237000,
+		11237500,
+		11264500,
+		11266500,
+		11315000,
+		11317000,
+		11318500,
+		11367500,
+		11374000,
+		11381500,
+		11383500,
+		11402000,
+		11413000
+		)
 ###try 3-mon peakflows###
+
+for(z in 1:length(scatter)){
+ 		scatter[[z]]$Winter_3mon <- Split3Winter(scatter[[z]]$prep, scatter[[z]]$Index, scatter[[z]]$thresholds_maf)
+		scatter[[z]]$Winter_6mon <- Split6Winter(scatter[[z]]$prep, scatter[[z]]$Index, scatter[[z]]$thresholds_maf)
+		scatter[[z]]$Winter_6mon <- cleanup6MON(scatter[[z]]$Winter_6mon)
+		scatter[[z]]$Winter_3mon <- cleanup3MON(scatter[[z]]$Winter_3mon)
+}
+
+
+scatter_peakflows3 <- vector("list", length(scatter))
+scatter_peakflowstats3 <- vector("list", length(scatter))
+scatter_peakflowsummary3 <- vector("list", length(scatter))
+scatter_peakflowmonthlystats3 <- vector("list", length(scatter))
+scatter_peakflowsdf3 <- vector("list", length(scatter))
+for(k in 1:length(scatter)){
+	scatter_peakflows3[[k]] <- vector("list",1)
+	names(scatter_peakflows3[[k]]) <- c("peakflows")
+	scatter_peakflows3[[k]]$peakflows <- vector("list", length=length(scatter[[k]]$Winter_3mon$Data))
+	for(i in 1:length(scatter[[k]]$Winter_3mon$Data)){
+		scatter_peakflows3[[k]]$peakflows[[i]] <- peakanalysis(input=scatter[[k]]$Winter_3mon$Data[[i]],
+				width=3, threshold=(scatter[[k]]$thresholds_maf$P90maf/(86400*2.29568411e-5*1e-6)), 
+				thresholdname="90%", mastertime="3mon", Index=scatter[[k]]$Index)
+	}
+	scatter_peakflowstats3[[k]] <- vector("list",length(scatter_peakflows3[[k]]$peakflows))
+	for(i in 1:length(scatter_peakflows3[[k]]$peakflows))	{
+		scatter_peakflowstats3[[k]][[i]] <- scatter_peakflows3[[k]]$peakflows[[i]][[2]]
+	}
+	scatter_peakflowsummary3[[k]] <- vector("list",length(scatter_peakflows3[[k]]$peakflows))
+	for(i in 1:length(scatter_peakflows3[[k]]$peakflows))	{
+		scatter_peakflowsummary3[[k]][[i]] <- scatter_peakflows3[[k]]$peakflows[[i]][[1]]
+	}
+	scatter_peakflowmonthlystats3[[k]] <- vector("list",length(scatter_peakflows3[[k]]$peakflows))
+	for(i in 1:length(scatter_peakflows3[[k]]$peakflows))	{
+		scatter_peakflowmonthlystats3[[k]][[i]] <- scatter_peakflows3[[k]]$peakflows[[i]][[3]]
+	}
+	scatter_peakflowsdf3[[k]] <- vector("list",3)
+	names(scatter_peakflowsdf3[[k]]) <- c("pfstatsdf3","pfsummarydf3","pfmonthlystats3")
+	scatter_peakflowsdf3[[k]]$pfstatsdf3 <- do.call(rbind.data.frame,scatter_peakflowstats3[[k]])
+	scatter_peakflowsdf3[[k]]$pfsummarydf3 <- do.call(rbind.data.frame,scatter_peakflowsummary3[[k]])
+	scatter_peakflowsdf3[[k]]$pfmonthlystats3 <- do.call(rbind.data.frame,scatter_peakflowmonthlystats3[[k]])
+	scatter_peakflowsdf3[[k]]$pfstatsdf3$volday_is_zero <- rep(NA, length(scatter_peakflowsdf3[[k]]$pfstatsdf3$TotDaysAbv))
+	for(i in 1:length(scatter_peakflowsdf3[[k]]$pfstatsdf3$TotDaysAbv)){
+		if(scatter_peakflowsdf3[[k]]$pfstatsdf3$TotDaysAbv[[i]]==0){
+			scatter_peakflowsdf3[[k]]$pfstatsdf3$volday_is_zero[[i]] <- 1
+		}else{
+			scatter_peakflowsdf3[[k]]$pfstatsdf3$volday_is_zero[[i]] <- 0
+		}
+	}
+	scatter_peakflowsdf3[[k]]$pfstatsdf3$volday_is_zero_cumsum <- cumsum(scatter_peakflowsdf3[[k]]$pfstatsdf3$volday_is_zero)	
+}
+names(scatter_peakflowsdf3)<- names(scatter)
+names(scatter_peakflows3)<- names(scatter)
+names(scatter_peakflowstats3)<- names(scatter)
+names(scatter_peakflowsummary3)<- names(scatter)
+names(scatter_peakflowmonthlystats3)<- names(scatter)
+
+for(z in 1:length(scatter)){
+	png(file=paste("C:\\Users\\tiffn_000\\Desktop\\Figures3\\zeroyears\\",names(scatter)[[z]],"_cumzero.png",sep=""), width=11, height=8.5, units="in", res=600)
+	plot(scatter_peakflowsdf3[[z]]$pfstatsdf3$year,scatter_peakflowsdf3[[z]]$pfstatsdf3$volday_is_zero_cumsum,
+			ylab="Cumulative Number of Years With Zero Flow Above 90%", xlab="Year")
+	for(i in 1:length(scatter[[z]]$damsunique$year)){
+		abline(v=scatter[[z]]$damsunique$year[[i]], col="red")
+		text(x=scatter[[z]]$damsunique$year[[i]], y = max(scatter_peakflowsdf3[[z]]$pfstatsdf3$volday_is_zero_cumsum),labels=as.character(scatter[[z]]$damsunique$totalcapacity_yr[[i]]))
+	}
+	title(main=paste(scatter[[z]]$raw$site_no[[1]], "\nRed Line is year of dam, \nnumber is total capacity of dams added in year", sep=""))
+	dev.off()
+}
+
+
+for(z in 1:length(scatter)){
+	png(file=paste("C:\\Users\\tiffn_000\\Desktop\\Figures3\\volabv\\",names(scatter)[[z]],"_volabv.png",sep=""), width=11, height=8.5, units="in", res=600)
+	plot(scatter_peakflowsdf3[[z]]$pfstatsdf3$year,scatter_peakflowsdf3[[z]]$pfstatsdf3$TotVolAbv_acft,
+			ylab="Vol Above 90% acft", xlab="Year")
+	for(i in 1:length(scatter[[z]]$damsunique$year)){
+		abline(v=scatter[[z]]$damsunique$year[[i]], col="red")
+		text(x=scatter[[z]]$damsunique$year[[i]], y = max(scatter_peakflowsdf3[[z]]$pfstatsdf3$TotVolAbv_acft),labels=as.character(scatter[[z]]$damsunique$totalcapacity_yr[[i]]))
+	}
+	title(main=paste(scatter[[z]]$raw$site_no[[1]], "\nRed Line is year of dam, \nnumber is total capacity of dams added in year", sep=""))
+	dev.off()
+}
+
+for(z in 1:length(scatter)){
+	png(file=paste("C:\\Users\\tiffn_000\\Desktop\\Figures3\\daysabv\\",names(scatter)[[z]],"_daysabv.png",sep=""), width=11, height=8.5, units="in", res=600)
+	plot(scatter_peakflowsdf3[[z]]$pfstatsdf3$year,scatter_peakflowsdf3[[z]]$pfstatsdf3$TotDaysAbv,
+			ylab="Days Above 90% acft", xlab="Year")
+	for(i in 1:length(scatter[[z]]$damsunique$year)){
+		abline(v=scatter[[z]]$damsunique$year[[i]], col="red")
+		text(x=scatter[[z]]$damsunique$year[[i]], y = max(scatter_peakflowsdf3[[z]]$pfstatsdf3$TotDaysAbv),labels=as.character(scatter[[z]]$damsunique$totalcapacity_yr[[i]]))
+	}
+	title(main=paste(scatter[[z]]$raw$site_no[[1]], "\nRed Line is year of dam, \nnumber is total capacity of dams added in year", sep=""))
+	dev.off()
+}
