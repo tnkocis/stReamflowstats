@@ -298,3 +298,52 @@ for(z in 1:length(scatter)){
 	title(main=paste(scatter[[z]]$raw$site_no[[1]], "\nRed Line is year of dam, \nnumber is total capacity of dams added in year", sep=""))
 	dev.off()
 }
+
+
+
+yearhyC <- data.frame(discharge=scatter$`11374000`$HydroYear$Data$`1990 - 1991`$Discharge_cfs,date=scatter$`11374000`$HydroYear$Data$`1990 - 1991`$Date,yeartype="critical")
+yearhyW <- data.frame(discharge=scatter$`11374000`$HydroYear$Data$`2010 - 2011`$Discharge_cfs,date=scatter$`11374000`$HydroYear$Data$`1990 - 1991`$Date,yeartype="wet")
+yearhyBN <- data.frame(discharge=scatter$`11374000`$HydroYear$Data$`2011 - 2012`$Discharge_cfs,date=scatter$`11374000`$HydroYear$Data$`1990 - 1991`$Date,yeartype="below normal")
+yearhytridf <- rbind.data.frame(yearhyC,yearhyW,yearhyBN)
+yearhytridf$yeartype<- factor(yearhytridf$yeartype, levels=c("wet","below normal", "critical"))
+
+cols <- c("streamflow"="black","95%"="blue","90%"="chartreuse4")
+
+
+yearhytriplot <- ggplot(data=yearhytridf, aes(x=date,y=discharge,color="streamflow"))+geom_line()+facet_grid(. ~ yeartype)+
+		geom_hline(aes(yintercept=scatter$`11374000`$thresholds_maf$P95maf*43556*1e6/86400, color="95%"), size=1)+
+		geom_hline(aes(yintercept=scatter$`11374000`$thresholds_maf$P90maf*43556*1e6/86400, color="90%"), size=1)+
+		scale_x_date(breaks="1 month", labels=date_format(format="%b"))+
+		scale_y_continuous(breaks=seq(0,9000,1000), limits=c(0,9000))+ ylab("Discharge(cfs)")+ xlab("Date")+ 
+		theme(
+				legend.position= "bottom",
+				panel.grid.minor = element_blank(),
+				panel.border = element_rect(colour = "black", fill=NA, size=1)
+		)+
+		scale_color_manual(name="",values=cols, breaks=(c("95%","90%","streamflow"))) +ggtitle("Sample Hydrographs and Thresholds Across Three Year Types")
+
+ggsave(yearhytriplot, file="C:\\Users\\tiffn_000\\Desktop\\Figures\\WBpresentation\\samplehydrographs2.jpg", height=8.5, width=11, dpi=300)
+
+tmonwet <- data.frame(discharge=scatter$`11374000`$Winter_3mon$Data$`2010 - 2011`$Discharge_cfs,date=scatter$`11374000`$Winter_3mon$Data$`2010 - 2011`$Date,yeartype="wet")
+tmonplot <- ggplot(data=tmonwet, aes(x=date, y=discharge, color="streamflow")) +
+		geom_line()+
+		geom_hline(aes(yintercept=scatter$`11374000`$thresholds_maf$P95maf*43556*1e6/86400, color="95%"))+
+		geom_hline(aes(yintercept=scatter$`11374000`$thresholds_maf$P90maf*43556*1e6/86400, color="90%"))+
+		scale_x_date(breaks="1 month", labels=date_format(format="%b"))+
+		scale_y_continuous(breaks=seq(0,9000,1000), limits=c(0,9000))+ ylab("Discharge(cfs)")+ xlab("Date")+ 
+		theme(
+				
+#				panel.grid.minor = element_blank(),
+				legend.position= "bottom",
+				panel.border = element_rect(colour = "black", fill=NA, size=1)
+		)+
+		scale_color_manual(name="",values=cols, breaks=(c("95%","90%","streamflow")))+
+		ggtitle("Sample Peak Flow Analysis, Three Month Winter Period")
+
+ggsave(tmonplot, file="C:\\Users\\tiffn_000\\Desktop\\Figures\\WBpresentation\\3monthgraph.jpg", height=8.5, width=11, dpi=300)
+
+
+multiplot(yearhydrographW,
+yearhydrographBN,
+yearhydrographC,
+cols=3)
