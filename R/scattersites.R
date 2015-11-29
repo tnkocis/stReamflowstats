@@ -347,3 +347,69 @@ multiplot(yearhydrographW,
 yearhydrographBN,
 yearhydrographC,
 cols=3)
+
+for(i in 1:length(scatter)){
+	vol <- rep(NA, 5)
+	avgvol <- rep(NA, 5)
+	frac <- rep(NA, 5)
+	for(n in 1:5){
+		vol[[n]] <- scatter[[i]]$Winter_3mon[[n+3]]$Stats$Thresholds$Totals$Volume_Abv_acfte6[[7]]
+		blah <- data.frame(year=as.numeric(format(scatter[[i]]$Winter_3mon[[n+3]]$Data$Date, "%Y")),
+				month=as.numeric(format(scatter[[i]]$Winter_3mon[[n+3]]$Data$Date, "%m")))
+		blah[-which(blah$month!=1),]
+		avgvol[[n]] <-  vol[[n]]/(length(unique(blah$year)))
+		frac[[n]] <- vol[[n]]/scatter[[i]]$Winter_3mon$All$Stats$Thresholds$Totals$Volume_Abv_acfte6[[7]]
+	}
+	
+	d <- data.frame(yeartype=c("Critical", "Dry", "Below Normal", "Above Normal", "Wet"),
+			Volume_TAF=vol*1000,
+			Average_Volume_TAF=avgvol*1000,
+			Frac=frac,
+			gauge=rep(names(scatter)[[i]]))
+	d["yeartype"] <- factor(d$yeartype, levels = c("Critical", "Dry", "Below Normal", "Above Normal", "Wet"))
+	
+	scatter[[i]]$Plots$stacked_90 <- ggplot(d, aes(x = gauge, y = Frac, fill = yeartype, width=0.25)) + geom_bar(type = "stacked", stat = "identity") + labs(title="Flows Above 90th Percentile Over 80 Years
+							December to January", 
+					x="Gauge", y="Fraction of Total Flows Above 90th Percentile")+ 
+			guides(fill=guide_legend(title="Year Type", reverse=TRUE)) + scale_fill_brewer(palette = "YlGnBu")+
+#			scale_x_discrete(labels=c("Sacramento (11389500)", "San Joaquin (11274000)", "Tulare (11186001)"))+
+			theme(axis.text.x=element_text(size=8))
+	
+	scatter[[i]]$Plots$avgvol_90 <- ggplot(d, aes(x = yeartype, y = Average_Volume_TAF, width=0.5, fill=yeartype)) + geom_bar(stat="identity") + facet_wrap(~gauge)+ 
+			theme(axis.text.x=element_text(size=10)) + scale_fill_brewer(palette = "YlGnBu") +
+			scale_x_discrete(labels=c("C", "D", "BN", "AN","W")) + guides(fill=guide_legend(title="Year Type", reverse=TRUE))+
+			labs(title="Total Flows Above 90th Percentile For Average Year Type
+							December to January", 
+					x="Year Type", y="Magnitude of Average Year Type Total Flow (TAF)")+
+			scale_y_continuous(labels = comma, breaks=pretty_breaks(n=10)) 
+	ggsave(plot=scatter[[i]]$Plots$stacked_90, 
+			filename=paste("C:\\Users\\tiffn_000\\Desktop\\Figures\\WBpresentation\\stacked\\",d$gauge[[1]],"_stacked_90.png"),
+			width=8.5, height=11, dpi=500)
+	ggsave(plot=scatter[[i]]$Plots$avgvol_90, 
+			filename=paste("C:\\Users\\tiffn_000\\Desktop\\Figures\\WBpresentation\\bar\\",d$gauge[[1]],"_avgvol_90.png"),
+			width=8.5, height=11, dpi=500)
+	
+}
+
+
+scatter_pktrends3mon <- vector("list",length(scatter))
+for(i in 1:length(scatter_peakflowsdf3)){
+	scatter_pktrends3mon[[i]] <- peakflowtrends(scatter_peakflowsdf3[[i]]$pfstatsdf3, names(scatter_peakflowsdf3)[[i]])
+}
+names(scatter_pktrends3mon)<-names(scatter_peakflowsdf3)
+
+scatter_pktrendshy <- vector("list",length(scatter))
+for(i in 1:length(scatter_peakflowsdf)){
+	scatter_pktrendshy[[i]] <- peakflowtrends(scatter_peakflowsdf[[i]]$pfstatsdf, names(scatter_peakflowsdf)[[i]])
+}
+names(scatter_pktrendshy)<-names(scatter_peakflowsdf)
+
+for(i in 1:length(scatter_pktrends3mon)){
+	write.csv(scatter_pktrends3mon[[i]], file=paste("C:\\Users\\tiffn_000\\Documents\\Data\\peakflowtrends\\pktrends3mon",names(scatter_pktrends3mon)[[i]],".csv",sep=""))
+}
+
+for(i in 1:length(scatter_pktrendshy)){
+	write.csv(scatter_pktrendshy[[i]] , file=paste("C:\\Users\\tiffn_000\\Documents\\Data\\peakflowtrends\\pktrendshy",names(scatter_pktrendshy)[[i]],".csv",sep=""))
+}
+
+
