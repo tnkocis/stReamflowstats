@@ -413,3 +413,54 @@ for(i in 1:length(scatter_pktrendshy)){
 }
 
 
+testvol <- rollmean(scatter_peakflowsdf3$`11374000`$pfstatsdf3$TotVolAbv_acft,5,na.pad=TRUE)
+lmtestvol <- lm(testvol~scatter_peakflowsdf3$`11374000`$pfstatsdf3$year)
+lmstd <- residuals(lmtestvol)/fitted.values(lmtestvol)
+testvoldf <- data.frame(stdvoldepart = unname(lmstd), year=scatter_peakflowsdf3$`11374000`$pfstatsdf3$year[1:62])
+testvoldf$sign <-rep(NA,length(testvoldf$year))
+testvoldf$sign[which(testvoldf$stdvoldepart>=0)] <- "p"
+testvoldf$sign[which(testvoldf$stdvoldepart<0)] <- "n"
+oni <- read.csv("C:\\Users\\tiffn_000\\Documents\\Data\\enso\\oni.csv", header=TRUE)
+rolloni <- data.frame(year=as.numeric(oni$Year), NDJ=rollmean(oni$NDJ,5,na.pad=TRUE))
+
+testvolplot <- ggplot(data=testvoldf, aes(x=year, y=stdvoldepart))+geom_bar(stat="identity", aes(fill=sign))+
+				geom_hline(y=0)+
+				scale_fill_manual(values = c("n" = "darkblue", "p" = "red"))+
+				geom_line(data=rolloni,aes(x=year,y=NDJ))
+		
+testvol <- rollmean(scatter_peakflowsdf3$`11237000`$pfstatsdf3$TotVolAbv_acft,10,na.pad=TRUE)
+testvoldf2 <- data.frame(vol=testvol, year=scatter_peakflowsdf3$`11237000`$pfstatsdf3$year, yr1=scatter_peakflowsdf3$`11237000`$pfstatsdf3$TotVolAbv_acft)
+testvolplot2 <- ggplot(data=testvoldf2, aes(x=year,y=vol))+geom_line(size=1)+
+		geom_line(aes(x=year,y=yr1))+
+		xlab("Year") + ylab("Volume Above 90th Percentile (acft)")+
+		ggtitle("Total Volume of Flow Above the 90th Percentile\n December to January")+
+		geom_smooth(method=lm, se=FALSE)
+ggsave(filename= "C:\\Users\\tiffn_000\\Desktop\\Figures\\WBpresentation\\voltrend_11237000.png", plot=testvolplot2, dpi=300, height=8, width=10 )
+
+testdays <- rollmean(scatter_peakflowsdf3$`11237000`$pfstatsdf3$TotDaysAbv,10,na.pad=TRUE)
+testdaysdf2 <- data.frame(days=testdays, year=scatter_peakflowsdf3$`11237000`$pfstatsdf3$year, yr1=scatter_peakflowsdf3$`11237000`$pfstatsdf3$TotDaysAbv)
+testdaysplot2 <- ggplot(data=testdaysdf2, aes(x=year,y=days))+geom_line(size=1)+
+		geom_line(aes(x=year,y=yr1))+
+		xlab("Year") + ylab("Number of Days Above 90th Percentile")+
+		ggtitle("Total Number of Days Above the 90th Percentile\n December to January")+
+		geom_smooth(method=lm, se=FALSE)
+ggsave(filename= "C:\\Users\\tiffn_000\\Desktop\\Figures\\WBpresentation\\daystrend_11237000.png", plot=testdaysplot2, dpi=300, height=8, width=10)
+
+testnum <- rollmean(scatter_peakflowsdf3$`11237000`$pfstatsdf3$numpeaks,10,na.pad=TRUE)
+testnumdf2 <- data.frame(days=testnum, year=scatter_peakflowsdf3$`11237000`$pfstatsdf3$year, yr1=scatter_peakflowsdf3$`11237000`$pfstatsdf3$numpeaks)
+testnumplot2 <- ggplot(data=testnumdf2, aes(x=year,y=days))+geom_line(size=1)+
+		geom_line(aes(x=year,y=yr1))+
+		xlab("Year") + ylab("Number of Peaks Above 90th Percentile")+
+		ggtitle("Total Number of Peaks Above the 90th Percentile\n December to January")+
+		geom_smooth(method=lm, se=FALSE)
+ggsave(filename= "C:\\Users\\tiffn_000\\Desktop\\Figures\\WBpresentation\\numpkstrend_11237000.png", plot=testnumplot2, dpi=300, height=8, width=10)
+
+meanpks <- rollmean(scatter_peakflowsdf3$`11237000`$pfstatsdf3$mean_peakflow,10,na.pad=TRUE)
+meanpksdf2 <- data.frame(days=meanpks, year=scatter_peakflowsdf3$`11237000`$pfstatsdf3$year, yr1=scatter_peakflowsdf3$`11237000`$pfstatsdf3$mean_peakflow)
+meanpksplot2 <- ggplot(data=meanpksdf2, aes(x=year,y=days))+geom_line(size=1)+
+		geom_line(aes(x=year,y=yr1))+
+		xlab("Year") + ylab("Mean Peakflow Event Magnitude (acft)")+
+		ggtitle("Mean Peakflow Event Magnitude Above the 90th Percentile\n December to January")+
+		geom_smooth(method=lm, se=FALSE)
+ggsave(filename= "C:\\Users\\tiffn_000\\Desktop\\Figures\\WBpresentation\\meanpkstrend_11237000.png", plot=meanpksplot2, dpi=300, height=8, width=10)
+
