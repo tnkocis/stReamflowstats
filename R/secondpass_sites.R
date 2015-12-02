@@ -10,6 +10,12 @@
 ###############################################################################
 
 
+# TODO: Add comment
+# 
+# Author: tiffn_000
+###############################################################################
+
+
 library(dplyr)
 library(hydroTSM)
 library(dataRetrieval)
@@ -62,7 +68,7 @@ for(z in 1:length(scatter_g)){
 	scatter[[z]]$dams <- damsearch(scatter[[z]], impairmentsdf)
 	if(all(scatter[[z]]$thresholds_maf==0)){
 	} else {
-
+		
 #		scatter[[z]]$Winter_3mon <- Split3Winter(scatter[[z]]$prep, scatter[[z]]$Index, scatter[[z]]$thresholds_maf)
 #		scatter[[z]]$Winter_6mon <- Split6Winter(scatter[[z]]$prep, scatter[[z]]$Index, scatter[[z]]$thresholds_maf)
 #		scatter[[z]]$Winter_monthly <- SplitWinterMonthly(scatter[[z]]$prep, scatter[[z]]$Index, scatter[[z]]$thresholds_maf)
@@ -168,22 +174,22 @@ for(z in 1:length(scatter)){
 
 
 unimp <- c(11189500,
-11230500,
-11231500,
-11237000,
-11237500,
-11244000,
-11264500,
-11266500,
-11315000,
-11367500,
-11374000,
-11381500,
-11383500,
-11402000,
-11318500,
-11413000,
-11317000)
+		11230500,
+		11231500,
+		11237000,
+		11237500,
+		11244000,
+		11264500,
+		11266500,
+		11315000,
+		11367500,
+		11374000,
+		11381500,
+		11383500,
+		11402000,
+		11318500,
+		11413000,
+		11317000)
 
 unimp_edit <- read.csv("C:\\Users\\tiffn_000\\Documents\\GIS\\scatter_sites\\scatter_sites_unimp_edited2.csv")
 
@@ -204,14 +210,14 @@ unimp2 <- c(
 		11383500,
 		11402000,
 		11413000
-		)
+)
 ###try 3-mon peakflows###
 
 for(z in 1:length(scatter)){
- 		scatter[[z]]$Winter_3mon <- Split3Winter(scatter[[z]]$prep, scatter[[z]]$Index, scatter[[z]]$thresholds_maf)
-		scatter[[z]]$Winter_6mon <- Split6Winter(scatter[[z]]$prep, scatter[[z]]$Index, scatter[[z]]$thresholds_maf)
-		scatter[[z]]$Winter_6mon <- cleanup6MON(scatter[[z]]$Winter_6mon)
-		scatter[[z]]$Winter_3mon <- cleanup3MON(scatter[[z]]$Winter_3mon)
+	scatter[[z]]$Winter_3mon <- Split3Winter(scatter[[z]]$prep, scatter[[z]]$Index, scatter[[z]]$thresholds_maf)
+	scatter[[z]]$Winter_6mon <- Split6Winter(scatter[[z]]$prep, scatter[[z]]$Index, scatter[[z]]$thresholds_maf)
+	scatter[[z]]$Winter_6mon <- cleanup6MON(scatter[[z]]$Winter_6mon)
+	scatter[[z]]$Winter_3mon <- cleanup3MON(scatter[[z]]$Winter_3mon)
 }
 
 
@@ -344,9 +350,9 @@ ggsave(tmonplot, file="C:\\Users\\tiffn_000\\Desktop\\Figures\\WBpresentation\\3
 
 
 multiplot(yearhydrographW,
-yearhydrographBN,
-yearhydrographC,
-cols=3)
+		yearhydrographBN,
+		yearhydrographC,
+		cols=3)
 
 for(i in 1:length(scatter)){
 	vol <- rep(NA, 5)
@@ -424,10 +430,10 @@ oni <- read.csv("C:\\Users\\tiffn_000\\Documents\\Data\\enso\\oni.csv", header=T
 rolloni <- data.frame(year=as.numeric(oni$Year), NDJ=rollmean(oni$NDJ,5,na.pad=TRUE))
 
 testvolplot <- ggplot(data=testvoldf, aes(x=year, y=stdvoldepart))+geom_bar(stat="identity", aes(fill=sign))+
-				geom_hline(y=0)+
-				scale_fill_manual(values = c("n" = "darkblue", "p" = "red"))+
-				geom_line(data=rolloni,aes(x=year,y=NDJ))
-		
+		geom_hline(y=0)+
+		scale_fill_manual(values = c("n" = "darkblue", "p" = "red"))+
+		geom_line(data=rolloni,aes(x=year,y=NDJ))
+
 testvol <- rollmean(scatter_peakflowsdf3$`11402000`$pfstatsdf3$TotVolAbv_acft,10,na.pad=TRUE)
 testvoldf2 <- data.frame(vol=testvol, year=scatter_peakflowsdf3$`11402000`$pfstatsdf3$year, yr1=scatter_peakflowsdf3$`11402000`$pfstatsdf3$TotVolAbv_acft)
 r2testvol <- summary(lm(testvoldf2$vol ~ testvoldf2$year))$r.squared
@@ -475,4 +481,5 @@ meanpksplot2 <- ggplot(data=meanpksdf2, aes(x=year,y=days))+geom_line(size=1, co
 		geom_smooth(method=lm, se=FALSE, color="red")+
 		geom_text(data=r2testnum,aes(label=paste("R^2: ",r2, sep="")),parse=TRUE,x=2010,y=4000)
 ggsave(filename= "C:\\Users\\tiffn_000\\Desktop\\Figures\\WBpresentation\\meanpkstrend_11402000.png", plot=meanpksplot2, dpi=300, height=8, width=10)
+
 
