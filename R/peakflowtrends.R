@@ -4,7 +4,7 @@
 ###############################################################################
 
 
-peakflowtrends <- function(pfstatsdf, gauge){
+peakflowtrends <- function(pfstatsdf, gauge, year){
 	library(zoo)
 	
 	meantotvol5 <- rollmean(pfstatsdf$TotVolAbv_acft,5,na.pad=TRUE)
@@ -168,6 +168,123 @@ peakflowtrends <- function(pfstatsdf, gauge){
 	
 	finaldf <- merge(MKdfs,SNdfs,by=c("window","measure"))
 	finaldf$gauge <- gauge
+
 	
-	return(finaldf)
+	meantotvol5 <- rollmean(pfstatsdf$TotVolAbv_acft[which(pfstatsdf$year>year)],5,na.pad=TRUE)
+	meantotvol10 <- rollmean(pfstatsdf$TotVolAbv_acft[which(pfstatsdf$year>year)],10,na.pad=TRUE)
+
+	
+	MKmeantotvol1 <- MannKendall(pfstatsdf$TotVolAbv_acft[which(pfstatsdf$year>year)])
+	MKmeantotvol1 <- data.frame(tau=MKmeantotvol1$tau[[1]],p2=MKmeantotvol1$sl[[1]],window=c(1),measure=c("totvolabv"))
+	MKmeantotvol5 <- MannKendall(meantotvol5)
+	MKmeantotvol5 <- data.frame(tau=MKmeantotvol5$tau[[1]],p2=MKmeantotvol5$sl[[1]],window=c(5),measure=c("totvolabv"))
+	MKmeantotvol10 <- MannKendall(meantotvol10)
+	MKmeantotvol10 <- data.frame(tau=MKmeantotvol10$tau[[1]],p2=MKmeantotvol10$sl[[1]],window=c(10),measure=c("totvolabv"))
+	MKmeantotvol <- rbind.data.frame(MKmeantotvol1,MKmeantotvol5,MKmeantotvol10)
+	
+	SNmeantotvol1 <- lm(pfstatsdf$TotVolAbv_acft[which(pfstatsdf$year>year)] ~ pfstatsdf$year[which(pfstatsdf$year>year)])
+	SNmeantotvol1 <- data.frame(slope=SNmeantotvol1$coefficients[[2]],SN=(var(fitted.values(SNmeantotvol1))/var(residuals(SNmeantotvol1))),window=c(1),measure=c("totvolabv"))
+	SNmeantotvol5 <- lm(meantotvol5 ~ pfstatsdf$year[which(pfstatsdf$year>year)])
+	SNmeantotvol5 <- data.frame(slope=SNmeantotvol5$coefficients[[2]],SN=(var(fitted.values(SNmeantotvol5))/var(residuals(SNmeantotvol5))),window=c(5),measure=c("totvolabv"))
+	SNmeantotvol10 <- lm(meantotvol10 ~ pfstatsdf$year[which(pfstatsdf$year>year)])
+	SNmeantotvol10 <- data.frame(slope=SNmeantotvol10$coefficients[[2]],SN=(var(fitted.values(SNmeantotvol10))/var(residuals(SNmeantotvol10))),window=c(10),measure=c("totvolabv"))
+	SNmeantotvol <- rbind.data.frame(SNmeantotvol1,SNmeantotvol5,SNmeantotvol10)
+	
+	
+	############################
+	meantotdays5 <- rollmean(pfstatsdf$TotDaysAbv[which(pfstatsdf$year>year)],5,na.pad=TRUE)
+	meantotdays10 <- rollmean(pfstatsdf$TotDaysAbv[which(pfstatsdf$year>year)],10,na.pad=TRUE)
+
+	
+	MKmeantotdays1 <- MannKendall(pfstatsdf$TotDaysAbv[which(pfstatsdf$year>year)])
+	MKmeantotdays1 <- data.frame(tau=MKmeantotdays1$tau[[1]],p2=MKmeantotdays1$sl[[1]],window=c(1),measure=c("totdaysabv"))
+	MKmeantotdays5 <- MannKendall(meantotdays5)
+	MKmeantotdays5 <- data.frame(tau=MKmeantotdays5$tau[[1]],p2=MKmeantotdays5$sl[[1]],window=c(5),measure=c("totdaysabv"))
+	MKmeantotdays10 <- MannKendall(meantotdays10)
+	MKmeantotdays10 <- data.frame(tau=MKmeantotdays10$tau[[1]],p2=MKmeantotdays10$sl[[1]],window=c(10),measure=c("totdaysabv"))
+	MKmeantotdays <- rbind.data.frame(MKmeantotdays1,MKmeantotdays5,MKmeantotdays10)
+	
+	SNmeantotdays1 <- lm(pfstatsdf$TotDaysAbv[which(pfstatsdf$year>year)] ~ pfstatsdf$year[which(pfstatsdf$year>year)])
+	SNmeantotdays1 <- data.frame(slope=SNmeantotdays1$coefficients[[2]],SN=(var(fitted.values(SNmeantotdays1))/var(residuals(SNmeantotdays1))),window=c(1),measure=c("totdaysabv"))
+	SNmeantotdays5 <- lm(meantotdays5 ~ pfstatsdf$year[which(pfstatsdf$year>year)])
+	SNmeantotdays5 <- data.frame(slope=SNmeantotdays5$coefficients[[2]],SN=(var(fitted.values(SNmeantotdays5))/var(residuals(SNmeantotdays5))),window=c(5),measure=c("totdaysabv"))
+	SNmeantotdays10 <- lm(meantotdays10 ~ pfstatsdf$year[which(pfstatsdf$year>year)])
+	SNmeantotdays10 <- data.frame(slope=SNmeantotdays10$coefficients[[2]],SN=(var(fitted.values(SNmeantotdays10))/var(residuals(SNmeantotdays10))),window=c(10),measure=c("totdaysabv"))
+	SNmeantotdays <- rbind.data.frame(SNmeantotdays1,SNmeantotdays5,SNmeantotdays10)
+	
+	####################
+	
+	meannumpks5 <- rollmean(pfstatsdf$numpeaks[which(pfstatsdf$year>year)],5,na.pad=TRUE)
+	meannumpks10 <- rollmean(pfstatsdf$numpeaks[which(pfstatsdf$year>year)],10,na.pad=TRUE)
+
+	MKmeannumpks1 <- MannKendall(pfstatsdf$numpeaks[which(pfstatsdf$year>year)])
+	MKmeannumpks1 <- data.frame(tau=MKmeannumpks1$tau[[1]],p2=MKmeannumpks1$sl[[1]],window=c(1),measure=c("numpeaksabv"))
+	MKmeannumpks5 <- MannKendall(meannumpks5)
+	MKmeannumpks5 <- data.frame(tau=MKmeannumpks5$tau[[1]],p2=MKmeannumpks5$sl[[1]],window=c(5),measure=c("numpeaksabv"))
+	MKmeannumpks10 <- MannKendall(meannumpks10)
+	MKmeannumpks10 <- data.frame(tau=MKmeannumpks10$tau[[1]],p2=MKmeannumpks10$sl[[1]],window=c(10),measure=c("numpeaksabv"))
+	MKmeannumpks <- rbind.data.frame(MKmeannumpks1,MKmeannumpks5,MKmeannumpks10)
+	
+	SNmeannumpks1 <- lm(pfstatsdf$TotDaysAbv[which(pfstatsdf$year>year)] ~ pfstatsdf$year[which(pfstatsdf$year>year)])
+	SNmeannumpks1 <- data.frame(slope=SNmeannumpks1$coefficients[[2]],SN=(var(fitted.values(SNmeannumpks1))/var(residuals(SNmeannumpks1))),window=c(1),measure=c("numpeaksabv"))
+	SNmeannumpks5 <- lm(meannumpks5 ~ pfstatsdf$year[which(pfstatsdf$year>year)])
+	SNmeannumpks5 <- data.frame(slope=SNmeannumpks5$coefficients[[2]],SN=(var(fitted.values(SNmeannumpks5))/var(residuals(SNmeannumpks5))),window=c(5),measure=c("numpeaksabv"))
+	SNmeannumpks10 <- lm(meannumpks10 ~ pfstatsdf$year[which(pfstatsdf$year>year)])
+	SNmeannumpks10 <- data.frame(slope=SNmeannumpks10$coefficients[[2]],SN=(var(fitted.values(SNmeannumpks10))/var(residuals(SNmeannumpks10))),window=c(10),measure=c("numpeaksabv"))
+	SNmeannumpks <- rbind.data.frame(SNmeannumpks1,SNmeannumpks5,SNmeannumpks10)
+	
+	####################
+	
+	
+	meanmeanpks5 <- rollmean(pfstatsdf$mean_peakflow[which(pfstatsdf$year>year)],5,na.pad=TRUE)
+	meanmeanpks10 <- rollmean(pfstatsdf$mean_peakflow[which(pfstatsdf$year>year)],10,na.pad=TRUE)
+
+	
+	MKmeanmeanpks1 <- MannKendall(pfstatsdf$mean_peakflow[which(pfstatsdf$year>year)])
+	MKmeanmeanpks1 <- data.frame(tau=MKmeanmeanpks1$tau[[1]],p2=MKmeanmeanpks1$sl[[1]],window=c(1),measure=c("meanpeaksabv"))
+	MKmeanmeanpks5 <- MannKendall(meanmeanpks5)
+	MKmeanmeanpks5 <- data.frame(tau=MKmeanmeanpks5$tau[[1]],p2=MKmeanmeanpks5$sl[[1]],window=c(5),measure=c("meanpeaksabv"))
+	MKmeanmeanpks10 <- MannKendall(meanmeanpks10)
+	MKmeanmeanpks10 <- data.frame(tau=MKmeanmeanpks10$tau[[1]],p2=MKmeanmeanpks10$sl[[1]],window=c(10),measure=c("meanpeaksabv"))
+	MKmeanmeanpks <- rbind.data.frame(MKmeanmeanpks1,MKmeanmeanpks5,MKmeanmeanpks10)
+	
+	SNmeanmeanpks1 <- lm(pfstatsdf$TotDaysAbv[which(pfstatsdf$year>year)] ~ pfstatsdf$year[which(pfstatsdf$year>year)])
+	SNmeanmeanpks1 <- data.frame(slope=SNmeanmeanpks1$coefficients[[2]],SN=(var(fitted.values(SNmeanmeanpks1))/var(residuals(SNmeanmeanpks1))),window=c(1),measure=c("meanpeaksabv"))
+	SNmeanmeanpks5 <- lm(meanmeanpks5 ~ pfstatsdf$year[which(pfstatsdf$year>year)])
+	SNmeanmeanpks5 <- data.frame(slope=SNmeanmeanpks5$coefficients[[2]],SN=(var(fitted.values(SNmeanmeanpks5))/var(residuals(SNmeanmeanpks5))),window=c(5),measure=c("meanpeaksabv"))
+	SNmeanmeanpks10 <- lm(meanmeanpks10 ~ pfstatsdf$year[which(pfstatsdf$year>year)])
+	SNmeanmeanpks10 <- data.frame(slope=SNmeanmeanpks10$coefficients[[2]],SN=(var(fitted.values(SNmeanmeanpks10))/var(residuals(SNmeanmeanpks10))),window=c(10),measure=c("meanpeaksabv"))
+	SNmeanmeanpks <- rbind.data.frame(SNmeanmeanpks1,SNmeanmeanpks5,SNmeanmeanpks10)
+	
+	####################
+	
+	meantotpks5 <- rollmean(pfstatsdf$total_peakflow[which(pfstatsdf$year>year)],5,na.pad=TRUE)
+	meantotpks10 <- rollmean(pfstatsdf$total_peakflow[which(pfstatsdf$year>year)],10,na.pad=TRUE)
+
+	MKmeantotpks1 <- MannKendall(pfstatsdf$total_peakflow[which(pfstatsdf$year>year)])
+	MKmeantotpks1 <- data.frame(tau=MKmeantotpks1$tau[[1]],p2=MKmeantotpks1$sl[[1]],window=c(1),measure=c("totpeakflwabv"))
+	MKmeantotpks5 <- MannKendall(meantotpks5)
+	MKmeantotpks5 <- data.frame(tau=MKmeantotpks5$tau[[1]],p2=MKmeantotpks5$sl[[1]],window=c(5),measure=c("totpeakflwabv"))
+	MKmeantotpks10 <- MannKendall(meantotpks10)
+	MKmeantotpks10 <- data.frame(tau=MKmeantotpks10$tau[[1]],p2=MKmeantotpks10$sl[[1]],window=c(10),measure=c("totpeakflwabv"))
+	MKmeantotpks <- rbind.data.frame(MKmeantotpks1,MKmeantotpks5,MKmeantotpks10)
+	
+	SNmeantotpks1 <- lm(pfstatsdf$TotDaysAbv[which(pfstatsdf$year>year)] ~ pfstatsdf$year[which(pfstatsdf$year>year)])
+	SNmeantotpks1 <- data.frame(slope=SNmeantotpks1$coefficients[[2]],SN=(var(fitted.values(SNmeantotpks1))/var(residuals(SNmeantotpks1))),window=c(1),measure=c("totpeakflwabv"))
+	SNmeantotpks5 <- lm(meantotpks5 ~ pfstatsdf$year[which(pfstatsdf$year>year)])
+	SNmeantotpks5 <- data.frame(slope=SNmeantotpks5$coefficients[[2]],SN=(var(fitted.values(SNmeantotpks5))/var(residuals(SNmeantotpks5))),window=c(5),measure=c("totpeakflwabv"))
+	SNmeantotpks10 <- lm(meantotpks10 ~ pfstatsdf$year[which(pfstatsdf$year>year)])
+	SNmeantotpks10 <- data.frame(slope=SNmeantotpks10$coefficients[[2]],SN=(var(fitted.values(SNmeantotpks10))/var(residuals(SNmeantotpks10))),window=c(10),measure=c("totpeakflwabv"))
+	SNmeantotpks <- rbind.data.frame(SNmeantotpks1,SNmeantotpks5,SNmeantotpks10)
+	
+	####################
+	
+	impMKdfs <- rbind.data.frame(MKmeantotvol,MKmeantotdays,MKmeannumpks,MKmeanmeanpks,MKmeantotpks)
+	impSNdfs <- rbind.data.frame(SNmeantotvol,SNmeantotdays,SNmeannumpks,SNmeanmeanpks,SNmeantotpks)
+	
+	impfinaldf <- merge(impMKdfs,impSNdfs,by=c("window","measure"))
+	impfinaldf$gauge <- gauge
+	finallist <- list(trend_dams=impfinaldf,trend_full=finaldf)
+	
+	return(finallist)
 }
