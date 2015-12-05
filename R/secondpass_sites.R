@@ -571,6 +571,105 @@ for(i in 1:7){
 	save.image(paste("C:\\Users\\tiffn_000\\Documents\\workspaces\\spbatch_",batchnum,".RData", sep=""))
 }
 
+for(i in 1:7){
+	batchnum <- i
+	load(paste("C:\\Users\\tiffn_000\\Documents\\workspaces\\spbatch_",batchnum,".RData", sep=""))
+	
+	peakflowmags <- function(pfstatsdf, gauge, year){
+		mean_totvol_TAF <- mean(pfstatsdf$TotVolAbv_acft[which(pfstatsdf$TotVolAbv_acft!=0&pfstatsdf$year>year)])/1000
+		mean_totdays <- mean(pfstatsdf$TotDaysAbv[which(pfstatsdf$TotDaysAbv!=0&pfstatsdf$year>year)])
+		mean_numpeaks <- mean(pfstatsdf$numpeaks[which(pfstatsdf$numpeaks!=0&pfstatsdf$year>year)])
+		frac_zero <- length(which(pfstatsdf$numpeaks==0&pfstatsdf$year>year))/length(pfstatsdf$numpeaks[which(pfstatsdf$year>year)])
+		frac_nonzero <- 1-frac_zero
+		num_zero <-length(which(pfstatsdf$numpeaks==0&pfstatsdf$year>year))
+		num_nonzero <-length(which(pfstatsdf$numpeaks!=0&pfstatsdf$year>year))
+		
+		meandf <- data.frame(mean_totvol_TAF =mean_totvol_TAF ,mean_totdays=mean_totdays,mean_numpeaks=mean_numpeaks,
+				frac_zero=frac_zero,
+				frac_nonzero=frac_nonzero,
+				num_zero=num_zero,
+				num_nonzero=num_nonzero,
+				gauge=gauge,
+				styear=year)
+		
+		return(meandf)
+	}
+	
+	spbatch_peakflowmags_hy <- vector("list", length(spbatch_peakflowsdf))
+	for(i in 1:length(spbatch_peakflowsdf)){
+		spbatch_peakflowmags_hy[[i]] <- peakflowmags(spbatch_peakflowsdf[[i]]$pfstatsdf, names(spbatch_peakflowsdf)[[i]],1800)
+	}
+	spbatch_peakflowmagsdf_hy <- do.call(rbind.data.frame, spbatch_peakflowmags_hy)
+	write.csv(spbatch_peakflowmagsdf_hy, file=paste("C:\\Users\\tiffn_000\\Documents\\GIS\\Active_sites_final\\Data\\mags\\full\\hy\\spbatch_peakflowmagsdf_hy_",batchnum,".csv",sep=""))
+	
+	
+	
+	spbatch_peakflowmags_3mon <- vector("list", length(spbatch_peakflowsdf3))
+	for(i in 1:length(spbatch_peakflowsdf3)){
+		spbatch_peakflowmags_3mon[[i]] <- peakflowmags(spbatch_peakflowsdf3[[i]]$pfstatsdf3, names(spbatch_peakflowsdf3)[[i]],1800)
+	}
+	spbatch_peakflowmagsdf_3mon <- do.call(rbind.data.frame, spbatch_peakflowmags_3mon)
+	write.csv(spbatch_peakflowmagsdf_3mon, file=paste("C:\\Users\\tiffn_000\\Documents\\GIS\\Active_sites_final\\Data\\mags\\full\\mon3\\spbatch_peakflowmagsdf_mon3_",batchnum,".csv",sep=""))
+	
+
+	
+	spbatch_peakflowmags_hydams <- vector("list", length(spbatch_peakflowsdf))
+	for(i in 1:length(spbatch_peakflowsdf)){
+		spbatch_peakflowmags_hydams[[i]] <- peakflowmags(spbatch_peakflowsdf[[i]]$pfstatsdf, names(spbatch_peakflowsdf)[[i]],year=
+						analysis_year$analysis_year[which(spbatch[[i]]$raw$site_no[[1]]==analysis_year$downstreamgauge)])
+	}
+	spbatch_peakflowmagsdf_hydams <- do.call(rbind.data.frame, spbatch_peakflowmags_hydams)
+	write.csv(spbatch_peakflowmagsdf_hydams, file=paste("C:\\Users\\tiffn_000\\Documents\\GIS\\Active_sites_final\\Data\\mags\\dams\\hy\\spbatch_peakflowmagsdf_hy_dams_",batchnum,".csv",sep=""))
+	
+	
+	spbatch_peakflowmags_3mondams <- vector("list", length(spbatch_peakflowsdf3))
+	for(i in 1:length(spbatch_peakflowsdf3)){
+		spbatch_peakflowmags_3mondams[[i]] <- peakflowmags(spbatch_peakflowsdf3[[i]]$pfstatsdf3, names(spbatch_peakflowsdf3)[[i]],year=
+						analysis_year$analysis_year[which(spbatch[[i]]$raw$site_no[[1]]==analysis_year$downstreamgauge)])
+	}
+	spbatch_peakflowmagsdf_3mondams <- do.call(rbind.data.frame, spbatch_peakflowmags_3mondams)
+	write.csv(spbatch_peakflowmagsdf_3mondams, file=paste("C:\\Users\\tiffn_000\\Documents\\GIS\\Active_sites_final\\Data\\mags\\dams\\mon3\\spbatch_peakflowmagsdf_mon3_dams_",batchnum,".csv",sep=""))
+	
+	
+	save.image(paste("C:\\Users\\tiffn_000\\Documents\\workspaces\\spbatch_",batchnum,".RData", sep=""))
+}
+
+
+pkmagshy_full <- dir("C:\\Users\\tiffn_000\\Documents\\GIS\\Active_sites_final\\Data\\mags\\full\\hy")
+pkmagshy_full_list <- vector("list", length(pkmagshy_full))
+for(i in 1:length(pkmagshy_full)){
+	pkmagshy_full_list[[i]] <- read.csv(file=paste("C:\\Users\\tiffn_000\\Documents\\GIS\\Active_sites_final\\Data\\mags\\full\\hy\\",pkmagshy_full[[i]],sep=""), header=TRUE, sep=",")
+}
+pkmagshy_full_df <- do.call(rbind.data.frame,pkmagshy_full_list)
+write.csv(pkmagshy_full_df,"C:\\Users\\tiffn_000\\Documents\\GIS\\Active_sites_final\\Data\\mags\\grouped\\pkmags_hy_full.csv")
+
+pkmagshy_dams <- dir("C:\\Users\\tiffn_000\\Documents\\GIS\\Active_sites_final\\Data\\mags\\dams\\hy")
+pkmagshy_dams_list <- vector("list", length(pkmagshy_dams))
+for(i in 1:length(pkmagshy_dams)){
+	pkmagshy_dams_list[[i]] <- read.csv(file=paste("C:\\Users\\tiffn_000\\Documents\\GIS\\Active_sites_final\\Data\\mags\\dams\\hy\\",pkmagshy_dams[[i]],sep=""), header=TRUE, sep=",")
+}
+pkmagshy_dams_df <- do.call(rbind.data.frame,pkmagshy_dams_list)
+write.csv(pkmagshy_dams_df,"C:\\Users\\tiffn_000\\Documents\\GIS\\Active_sites_final\\Data\\mags\\grouped\\pkmags_hy_dams.csv")
+
+pkmagsmon3_full <- dir("C:\\Users\\tiffn_000\\Documents\\GIS\\Active_sites_final\\Data\\mags\\full\\mon3")
+pkmagsmon3_full_list <- vector("list", length(pkmagsmon3_full))
+for(i in 1:length(pkmagsmon3_full)){
+	pkmagsmon3_full_list[[i]] <- read.csv(file=paste("C:\\Users\\tiffn_000\\Documents\\GIS\\Active_sites_final\\Data\\mags\\full\\mon3\\",pkmagsmon3_full[[i]],sep=""), header=TRUE, sep=",")
+}
+pkmagsmon3_full_df <- do.call(rbind.data.frame,pkmagsmon3_full_list)
+write.csv(pkmagsmon3_full_df,"C:\\Users\\tiffn_000\\Documents\\GIS\\Active_sites_final\\Data\\mags\\grouped\\pkmags_mon3_full.csv")
+
+pkmagsmon3_dams <- dir("C:\\Users\\tiffn_000\\Documents\\GIS\\Active_sites_final\\Data\\mags\\dams\\mon3")
+pkmagsmon3_dams_list <- vector("list", length(pkmagsmon3_dams))
+for(i in 1:length(pkmagsmon3_dams)){
+	pkmagsmon3_dams_list[[i]] <- read.csv(file=paste("C:\\Users\\tiffn_000\\Documents\\GIS\\Active_sites_final\\Data\\mags\\dams\\mon3\\",pkmagsmon3_dams[[i]],sep=""), header=TRUE, sep=",")
+}
+pkmagsmon3_dams_df <- do.call(rbind.data.frame,pkmagsmon3_dams_list)
+write.csv(pkmagsmon3_dams_df,"C:\\Users\\tiffn_000\\Documents\\GIS\\Active_sites_final\\Data\\mags\\grouped\\pkmags_mon3_dams.csv")
+
+
+
+
 active_basins <- read.csv("C:\\Users\\tiffn_000\\Documents\\GIS\\Active_sites_final\\active_basins.csv", header=TRUE)
 active_basins <- active_basins[which(active_basins$site_no%in%unique(impairmentsdf$downstreamgauge)),]
 impairments_basins <- merge(impairmentsdf,active_basins, by.x="downstreamgauge", by.y="site_no", all=TRUE, sort=FALSE)
