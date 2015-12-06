@@ -705,4 +705,26 @@ qplot(spbatch_peakflowsdf3[[3]]$pfstatsdf3$year,rlmnvol, geom="point")+geom_smoo
 		ggtitle(paste(spbatch[[3]]$raw$site_no[[1]],", ", analysis_year$basin[which(analysis_year$downstreamgauge==spbatch[[3]]$raw$site_no[[1]])], ", pval=", pval$pval, sep=""))
 
 
+trendvol <- read.csv(file="C:\\Users\\tiffn_000\\Documents\\GIS\\Active_sites_final\\Data\\trends\\grouped\\3mon\\dams\\trend3mondams_w5_totvol.csv", header=TRUE)
+trenddays<- read.csv(file="C:\\Users\\tiffn_000\\Documents\\GIS\\Active_sites_final\\Data\\trends\\grouped\\3mon\\dams\\trend3mondams_w5_totdays.csv", header=TRUE)
+trendnum <- read.csv(file="C:\\Users\\tiffn_000\\Documents\\GIS\\Active_sites_final\\Data\\trends\\grouped\\3mon\\dams\\trend3mondams_w5_numpks.csv", header=TRUE)
+mags <- read.csv(file="C:\\Users\\tiffn_000\\Documents\\GIS\\Active_sites_final\\Data\\mags\\grouped\\pkmags_mon3_dams.csv", header=TRUE)
+
+merged <- merge(mags,trendvol, by="gauge")
+merged <- merge(merged,trenddays, by="gauge")
+merged <- merge(merged,trendnum, by="gauge")
+write.csv(merged, file="C:\\Users\\tiffn_000\\Documents\\GIS\\Active_sites_final\\Data\\merged_3mon_dams.csv")
+
+
+
+testarea <- hypeakplotsstats(spbatch_peakflowsdf[[3]]$pfmonthlystats, names(spbatch_peakflowsdf)[[3]])
+
+
+
+
+
+
+
+
+
 
