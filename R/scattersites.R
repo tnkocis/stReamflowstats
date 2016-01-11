@@ -428,17 +428,23 @@ testvolplot <- ggplot(data=testvoldf, aes(x=year, y=stdvoldepart))+geom_bar(stat
 				scale_fill_manual(values = c("n" = "darkblue", "p" = "red"))+
 				geom_line(data=rolloni,aes(x=year,y=NDJ))
 		
-testvol <- rollmean(scatter_peakflowsdf3$`11402000`$pfstatsdf3$TotVolAbv_acft,10,na.pad=TRUE)
-testvoldf2 <- data.frame(vol=testvol, year=scatter_peakflowsdf3$`11402000`$pfstatsdf3$year, yr1=scatter_peakflowsdf3$`11402000`$pfstatsdf3$TotVolAbv_acft)
-r2testvol <- summary(lm(testvoldf2$vol ~ testvoldf2$year))$r.squared
-r2testvol <- data.frame(r2=round(r2testvol,2))
-testvolplot2 <- ggplot(data=testvoldf2, aes(x=year,y=vol))+geom_line(size=1, color="blue")+
-		geom_line(aes(x=year,y=yr1))+
+testvol <- rollmean(spbatch_peakflowsdf3[[14]]$pfstatsdf3$TotVolAbv_acft,5,na.pad=TRUE)
+testvoldf2 <- data.frame(vol=testvol, year=spbatch_peakflowsdf3[[14]]$pfstatsdf3$year, yr1=spbatch_peakflowsdf3[[14]]$pfstatsdf3$TotVolAbv_acft)
+ptestvol <- summary(lm(testvoldf2$vol ~ testvoldf2$year))$coefficients[,4] 
+ptestvol <- data.frame(p=round(ptestvol,2))
+testvolplot2 <- ggplot(data=testvoldf2, aes(x=year,y=vol))+
+		geom_histogram(aes(x=year,y=yr1),stat="identity", color="skyblue3", fill="skyblue3")+
+		geom_line(size=1, color="blue")+
 		xlab("Year") + ylab("Volume Above 90th Percentile (acft)")+
-		ggtitle("Total Volume of Flow Above the 90th Percentile\n December to January")+
+		ggtitle("Total Volume of Flow Above the 90th% \n December to February\n ")+
 		geom_smooth(method=lm, se=FALSE, color="red")+
-		geom_text(data=r2testvol,aes(label=paste("R^2: ",r2, sep="")),parse=TRUE,x=2010,y=(150000))
-ggsave(filename= "C:\\Users\\tiffn_000\\Desktop\\Figures\\WBpresentation\\voltrend_11402000.png", plot=testvolplot2, dpi=300, height=8, width=10 )
+		geom_text(data=ptestvol,aes(label=paste("p<= ",p, sep="")),parse=TRUE,x=2010,y=(75000), size=7)+
+		theme(axis.text.x= element_text(size=15),
+				axis.title.x=element_text(size=20),
+				axis.text.y=element_text(size=12),
+				axis.title.y=element_text(size=20),
+				plot.title=element_text(size=25))
+ggsave(filename= "C:\\Users\\tiffn_000\\Google Drive\\AGUposter2015\\sampletrend.png", plot=testvolplot2, dpi=400, height=7, width=9 )
 
 testdays <- rollmean(scatter_peakflowsdf3$`11402000`$pfstatsdf3$TotDaysAbv,10,na.pad=TRUE)
 testdaysdf2 <- data.frame(days=testdays, year=scatter_peakflowsdf3$`11402000`$pfstatsdf3$year, yr1=scatter_peakflowsdf3$`11402000`$pfstatsdf3$TotDaysAbv)

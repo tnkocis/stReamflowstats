@@ -4,12 +4,18 @@
 ###############################################################################
 
 
-peakanalysis <- function(input, width, threshold,thresholdname, mastertime, Index){
+# TODO: Add comment
+# 
+# Author: tiffn_000
+###############################################################################
+
+
+simplified_peakanalysis <- function(input, width, threshold,thresholdname, mastertime, Index){
 	if(!require(zoo)){
 		install.packages("zoo")
 		library(zoo)
 	}
-
+	
 	if(as.integer(width) != width){
 		warning("Rounding argument 'width' to nearest integer.")
 		width = round(width)
@@ -28,7 +34,7 @@ peakanalysis <- function(input, width, threshold,thresholdname, mastertime, Inde
 	mon <- format(input$Date,"%m")
 	yearchr <- paste(as.numeric(format(tail(input$Date,1),"%Y"))-1,"-",as.numeric(format(tail(input$Date,1),"%Y")))
 	yearindex <- Index$Index[[which(Index$Year==yearchr)]]
-
+	
 	if(numpeaks != 0){
 		duration <- function(peakflows,loc){
 			lengthbeforepeak <- loc-1
@@ -128,54 +134,7 @@ peakanalysis <- function(input, width, threshold,thresholdname, mastertime, Inde
 		summary$start <- as.Date(summary$start, format="%Y-%m-%d")
 		summary$end <- as.Date(summary$end, format="%Y-%m-%d")
 		peakmon <- format(summary$peak_date,"%m")
-		if(mastertime=="3mon"){
-			summary <- summary[which(peakmon == "12" | peakmon == "01" | peakmon== "02"),]
-			if(length(summary$peak_flow)==0){
-				summary <- data.frame(peak_date=c(NA), peak_flow=c(NA), thres_value=c(NA), thres=c(NA),
-						start=c(NA),end=c(NA),
-						duration=c(NA),vol_acft_event=c(NA), year=as.numeric(format(head(input$Date,1),"%Y")), yeartype_index=yearindex)
-			}
-			firstdate <- as.Date(summary$start[[1]])
-			enddate <- as.Date(tail(summary$end,1))
-			if(is.na(firstdate)|is.na(enddate)){
-				stats <- data.frame(TotVolAbv_acft=c(0), TotDaysAbv = c(0), 
-						numpeaks = c(0), mean_peakflow = c(0), total_peakflow = c(0),
-						year=as.numeric(format(head(input$Date,1),"%Y")), yeartype_index=yearindex)
-			}else {
-				daterangeloc <- which(input$Date==firstdate):which(input$Date==enddate)
-				peaks3mon <- peaks[daterangeloc]
-				numpeaks3mon <- sum(peaks3mon, na.rm=TRUE)
-				threshlog3mon <- threshlog[daterangeloc]
-				dischrange <- input$Discharge_cfs[daterangeloc]
-				if (numpeaks3mon == 0 | is.na(numpeaks3mon)){
-					peakflow3mon <- NA
-				} else {
-					peakflow3mon <- dischrange[which(peaks3mon==TRUE)]
-				}
-				if(all(is.na(threshlog))){
-					totaldaysabv <- NA
-				} else {totaldaysabv <- sum(threshlog3mon, na.rm=TRUE)}
-				if(all(is.na(threshlog))){
-					totalvolabv <- NA
-				}else{ 
-					totalvolabv <- sum(dischrange[threshlog3mon], na.rm=TRUE)*86400*2.29568411e-5
-				}
-				if(all(is.na(peakflow))){
-					avgpeakflow <-0
-				} else {
-					avgpeakflow <- mean(peakflow3mon, na.rm=TRUE)
-				}
-				if(all(is.na(peakflow))){
-					total_peakflow <- 0
-				} else {
-					total_peakflow <- sum(peakflow3mon, na.rm=TRUE)
-				}
-				
-				stats <- data.frame(TotVolAbv_acft=totalvolabv, TotDaysAbv = totaldaysabv, 
-						numpeaks = numpeaks3mon, mean_peakflow = avgpeakflow, total_peakflow=total_peakflow,
-						year=as.numeric(format(head(input$Date,1),"%Y")), yeartype_index=yearindex)
-			}
-		} else if(mastertime=="hy"){
+	 if(mastertime=="hy"){
 			summary <- summary
 			if(length(summary$peak_flow)==0){
 				summary <- data.frame(peak_date=c(NA), peak_flow=c(NA), thres_value=c(NA), thres=c(NA),
@@ -222,56 +181,9 @@ peakanalysis <- function(input, width, threshold,thresholdname, mastertime, Inde
 						numpeaks = numpeakshy, mean_peakflow = avgpeakflow, total_peakflow=total_peakflow,
 						year=as.numeric(format(head(input$Date,1),"%Y")), yeartype_index=yearindex)
 			}
-		}else if(mastertime=="6mon"){
-			summary <- summary[which(peakmon == "11" | peakmon == "12" | peakmon == "01" | peakmon== "02" | peakmon== "03" | peakmon== "04"),]
-			if(length(summary$peak_flow)==0){
-				summary <- data.frame(peak_date=c(NA), peak_flow=c(NA), thres_value=c(NA), thres=c(NA),
-						start=c(NA),end=c(NA),
-						duration=c(NA),vol_acft_event=c(NA), year=as.numeric(format(head(input$Date,1),"%Y")), yeartype_index=yearindex)
+			} else {
+				stop("mastertime error")
 			}
-			firstdate <- as.Date(summary$start[[1]])
-			enddate <- as.Date(tail(summary$end,1))
-			if(is.na(firstdate)|is.na(enddate)){
-				stats <- data.frame(TotVolAbv_acft=c(0), TotDaysAbv = c(0), 
-						numpeaks = c(0), mean_peakflow = c(0), total_peakflow = c(0),
-						year=as.numeric(format(head(input$Date,1),"%Y")), yeartype_index=yearindex)
-			}else {
-				daterangeloc <- which(input$Date==firstdate):which(input$Date==enddate)
-				peaks6mon <- peaks[daterangeloc]
-				numpeaks6mon <- sum(peaks6mon, na.rm=TRUE)
-				threshlog6mon <- threshlog[daterangeloc]
-				dischrange <- input$Discharge_cfs[daterangeloc]
-				if (numpeaks6mon == 0 | is.na(numpeaks6mon)){
-					peakflow6mon <- NA
-				} else {
-					peakflow6mon <- dischrange[which(peaks6mon==TRUE)]
-				}
-				if(all(is.na(threshlog))){
-					totaldaysabv <- NA
-				} else {totaldaysabv <- sum(threshlog6mon, na.rm=TRUE)}
-				if(all(is.na(threshlog))){
-					totalvolabv <- NA
-				}else{ 
-					totalvolabv <- sum(dischrange[threshlog6mon], na.rm=TRUE)*86400*2.29568411e-5
-				}
-				if(all(is.na(peakflow))){
-					avgpeakflow <-0
-				} else {
-					avgpeakflow <- mean(peakflow6mon, na.rm=TRUE)
-				}
-				if(all(is.na(peakflow))){
-					total_peakflow <- 0
-				} else {
-					total_peakflow <- sum(peakflow6mon, na.rm=TRUE)
-				}
-				
-				stats <- data.frame(TotVolAbv_acft=totalvolabv, TotDaysAbv = totaldaysabv, 
-						numpeaks = numpeaks6mon, mean_peakflow = avgpeakflow, total_peakflow=total_peakflow,
-						year=as.numeric(format(head(input$Date,1),"%Y")), yeartype_index=yearindex)
-			}
-		}else {
-			stop("mastertime error")
-		}
 	} else {
 		summary <- data.frame(peak_date=c(NA), peak_flow=c(NA), thres_value=c(NA), thres=c(NA),
 				start=c(NA),end=c(NA),
@@ -281,7 +193,8 @@ peakanalysis <- function(input, width, threshold,thresholdname, mastertime, Inde
 				year=as.numeric(format(head(input$Date,1),"%Y")), yeartype_index=yearindex)
 	}
 	if(mastertime=="hy"){
-		monthly_stats <- data.frame(month=rep(NA,12),TotVolAbv_acft=rep(NA,12), TotDaysAbv=rep(NA,12),sthyyear=rep(NA,12), threshold=rep(threshold,12))
+		monthly_stats <- data.frame(month=rep(NA,12),TotVolAbv_acft=rep(NA,12), TotDaysAbv=rep(NA,12), numpeaks=rep(NA,12), mean_peakflow=rep(NA,12),
+				total_peakflow=rep(NA,12), sthyyear=rep(NA,12), yeartype_index=rep(NA,12), threshold=rep(threshold,12))
 		months <- c("10","11","12","01","02","03","04","05","06","07","08","09")
 		for(i in 1:length(months)){
 			monlog <- format(input$Date,"%m")==months[[i]]
@@ -296,45 +209,28 @@ peakanalysis <- function(input, width, threshold,thresholdname, mastertime, Inde
 				monthly_stats$TotVolAbv_acft[[i]] <-sum(vols,na.rm=TRUE)*86400*2.29568411e-5
 			}
 			monthly_stats$sthyyear[[i]] <- as.numeric(format(input$Date,"%Y"))[[1]]
-		}
+			
+			peaksmonlog <- format(datepeaks,"%m")==months[[i]]
+			numpeaksmon <- sum(peaksmonlog, na.rm=TRUE)
+			monthly_stats$numpeaks[[i]] <- numpeaksmon
+			
+			peaksmon <- peakflow[peaksmonlog]
+			if(numpeaksmon==0){
+				meanpeakflowmon <- 0
+			}else{
+				meanpeakflowmon <- mean(peaksmon, na.rm=TRUE)
+			}
+			totalpeakflowmon <- sum(peaksmon, na.rm=TRUE)
+			
+			monthly_stats$mean_peakflow[[i]] <- meanpeakflowmon
+			monthly_stats$total_peakflow[[i]] <- totalpeakflowmon
+			
+			monthly_stats$yeartype_index[[i]] <- yearindex
+			}
 		
-	} else if(mastertime=="3mon"){
-		monthly_stats <- data.frame(month=rep(NA,3),TotVolAbv_acft=rep(NA,3), TotDaysAbv=rep(NA,3),sthyyear=rep(NA,3), threshold=rep(threshold,3))
-		months <- c("12","01","02")
-		for(i in 1:length(months)){
-			monlog <- format(input$Date,"%m")==months[[i]]
-			dischmon <- input$Discharge_cfs[monlog]
-			thresmonlog <- dischmon >= threshold
-			monthly_stats$month[[i]] <- months[[i]]
-			monthly_stats$TotDaysAbv[[i]] <-  sum(thresmonlog, na.rm=TRUE)
-			vols <- dischmon[thresmonlog]
-			if(length(vols)==0){
-				monthly_stats$TotVolAbv_acft[[i]] <- 0
-			} else {
-				monthly_stats$TotVolAbv_acft[[i]] <-sum(vols,na.rm=TRUE)*86400*2.29568411e-5
-			}
-			monthly_stats$sthyyear[[i]] <- as.numeric(format(input$Date,"%Y"))[[1]]
-		}
-	}  else if(mastertime=="6mon"){
-		monthly_stats <- data.frame(month=rep(NA,6),TotVolAbv_acft=rep(NA,6), TotDaysAbv=rep(NA,6),sthyyear=rep(NA,6), threshold=rep(threshold,6))
-		months <- c("11","12","01","02","03","04")
-		for(i in 1:length(months)){
-			monlog <- format(input$Date,"%m")==months[[i]]
-			dischmon <- input$Discharge_cfs[monlog]
-			thresmonlog <- dischmon >= threshold
-			monthly_stats$month[[i]] <- months[[i]]
-			monthly_stats$TotDaysAbv[[i]] <-  sum(thresmonlog, na.rm=TRUE)
-			vols <- dischmon[thresmonlog]
-			if(length(vols)==0){
-				monthly_stats$TotVolAbv_acft[[i]] <- 0
-			} else {
-				monthly_stats$TotVolAbv_acft[[i]] <-sum(vols,na.rm=TRUE)*86400*2.29568411e-5
-			}
-			monthly_stats$sthyyear[[i]] <- as.numeric(format(input$Date,"%Y"))[[1]]
-		}
 	}else {
 		stop("mastertime error")
 	}
-	
 	return(list(summary=summary, stats=stats, monthly_stats=monthly_stats))
 }
+
