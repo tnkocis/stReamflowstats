@@ -553,21 +553,49 @@ for(z in 1:7){
 
 
 ### not done#######
-test_peakflowtrends <- vector("list", length(spbatch))
-for(k in 1:length(spbatch)){
-	test_peakflowtrends[[k]] <- vector("list", 6)
-	names(test_peakflowtrends[[k]]) <- names(test_split[[k]])
-	for(i in 1:6){
-		for(l in 1:15){
-			test_peakflowtrends[[k]][[i]][[l]] <- simplified_peakflowtrends(test_split[[k]][[i]][[l]], names(test_split)[[k]],
-					analysis_year$analysis_year[which(spbatch[[k]]$raw$site_no[[1]]==analysis_year$downstreamgauge)])
+for(z in 1:7){
+	batchnum <- z
+	load(paste("C:\\Users\\tiffn_000\\Documents\\workspaces\\post_agu_spbatch_",batchnum,".RData", sep=""))
+		
+	test_peakflowtrends <- vector("list", length(spbatch))
+	for(k in 1:length(spbatch)){
+		test_peakflowtrends[[k]] <- vector("list", 1)
+		names(test_peakflowtrends[[k]]) <- names(test_split[[k]])[[1]]
+		for(i in 1:1){
+			for(l in 1:15){
+				test_peakflowtrends[[k]][[i]][[l]] <- simplified_peakflowtrends(test_split[[k]][[i]][[l]], names(test_split)[[k]],
+						analysis_year$analysis_year[which(spbatch[[k]]$raw$site_no[[1]]==analysis_year$downstreamgauge)])
+			}
+			names(test_peakflowtrends[[k]][[i]]) <- names(test_split[[k]][[i]])
 		}
-		names(test_peakflowtrends[[k]][[i]]) <- names(test_split[[k]][[i]])
 	}
+	names(test_peakflowtrends) <- names(spbatch)
+	
+	
+	test_peakflowtrends_bind <- test_peakflowtrends[[1]]
+	for(k in 2:length(spbatch)){
+		for(i in 1:1){
+			for(l in 1:15){
+				for(m in 1:3){
+					test_peakflowtrends_bind[[i]][[l]][[m]] <- rbind.data.frame(test_peakflowtrends_bind[[i]][[l]][[m]],
+							test_peakflowtrends[[k]][[i]][[l]][[m]])	
+				}
+			}
+		}
+	}
+	
+	for(i in 1:15){
+		write.csv(test_peakflowtrends_bind$all[[i]][[1]], file=paste("C:\\Users\\tiffn_000\\Documents\\GIS\\post_agu\\peakflow_trends\\all\\dams\\batch_",batchnum,"_",
+						names(test_peakflowtrends_bind$all)[[i]],"_",names(test_peakflowtrends_bind$all[[i]])[[1]],".csv", sep=""))
+
+		write.csv(test_peakflowtrends_bind$all[[i]][[2]], file=paste("C:\\Users\\tiffn_000\\Documents\\GIS\\post_agu\\peakflow_trends\\all\\full\\batch_",batchnum,"_",
+						names(test_peakflowtrends_bind$all)[[i]],"_",names(test_peakflowtrends_bind$all[[i]])[[2]],".csv", sep=""))
+		
+		write.csv(test_peakflowtrends_bind$all[[i]][[3]], file=paste("C:\\Users\\tiffn_000\\Documents\\GIS\\post_agu\\peakflow_trends\\all\\1980\\batch_",batchnum,"_",
+						names(test_peakflowtrends_bind$all)[[i]],"_",names(test_peakflowtrends_bind$all[[i]])[[3]],".csv", sep=""))
+		
+	}
+
+	save.image(paste("C:\\Users\\tiffn_000\\Documents\\workspaces\\post_agu_spbatch_",batchnum,".RData", sep=""))
 }
-names(test_peakflowtrends) <- names(spbatch)
-
-
-
-
 
