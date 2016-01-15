@@ -6,6 +6,7 @@
 
 peakflowtrends <- function(pfstatsdf, gauge, year){
 	library(zoo)
+	library(Kendall)
 	
 	meantotvol5 <- rollmean(pfstatsdf$TotVolAbv_acft,5,na.pad=TRUE)
 	meantotvol10 <- rollmean(pfstatsdf$TotVolAbv_acft,10,na.pad=TRUE)

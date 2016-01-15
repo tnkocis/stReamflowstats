@@ -23,3 +23,4 @@ peakflowmags <- function(pfstatsdf, gauge, year){
 	
 	return(meandf)
 }
+

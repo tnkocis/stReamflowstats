@@ -91,14 +91,14 @@ peakflowanalysis_split <- function(pfmonthlystats){
 	
 	uniqueyear <- unique(pfmonthlystats$sthyyear)
 	mon3 <- data.frame(TotVolAbv_acft=rep(NA,length(uniqueyear)),TotDaysAbv=rep(NA,length(uniqueyear)),numpeaks=rep(NA,length(uniqueyear)),mean_peakflow=rep(NA,length(uniqueyear)),
-			total_peakflow=rep(NA,length(uniqueyear)),year=rep(NA,length(uniqueyear)),yeartype_index=rep(NA,length(uniqueyear)))
+			total_peakflow=rep(NA,length(uniqueyear)),sthyyear=rep(NA,length(uniqueyear)),yeartype_index=rep(NA,length(uniqueyear)))
 	for(i in 1:length(uniqueyear)){
 		mon3$TotVolAbv_acft[[i]] <- sum(pfmonthlystats$TotVolAbv_acft[which((pfmonthlystats$month=="12" |pfmonthlystats$month=="01"|pfmonthlystats$month=="02")&pfmonthlystats$sthyyear==uniqueyear[[i]])], na.rm=TRUE)
 		mon3$TotDaysAbv[[i]] <- sum(pfmonthlystats$TotDaysAbv[which((pfmonthlystats$month=="12" |pfmonthlystats$month=="01"|pfmonthlystats$month=="02")&pfmonthlystats$sthyyear==uniqueyear[[i]])], na.rm=TRUE)
 		mon3$numpeaks[[i]] <- sum(pfmonthlystats$numpeaks[which((pfmonthlystats$month=="12" |pfmonthlystats$month=="01"|pfmonthlystats$month=="02")&pfmonthlystats$sthyyear==uniqueyear[[i]])], na.rm=TRUE)
 		mon3$total_peakflow[[i]] <- sum(pfmonthlystats$total_peakflow[which((pfmonthlystats$month=="12" |pfmonthlystats$month=="01"|pfmonthlystats$month=="02")&pfmonthlystats$sthyyear==uniqueyear[[i]])], na.rm=TRUE)
 		mon3$mean_peakflow[[i]] <- mon3$total_peakflow[[i]]/mon3$numpeaks[[i]] 
-		mon3$year[[i]] <- uniqueyear[[i]]
+		mon3$sthyyear[[i]] <- uniqueyear[[i]]
 		mon3$yeartype_index[[i]] <- pfmonthlystats$yeartype_index[which(pfmonthlystats$sthyyear==uniqueyear[[i]])][[1]]
 	}
 	mon3_5 <- mon3[which(mon3$yeartype_index==5),]
@@ -111,14 +111,14 @@ peakflowanalysis_split <- function(pfmonthlystats){
 	
 	
 	mon6 <- data.frame(TotVolAbv_acft=rep(NA,length(uniqueyear)),TotDaysAbv=rep(NA,length(uniqueyear)),numpeaks=rep(NA,length(uniqueyear)),mean_peakflow=rep(NA,length(uniqueyear)),
-			total_peakflow=rep(NA,length(uniqueyear)),year=rep(NA,length(uniqueyear)),yeartype_index=rep(NA,length(uniqueyear)))
+			total_peakflow=rep(NA,length(uniqueyear)),sthyyear=rep(NA,length(uniqueyear)),yeartype_index=rep(NA,length(uniqueyear)))
 	for(i in 1:length(uniqueyear)){
 		mon6$TotVolAbv_acft[[i]] <- sum(pfmonthlystats$TotVolAbv_acft[which((pfmonthlystats$month=="11"|pfmonthlystats$month=="12" |pfmonthlystats$month=="01"|pfmonthlystats$month=="02"|pfmonthlystats$month=="03"|pfmonthlystats$month=="04")&pfmonthlystats$sthyyear==uniqueyear[[i]])], na.rm=TRUE)
 		mon6$TotDaysAbv[[i]] <- sum(pfmonthlystats$TotDaysAbv[which((pfmonthlystats$month=="11"|pfmonthlystats$month=="12" |pfmonthlystats$month=="01"|pfmonthlystats$month=="02"|pfmonthlystats$month=="03"|pfmonthlystats$month=="04")&pfmonthlystats$sthyyear==uniqueyear[[i]])], na.rm=TRUE)
 		mon6$numpeaks[[i]] <- sum(pfmonthlystats$numpeaks[which((pfmonthlystats$month=="11"|pfmonthlystats$month=="12" |pfmonthlystats$month=="01"|pfmonthlystats$month=="02"|pfmonthlystats$month=="03"|pfmonthlystats$month=="04")&pfmonthlystats$sthyyear==uniqueyear[[i]])], na.rm=TRUE)
 		mon6$total_peakflow[[i]] <- sum(pfmonthlystats$total_peakflow[which((pfmonthlystats$month=="11"|pfmonthlystats$month=="12" |pfmonthlystats$month=="01"|pfmonthlystats$month=="02"|pfmonthlystats$month=="03"|pfmonthlystats$month=="04")&pfmonthlystats$sthyyear==uniqueyear[[i]])], na.rm=TRUE)
 		mon6$mean_peakflow[[i]] <- mon6$total_peakflow[[i]]/mon6$numpeaks[[i]] 
-		mon6$year[[i]] <- uniqueyear[[i]]
+		mon6$sthyyear[[i]] <- uniqueyear[[i]]
 		mon6$yeartype_index[[i]] <- pfmonthlystats$yeartype_index[which(pfmonthlystats$sthyyear==uniqueyear[[i]])][[1]]
 	}
 	mon6_5 <- mon6[which(mon6$yeartype_index==5),]
@@ -131,14 +131,14 @@ peakflowanalysis_split <- function(pfmonthlystats){
 	
 	
 	hy <- data.frame(TotVolAbv_acft=rep(NA,length(uniqueyear)),TotDaysAbv=rep(NA,length(uniqueyear)),numpeaks=rep(NA,length(uniqueyear)),mean_peakflow=rep(NA,length(uniqueyear)),
-			total_peakflow=rep(NA,length(uniqueyear)),year=rep(NA,length(uniqueyear)),yeartype_index=rep(NA,length(uniqueyear)))
+			total_peakflow=rep(NA,length(uniqueyear)),sthyyear=rep(NA,length(uniqueyear)),yeartype_index=rep(NA,length(uniqueyear)))
 	for(i in 1:length(uniqueyear)){
 		hy$TotVolAbv_acft[[i]] <- sum(pfmonthlystats$TotVolAbv_acft[which(pfmonthlystats$sthyyear==uniqueyear[[i]])], na.rm=TRUE)
 		hy$TotDaysAbv[[i]] <- sum(pfmonthlystats$TotDaysAbv[which(pfmonthlystats$sthyyear==uniqueyear[[i]])], na.rm=TRUE)
 		hy$numpeaks[[i]] <- sum(pfmonthlystats$numpeaks[which(pfmonthlystats$sthyyear==uniqueyear[[i]])], na.rm=TRUE)
 		hy$total_peakflow[[i]] <- sum(pfmonthlystats$total_peakflow[which(pfmonthlystats$sthyyear==uniqueyear[[i]])], na.rm=TRUE)
 		hy$mean_peakflow[[i]] <- hy$total_peakflow[[i]]/hy$numpeaks[[i]] 
-		hy$year[[i]] <- uniqueyear[[i]]
+		hy$sthyyear[[i]] <- uniqueyear[[i]]
 		hy$yeartype_index[[i]] <- pfmonthlystats$yeartype_index[which(pfmonthlystats$sthyyear==uniqueyear[[i]])][[1]]
 	}
 	hy_5 <- hy[which(hy$yeartype_index==5),]
