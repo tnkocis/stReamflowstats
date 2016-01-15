@@ -428,9 +428,7 @@ for(z in 1:7){
 	for(k in 1:length(spbatch)){
 		test_split[[k]]<- peakflowanalysis_split(test_peakflowsdf[[k]]$pfmonthlystats)
 	}
-	names(test_split)<- names(spbatch)
-	testsplit<- peakflowanalysis_split(test_peakflowsdf$`11452500`$pfmonthlystats)
-	
+	names(test_split)<- names(spbatch)	
 	
 	test_peakflowmags_full <- vector("list", length(spbatch))
 	for(k in 1:length(spbatch)){
@@ -487,62 +485,62 @@ for(z in 1:7){
 	
 	for(i in 1:15){
 		write.csv(test_peakflowmags_full_bind$all[[i]], file=paste("C:\\Users\\tiffn_000\\Documents\\GIS\\post_agu\\peakflow_mags\\full\\all\\batch_",batchnum,"_",
-						names(test_peakflowmags_full_bind$all)[[i]],".csv"))
+						names(test_peakflowmags_full_bind$all)[[i]],".csv", sep=""))
 		
 		write.csv(test_peakflowmags_full_bind$W[[i]], file=paste("C:\\Users\\tiffn_000\\Documents\\GIS\\post_agu\\peakflow_mags\\full\\W\\batch_",batchnum,"_",
-						names(test_peakflowmags_full_bind$W)[[i]],".csv"))
+						names(test_peakflowmags_full_bind$W)[[i]],".csv", sep=""))
 		
 		write.csv(test_peakflowmags_full_bind$AN[[i]], file=paste("C:\\Users\\tiffn_000\\Documents\\GIS\\post_agu\\peakflow_mags\\full\\AN\\batch_",batchnum,"_",
-						names(test_peakflowmags_full_bind$AN)[[i]],".csv"))
+						names(test_peakflowmags_full_bind$AN)[[i]],".csv", sep=""))
 		
 		write.csv(test_peakflowmags_full_bind$BN[[i]], file=paste("C:\\Users\\tiffn_000\\Documents\\GIS\\post_agu\\peakflow_mags\\full\\BN\\batch_",batchnum,"_",
-						names(test_peakflowmags_full_bind$BN)[[i]],".csv"))
+						names(test_peakflowmags_full_bind$BN)[[i]],".csv", sep=""))
 		
 		write.csv(test_peakflowmags_full_bind$D[[i]], file=paste("C:\\Users\\tiffn_000\\Documents\\GIS\\post_agu\\peakflow_mags\\full\\D\\batch_",batchnum,"_",
-						names(test_peakflowmags_full_bind$D)[[i]],".csv"))
+						names(test_peakflowmags_full_bind$D)[[i]],".csv", sep=""))
 		
 		write.csv(test_peakflowmags_full_bind$C[[i]], file=paste("C:\\Users\\tiffn_000\\Documents\\GIS\\post_agu\\peakflow_mags\\full\\C\\batch_",batchnum,"_",
-						names(test_peakflowmags_full_bind$C)[[i]],".csv"))
+						names(test_peakflowmags_full_bind$C)[[i]],".csv", sep=""))
 	}
 	
 	for(i in 1:15){
 		write.csv(test_peakflowmags_dams_bind$all[[i]], file=paste("C:\\Users\\tiffn_000\\Documents\\GIS\\post_agu\\peakflow_mags\\dams\\all\\batch_",batchnum,"_",
-						names(test_peakflowmags_dams_bind$all)[[i]],".csv"))
+						names(test_peakflowmags_dams_bind$all)[[i]],".csv", sep=""))
 		
 		write.csv(test_peakflowmags_dams_bind$W[[i]], file=paste("C:\\Users\\tiffn_000\\Documents\\GIS\\post_agu\\peakflow_mags\\dams\\W\\batch_",batchnum,"_",
-						names(test_peakflowmags_dams_bind$W)[[i]],".csv"))
+						names(test_peakflowmags_dams_bind$W)[[i]],".csv", sep=""))
 		
 		write.csv(test_peakflowmags_dams_bind$AN[[i]], file=paste("C:\\Users\\tiffn_000\\Documents\\GIS\\post_agu\\peakflow_mags\\dams\\AN\\batch_",batchnum,"_",
-						names(test_peakflowmags_dams_bind$AN)[[i]],".csv"))
+						names(test_peakflowmags_dams_bind$AN)[[i]],".csv", sep=""))
 		
 		write.csv(test_peakflowmags_dams_bind$BN[[i]], file=paste("C:\\Users\\tiffn_000\\Documents\\GIS\\post_agu\\peakflow_mags\\dams\\BN\\batch_",batchnum,"_",
-						names(test_peakflowmags_dams_bind$BN)[[i]],".csv"))
+						names(test_peakflowmags_dams_bind$BN)[[i]],".csv", sep=""))
 		
 		write.csv(test_peakflowmags_dams_bind$D[[i]], file=paste("C:\\Users\\tiffn_000\\Documents\\GIS\\post_agu\\peakflow_mags\\dams\\D\\batch_",batchnum,"_",
-						names(test_peakflowmags_dams_bind$D)[[i]],".csv"))
+						names(test_peakflowmags_dams_bind$D)[[i]],".csv", sep=""))
 		
 		write.csv(test_peakflowmags_dams_bind$C[[i]], file=paste("C:\\Users\\tiffn_000\\Documents\\GIS\\post_agu\\peakflow_mags\\dams\\C\\batch_",batchnum,"_",
-						names(test_peakflowmags_dams_bind$C)[[i]],".csv"))
+						names(test_peakflowmags_dams_bind$C)[[i]],".csv", sep=""))
 	}
 	
 	for(i in 1:15){
 		write.csv(test_peakflowmags_1980_bind$all[[i]], file=paste("C:\\Users\\tiffn_000\\Documents\\GIS\\post_agu\\peakflow_mags\\1980\\all\\batch_",batchnum,"_",
-						names(test_peakflowmags_1980_bind$all)[[i]],".csv"))
+						names(test_peakflowmags_1980_bind$all)[[i]],".csv", sep=""))
 		
 		write.csv(test_peakflowmags_1980_bind$W[[i]], file=paste("C:\\Users\\tiffn_000\\Documents\\GIS\\post_agu\\peakflow_mags\\1980\\W\\batch_",batchnum,"_",
-						names(test_peakflowmags_1980_bind$W)[[i]],".csv"))
+						names(test_peakflowmags_1980_bind$W)[[i]],".csv", sep=""))
 		
 		write.csv(test_peakflowmags_1980_bind$AN[[i]], file=paste("C:\\Users\\tiffn_000\\Documents\\GIS\\post_agu\\peakflow_mags\\1980\\AN\\batch_",batchnum,"_",
-						names(test_peakflowmags_1980_bind$AN)[[i]],".csv"))
+						names(test_peakflowmags_1980_bind$AN)[[i]],".csv", sep=""))
 		
 		write.csv(test_peakflowmags_1980_bind$BN[[i]], file=paste("C:\\Users\\tiffn_000\\Documents\\GIS\\post_agu\\peakflow_mags\\1980\\BN\\batch_",batchnum,"_",
-						names(test_peakflowmags_1980_bind$BN)[[i]],".csv"))
+						names(test_peakflowmags_1980_bind$BN)[[i]],".csv", sep=""))
 		
 		write.csv(test_peakflowmags_1980_bind$D[[i]], file=paste("C:\\Users\\tiffn_000\\Documents\\GIS\\post_agu\\peakflow_mags\\1980\\D\\batch_",batchnum,"_",
-						names(test_peakflowmags_1980_bind$D)[[i]],".csv"))
+						names(test_peakflowmags_1980_bind$D)[[i]],".csv", sep=""))
 		
 		write.csv(test_peakflowmags_1980_bind$C[[i]], file=paste("C:\\Users\\tiffn_000\\Documents\\GIS\\post_agu\\peakflow_mags\\1980\\C\\batch_",batchnum,"_",
-						names(test_peakflowmags_1980_bind$C)[[i]],".csv"))
+						names(test_peakflowmags_1980_bind$C)[[i]],".csv", sep=""))
 	}
 
 
