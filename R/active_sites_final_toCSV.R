@@ -375,8 +375,10 @@ testarea <- hypeakplotsstats(spbatch_peakflowsdf[[3]]$pfmonthlystats, names(spba
 
 for(z in 1:7){
 	batchnum <- z
-	load(paste("C:\\Users\\tiffn_000\\Documents\\workspaces\\spbatch_",batchnum,".RData", sep=""))
-	
+	load(paste("C:\\Users\\tiffn_000\\Documents\\workspaces\\post_agu_spbatch_",batchnum,".RData", sep=""))
+	for(k in 1:length(spbatch)){
+		spbatch[[k]]$thresholds_maf <- thresholds(spbatch[[k]]$prep)
+	}
 	
 	test_peakflows <- vector("list", length(spbatch))
 	test_peakflowstats <- vector("list", length(spbatch))
@@ -389,7 +391,7 @@ for(z in 1:7){
 		test_peakflows[[k]]$peakflows <- vector("list", length=length(spbatch[[k]]$HydroYear$Data))
 		for(i in 1:length(spbatch[[k]]$HydroYear$Data)){
 			test_peakflows[[k]]$peakflows[[i]] <- simplified_peakanalysis(input=spbatch[[k]]$HydroYear$Data[[i]],
-					width=3, threshold=(spbatch[[k]]$thresholdsdams_maf$P90maf/(86400*2.29568411e-5*1e-6)), 
+					width=3, threshold=(spbatch[[k]]$thresholds_maf$P90maf/(86400*2.29568411e-5*1e-6)), 
 					thresholdname="90%", mastertime="hy", Index=spbatch[[k]]$Index)
 		}
 		test_peakflowstats[[k]] <- vector("list",length(test_peakflows[[k]]$peakflows))
