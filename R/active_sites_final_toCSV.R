@@ -554,7 +554,7 @@ for(z in 1:7){
 
 
 
-### not done#######
+### #######
 for(z in 1:7){
 	batchnum <- z
 	load(paste("C:\\Users\\tiffn_000\\Documents\\workspaces\\post_agu_spbatch_",batchnum,".RData", sep=""))
@@ -601,3 +601,17 @@ for(z in 1:7){
 	save.image(paste("C:\\Users\\tiffn_000\\Documents\\workspaces\\post_agu_spbatch_",batchnum,".RData", sep=""))
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+#durations stats#
+ 
