@@ -614,4 +614,56 @@ for(z in 1:7){
 
 
 #durations stats#
- 
+test_durations <- vector("list",length(spbatch[[1]]$HydroYear$Data)) 
+for(i in 1:length(spbatch[[1]]$HydroYear$Data)){
+	test_durations[[i]] <- durations_stats(spbatch[[1]]$HydroYear$Data[[i]], width=3, threshold=(spbatch[[1]]$thresholdsdams_maf$P90maf/(86400*2.29568411e-5*1e-6)), 
+					thresholdname="90%",Index=spbatch[[1]]$Index, gauge=names(spbatch)[[1]])
+}
+test_durationsdfbind <- vector("list",16)
+test_durationsdfbind <- test_durations[[1]]
+for(i in 2:length(test_durations)){
+	for(j in 1:16){
+		test_durationsdfbind[[j]] <- rbind.data.frame(test_durationsdfbind[[j]],test_durations[[i]][[j]])
+	}
+}
+library(ggplot2)
+hydf <- test_durationsdfbind[[1]][which(test_durationsdfbind[[1]]$period=="hy"),]
+test_durationsplot <- ggplot(hydf, aes(sthyyear))+
+		geom_ribbon(aes(ymin=min,ymax=max),fill="grey80")+
+		geom_ribbon(aes(ymin=q25,ymax=q75),fill="grey60")+
+		geom_line(aes(y=median))
+ggsave(filename="C:\\Users\\tiffn_000\\Desktop\\test_durations\\testdurationsplot1.pdf",plot=test_durationsplot,width=11,height=8.5,units="in",dpi=300)
+
+
+hyevents <- test_durationsdfbind$hyevents
+hyevents$stdecade <- NA
+for(i in 1:length(hyevents$year)){
+	if(hyevents$year[[i]]<1910){
+		hyevents$stdecade[[i]] <-1900
+	}else if(hyevents$year[[i]]<1920&hyevents$year[[i]]>=1910){
+		hyevents$stdecade[[i]] <-1910
+	}else if(hyevents$year[[i]]<1930&hyevents$year[[i]]>=1920){
+		hyevents$stdecade[[i]] <-1920
+	}else if(hyevents$year[[i]]<1940&hyevents$year[[i]]>=1930){
+		hyevents$stdecade[[i]] <-1930
+	}else if(hyevents$year[[i]]<1950&hyevents$year[[i]]>=1940){
+		hyevents$stdecade[[i]] <-1940
+	}else if(hyevents$year[[i]]<1960&hyevents$year[[i]]>=1950){
+		hyevents$stdecade[[i]] <-1950
+	}else if(hyevents$year[[i]]<1970&hyevents$year[[i]]>=1960){
+		hyevents$stdecade[[i]] <-1960
+	}else if(hyevents$year[[i]]<1980&hyevents$year[[i]]>=1970){
+		hyevents$stdecade[[i]] <-1970
+	}else if(hyevents$year[[i]]<1990&hyevents$year[[i]]>=1980){
+		hyevents$stdecade[[i]] <-1980
+	}else if(hyevents$year[[i]]<2000&hyevents$year[[i]]>=1990){
+		hyevents$stdecade[[i]] <-1990
+	}else if(hyevents$year[[i]]<2010&hyevents$year[[i]]>=2000){
+		hyevents$stdecade[[i]] <-2000
+	}else if(hyevents$year[[i]]<2020&hyevents$year[[i]]>=2010){
+		hyevents$stdecade[[i]] <-2010
+	}
+}
+
+decadalviolin <- ggplot(hyevents,aes(factor(stdecade),log(events))) +geom_violin()
+ggsave(filename="C:\\Users\\tiffn_000\\Desktop\\test_durations\\decadalviolin3.pdf",plot=decadalviolin,width=11,height=8.5,units="in",dpi=300)
