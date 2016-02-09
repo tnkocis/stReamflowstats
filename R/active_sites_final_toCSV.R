@@ -1357,4 +1357,51 @@ decadalviolin <- ggplot(hyevents,aes(factor(stdecade),log(events))) +geom_violin
 ggsave(filename="C:\\Users\\tiffn_000\\Desktop\\test_durations\\decadalviolin3.pdf",plot=decadalviolin,width=11,height=8.5,units="in",dpi=300)
 
 
+monthlyfullrecord <- read.csv("C:\\Users\\tiffn_000\\Google Drive\\figures\\SGMA_meeting\\monthly_fullrecord_numbers.csv")
+monthlyfullrecord$month <- factor(monthlyfullrecord$month, levels=c("nov","dec","jan","feb","mar","apr"))
+monthlyfullrecord$yeartype <- factor(monthlyfullrecord$yeartype, levels=c("C","D","BN","AN","W"))
+monthlyfullrecord$volume_maf <- monthlyfullrecord$volume_taf/1000
+monthlyfullrecord_sac <- monthlyfullrecord[which(monthlyfullrecord$gauge==11447650),]
+monthlyfullrecord_sj <- monthlyfullrecord[which(monthlyfullrecord$gauge==11303500),]
 
+
+monthlybarplot_sac <- ggplot(monthlyfullrecord_sac, aes(x = yeartype, y = volume_maf, width=0.9, fill=yeartype)) + geom_bar(stat="identity") + facet_wrap(~month, ncol=6)+ 
+		theme(axis.text.x=element_text(size=10)) + scale_fill_brewer(palette = "YlGnBu") +
+		scale_x_discrete(labels=c("C", "D", "BN", "AN","W")) + guides(fill=guide_legend(title="Year Type", reverse=TRUE))+
+		labs(title="Total Flows Above 90th Percentile For Average Year Type With Non-Zero Flow
+						Sacramento USGS 11447650 (45 years of Data, 1970-2014)
+", 
+				x="Year Type", y="Magnitude of Average Year Type Total Flow (MAF)")+
+		theme(axis.text=element_text(size=14),
+				axis.title=element_text(size=16),
+				title=element_text(size=16.5))
+
+ggsave("C:\\Users\\tiffn_000\\Google Drive\\figures\\SGMA_meeting\\sac_monthlybarplot_fullrecordthresold.png", monthlybarplot_sac, width=11, height=8.5, units="in")
+
+monthlybarplot_sj <- ggplot(monthlyfullrecord_sj, aes(x = yeartype, y = volume_maf, width=0.9, fill=yeartype)) + geom_bar(stat="identity") + facet_wrap(~month, ncol=6)+ 
+		theme(axis.text.x=element_text(size=10)) + scale_fill_brewer(palette = "YlGnBu") +
+		scale_x_discrete(labels=c("C", "D", "BN", "AN","W")) + guides(fill=guide_legend(title="Year Type", reverse=TRUE))+
+		labs(title="Total Flows Above 90th Percentile For Average Year Type With Non-Zero Flow
+						San Joaquin USGS 11303500 (25 years of Data, 1989-2014)
+						", 
+				x="Year Type", y="Magnitude of Average Year Type Total Flow (MAF)")+
+		theme(axis.text=element_text(size=14),
+				axis.title=element_text(size=16),
+				title=element_text(size=16.5))
+
+ggsave("C:\\Users\\tiffn_000\\Google Drive\\figures\\SGMA_meeting\\sj_monthlybarplot_fullrecordthresold.png", monthlybarplot_sj, width=11, height=8.5, units="in")
+
+periodfullrecord <- read.csv("C:\\Users\\tiffn_000\\Google Drive\\figures\\SGMA_meeting\\barplots_fullrecord_threshold\\data_for_barplots\\period_fullrecord_numbers.csv")
+
+pe <- ggplot(monthlyfullrecord_sj, aes(x = yeartype, y = volume_maf, width=0.9, fill=yeartype)) + geom_bar(stat="identity") + facet_wrap(~month, ncol=6)+ 
+		theme(axis.text.x=element_text(size=10)) + scale_fill_brewer(palette = "YlGnBu") +
+		scale_x_discrete(labels=c("C", "D", "BN", "AN","W")) + guides(fill=guide_legend(title="Year Type", reverse=TRUE))+
+		labs(title="Total Flows Above 90th Percentile For Average Year Type With Non-Zero Flow
+						San Joaquin USGS 11303500 (25 years of Data, 1989-2014)
+						", 
+				x="Year Type", y="Magnitude of Average Year Type Total Flow (MAF)")+
+		theme(axis.text=element_text(size=14),
+				axis.title=element_text(size=16),
+				title=element_text(size=16.5))
+
+#see work computer scratch for more
