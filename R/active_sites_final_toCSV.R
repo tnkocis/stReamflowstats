@@ -1405,3 +1405,279 @@ pe <- ggplot(monthlyfullrecord_sj, aes(x = yeartype, y = volume_maf, width=0.9, 
 				title=element_text(size=16.5))
 
 #see work computer scratch for more
+
+
+
+
+
+
+
+
+################zero_threshold
+#####################
+#########################
+
+for(z in 1:7){
+	batchnum <- z
+	load(paste("C:\\Users\\tiffn_000\\Documents\\workspaces\\full_record_spbatch_",batchnum,".RData", sep=""))
+	
+	test_peakflows <- vector("list", length(spbatch))
+	test_peakflowstats <- vector("list", length(spbatch))
+	test_peakflowsummary <- vector("list", length(spbatch))
+	test_peakflowmonthlystats <- vector("list", length(spbatch))
+	test_peakflowsdf <- vector("list", length(spbatch))
+	for(k in 1:length(spbatch)){
+		test_peakflows[[k]] <- vector("list",1)
+		names(test_peakflows[[k]]) <- c("peakflows")
+		test_peakflows[[k]]$peakflows <- vector("list", length=length(spbatch[[k]]$HydroYear$Data))
+		for(i in 1:length(spbatch[[k]]$HydroYear$Data)){
+			test_peakflows[[k]]$peakflows[[i]] <- simplified_peakanalysis(input=spbatch[[k]]$HydroYear$Data[[i]],
+					width=3, threshold=0, 
+					thresholdname="zero", mastertime="hy", Index=spbatch[[k]]$Index)
+		}
+		test_peakflowstats[[k]] <- vector("list",length(test_peakflows[[k]]$peakflows))
+		for(i in 1:length(test_peakflows[[k]]$peakflows))	{
+			test_peakflowstats[[k]][[i]] <- test_peakflows[[k]]$peakflows[[i]][[2]]
+		}
+		test_peakflowsummary[[k]] <- vector("list",length(test_peakflows[[k]]$peakflows))
+		for(i in 1:length(test_peakflows[[k]]$peakflows))	{
+			test_peakflowsummary[[k]][[i]] <- test_peakflows[[k]]$peakflows[[i]][[1]]
+		}
+		test_peakflowmonthlystats[[k]] <- vector("list",length(test_peakflows[[k]]$peakflows))
+		for(i in 1:length(test_peakflows[[k]]$peakflows))	{
+			test_peakflowmonthlystats[[k]][[i]] <- test_peakflows[[k]]$peakflows[[i]][[3]]
+		}
+		test_peakflowsdf[[k]] <- vector("list",3)
+		names(test_peakflowsdf[[k]]) <- c("pfstatsdf","pfsummarydf","pfmonthlystats")
+		test_peakflowsdf[[k]]$pfstatsdf <- do.call(rbind.data.frame,test_peakflowstats[[k]])
+		test_peakflowsdf[[k]]$pfsummarydf <- do.call(rbind.data.frame,test_peakflowsummary[[k]])
+		test_peakflowsdf[[k]]$pfmonthlystats <- do.call(rbind.data.frame,test_peakflowmonthlystats[[k]])
+		test_peakflowsdf[[k]]$pfstatsdf$volday_is_zero <- rep(NA, length(test_peakflowsdf[[k]]$pfstatsdf$TotDaysAbv))
+		for(i in 1:length(test_peakflowsdf[[k]]$pfstatsdf$TotDaysAbv)){
+			if(test_peakflowsdf[[k]]$pfstatsdf$TotDaysAbv[[i]]==0){
+				test_peakflowsdf[[k]]$pfstatsdf$volday_is_zero[[i]] <- 1
+			}else{
+				test_peakflowsdf[[k]]$pfstatsdf$volday_is_zero[[i]] <- 0
+			}
+		}
+		test_peakflowsdf[[k]]$pfstatsdf$volday_is_zero_cumsum <- cumsum(test_peakflowsdf[[k]]$pfstatsdf$volday_is_zero)	
+	}
+	names(test_peakflowsdf)<- names(spbatch)
+	names(test_peakflows)<- names(spbatch)
+	names(test_peakflowstats)<- names(spbatch)
+	names(test_peakflowsummary)<- names(spbatch)
+	names(test_peakflowmonthlystats)<- names(spbatch)
+	test_split <- vector("list", length(spbatch))
+	for(k in 1:length(spbatch)){
+		test_split[[k]]<- peakflowanalysis_split(test_peakflowsdf[[k]]$pfmonthlystats)
+	}
+	names(test_split)<- names(spbatch)	
+	
+	test_peakflowmags_full <- vector("list", length(spbatch))
+	for(k in 1:length(spbatch)){
+		test_peakflowmags_full[[k]] <- simplified_peakflowmags(test_split[[k]],names(test_split)[[k]],1800)
+		
+	}
+	names(test_peakflowmags_full) <- names(spbatch)
+	
+	test_peakflowmags_1980 <- vector("list", length(spbatch))
+	for(k in 1:length(spbatch)){
+		test_peakflowmags_1980[[k]] <- simplified_peakflowmags(test_split[[k]],names(test_split)[[k]],1980)
+		
+	}
+	names(test_peakflowmags_1980) <- names(spbatch)
+	
+	test_peakflowmags_dams <- vector("list", length(spbatch))
+	for(k in 1:length(spbatch)){
+		test_peakflowmags_dams[[k]] <- simplified_peakflowmags(test_split[[k]],names(test_split)[[k]],year=
+						analysis_year$analysis_year[which(spbatch[[k]]$raw$site_no[[1]]==analysis_year$downstreamgauge)])
+		
+	}
+	names(test_peakflowmags_dams) <- names(spbatch)
+	
+	test_peakflowmags_full_bind <- test_peakflowmags_full[[1]]
+	for(k in 2:length(spbatch)){
+		for(i in 1:6){
+			for(l in 1:15){
+				test_peakflowmags_full_bind[[i]][[l]] <- rbind.data.frame(test_peakflowmags_full_bind[[i]][[l]],
+						test_peakflowmags_full[[k]][[i]][[l]])
+			}
+		}
+	}
+	
+	test_peakflowmags_1980_bind <- test_peakflowmags_1980[[1]]
+	for(k in 2:length(spbatch)){
+		for(i in 1:6){
+			for(l in 1:15){
+				test_peakflowmags_1980_bind[[i]][[l]] <- rbind.data.frame(test_peakflowmags_1980_bind[[i]][[l]],
+						test_peakflowmags_1980[[k]][[i]][[l]])
+			}
+		}
+	}
+	
+	test_peakflowmags_dams_bind <- test_peakflowmags_dams[[1]]
+	for(k in 2:length(spbatch)){
+		for(i in 1:6){
+			for(l in 1:15){
+				test_peakflowmags_dams_bind[[i]][[l]] <- rbind.data.frame(test_peakflowmags_dams_bind[[i]][[l]],
+						test_peakflowmags_dams[[k]][[i]][[l]])
+			}
+		}
+	}
+	
+	
+	for(i in 1:15){
+		write.csv(test_peakflowmags_full_bind$all[[i]], file=paste("C:\\Users\\tiffn_000\\Documents\\GIS\\zero_threshold\\peakflow_mags\\full\\all\\batch_",batchnum,"_",
+						names(test_peakflowmags_full_bind$all)[[i]],".csv", sep=""))
+		
+		write.csv(test_peakflowmags_full_bind$W[[i]], file=paste("C:\\Users\\tiffn_000\\Documents\\GIS\\zero_threshold\\peakflow_mags\\full\\W\\batch_",batchnum,"_",
+						names(test_peakflowmags_full_bind$W)[[i]],".csv", sep=""))
+		
+		write.csv(test_peakflowmags_full_bind$AN[[i]], file=paste("C:\\Users\\tiffn_000\\Documents\\GIS\\zero_threshold\\peakflow_mags\\full\\AN\\batch_",batchnum,"_",
+						names(test_peakflowmags_full_bind$AN)[[i]],".csv", sep=""))
+		
+		write.csv(test_peakflowmags_full_bind$BN[[i]], file=paste("C:\\Users\\tiffn_000\\Documents\\GIS\\zero_threshold\\peakflow_mags\\full\\BN\\batch_",batchnum,"_",
+						names(test_peakflowmags_full_bind$BN)[[i]],".csv", sep=""))
+		
+		write.csv(test_peakflowmags_full_bind$D[[i]], file=paste("C:\\Users\\tiffn_000\\Documents\\GIS\\zero_threshold\\peakflow_mags\\full\\D\\batch_",batchnum,"_",
+						names(test_peakflowmags_full_bind$D)[[i]],".csv", sep=""))
+		
+		write.csv(test_peakflowmags_full_bind$C[[i]], file=paste("C:\\Users\\tiffn_000\\Documents\\GIS\\zero_threshold\\peakflow_mags\\full\\C\\batch_",batchnum,"_",
+						names(test_peakflowmags_full_bind$C)[[i]],".csv", sep=""))
+	}
+	
+	for(i in 1:15){
+		write.csv(test_peakflowmags_dams_bind$all[[i]], file=paste("C:\\Users\\tiffn_000\\Documents\\GIS\\zero_threshold\\peakflow_mags\\dams\\all\\batch_",batchnum,"_",
+						names(test_peakflowmags_dams_bind$all)[[i]],".csv", sep=""))
+		
+		write.csv(test_peakflowmags_dams_bind$W[[i]], file=paste("C:\\Users\\tiffn_000\\Documents\\GIS\\zero_threshold\\peakflow_mags\\dams\\W\\batch_",batchnum,"_",
+						names(test_peakflowmags_dams_bind$W)[[i]],".csv", sep=""))
+		
+		write.csv(test_peakflowmags_dams_bind$AN[[i]], file=paste("C:\\Users\\tiffn_000\\Documents\\GIS\\zero_threshold\\peakflow_mags\\dams\\AN\\batch_",batchnum,"_",
+						names(test_peakflowmags_dams_bind$AN)[[i]],".csv", sep=""))
+		
+		write.csv(test_peakflowmags_dams_bind$BN[[i]], file=paste("C:\\Users\\tiffn_000\\Documents\\GIS\\zero_threshold\\peakflow_mags\\dams\\BN\\batch_",batchnum,"_",
+						names(test_peakflowmags_dams_bind$BN)[[i]],".csv", sep=""))
+		
+		write.csv(test_peakflowmags_dams_bind$D[[i]], file=paste("C:\\Users\\tiffn_000\\Documents\\GIS\\zero_threshold\\peakflow_mags\\dams\\D\\batch_",batchnum,"_",
+						names(test_peakflowmags_dams_bind$D)[[i]],".csv", sep=""))
+		
+		write.csv(test_peakflowmags_dams_bind$C[[i]], file=paste("C:\\Users\\tiffn_000\\Documents\\GIS\\zero_threshold\\peakflow_mags\\dams\\C\\batch_",batchnum,"_",
+						names(test_peakflowmags_dams_bind$C)[[i]],".csv", sep=""))
+	}
+	
+	for(i in 1:15){
+		write.csv(test_peakflowmags_1980_bind$all[[i]], file=paste("C:\\Users\\tiffn_000\\Documents\\GIS\\zero_threshold\\peakflow_mags\\1980\\all\\batch_",batchnum,"_",
+						names(test_peakflowmags_1980_bind$all)[[i]],".csv", sep=""))
+		
+		write.csv(test_peakflowmags_1980_bind$W[[i]], file=paste("C:\\Users\\tiffn_000\\Documents\\GIS\\zero_threshold\\peakflow_mags\\1980\\W\\batch_",batchnum,"_",
+						names(test_peakflowmags_1980_bind$W)[[i]],".csv", sep=""))
+		
+		write.csv(test_peakflowmags_1980_bind$AN[[i]], file=paste("C:\\Users\\tiffn_000\\Documents\\GIS\\zero_threshold\\peakflow_mags\\1980\\AN\\batch_",batchnum,"_",
+						names(test_peakflowmags_1980_bind$AN)[[i]],".csv", sep=""))
+		
+		write.csv(test_peakflowmags_1980_bind$BN[[i]], file=paste("C:\\Users\\tiffn_000\\Documents\\GIS\\zero_threshold\\peakflow_mags\\1980\\BN\\batch_",batchnum,"_",
+						names(test_peakflowmags_1980_bind$BN)[[i]],".csv", sep=""))
+		
+		write.csv(test_peakflowmags_1980_bind$D[[i]], file=paste("C:\\Users\\tiffn_000\\Documents\\GIS\\zero_threshold\\peakflow_mags\\1980\\D\\batch_",batchnum,"_",
+						names(test_peakflowmags_1980_bind$D)[[i]],".csv", sep=""))
+		
+		write.csv(test_peakflowmags_1980_bind$C[[i]], file=paste("C:\\Users\\tiffn_000\\Documents\\GIS\\zero_threshold\\peakflow_mags\\1980\\C\\batch_",batchnum,"_",
+						names(test_peakflowmags_1980_bind$C)[[i]],".csv", sep=""))
+	}
+	
+	
+	test_peakflowtrends <- vector("list", length(spbatch))
+	for(k in 1:length(spbatch)){
+		test_peakflowtrends[[k]] <- vector("list", 1)
+		names(test_peakflowtrends[[k]]) <- names(test_split[[k]])[[1]]
+		for(i in 1:1){
+			for(l in 1:15){
+				test_peakflowtrends[[k]][[i]][[l]] <- simplified_peakflowtrends(test_split[[k]][[i]][[l]], names(test_split)[[k]],
+						analysis_year$analysis_year[which(spbatch[[k]]$raw$site_no[[1]]==analysis_year$downstreamgauge)])
+			}
+			names(test_peakflowtrends[[k]][[i]]) <- names(test_split[[k]][[i]])
+		}
+	}
+	names(test_peakflowtrends) <- names(spbatch)
+	
+	
+	test_peakflowtrends_bind <- test_peakflowtrends[[1]]
+	for(k in 2:length(spbatch)){
+		for(i in 1:1){
+			for(l in 1:15){
+				for(m in 1:3){
+					test_peakflowtrends_bind[[i]][[l]][[m]] <- rbind.data.frame(test_peakflowtrends_bind[[i]][[l]][[m]],
+							test_peakflowtrends[[k]][[i]][[l]][[m]])	
+				}
+			}
+		}
+	}
+	
+	
+	for(i in 1:15){
+		write.csv(test_peakflowtrends_bind$all[[i]][[1]], file=paste("C:\\Users\\tiffn_000\\Documents\\GIS\\zero_threshold\\peakflow_trends\\all\\dams\\batch_",batchnum,"_",
+						names(test_peakflowtrends_bind$all)[[i]],"_",names(test_peakflowtrends_bind$all[[i]])[[1]],".csv", sep=""))
+		
+		write.csv(test_peakflowtrends_bind$all[[i]][[2]], file=paste("C:\\Users\\tiffn_000\\Documents\\GIS\\zero_threshold\\peakflow_trends\\all\\full\\batch_",batchnum,"_",
+						names(test_peakflowtrends_bind$all)[[i]],"_",names(test_peakflowtrends_bind$all[[i]])[[2]],".csv", sep=""))
+		
+		write.csv(test_peakflowtrends_bind$all[[i]][[3]], file=paste("C:\\Users\\tiffn_000\\Documents\\GIS\\zero_threshold\\peakflow_trends\\all\\1980\\batch_",batchnum,"_",
+						names(test_peakflowtrends_bind$all)[[i]],"_",names(test_peakflowtrends_bind$all[[i]])[[3]],".csv", sep=""))
+		
+#		write.csv(test_peakflowtrends_bind$W[[i]][[1]], file=paste("C:\\Users\\tiffn_000\\Documents\\GIS\\zero_threshold\\peakflow_trends\\W\\dams\\batch_",batchnum,"_",
+#						names(test_peakflowtrends_bind$W)[[i]],"_",names(test_peakflowtrends_bind$W[[i]])[[1]],".csv", sep=""))
+#		
+#		write.csv(test_peakflowtrends_bind$W[[i]][[2]], file=paste("C:\\Users\\tiffn_000\\Documents\\GIS\\zero_threshold\\peakflow_trends\\W\\full\\batch_",batchnum,"_",
+#						names(test_peakflowtrends_bind$W)[[i]],"_",names(test_peakflowtrends_bind$W[[i]])[[2]],".csv", sep=""))
+#		
+#		write.csv(test_peakflowtrends_bind$W[[i]][[3]], file=paste("C:\\Users\\tiffn_000\\Documents\\GIS\\zero_threshold\\peakflow_trends\\W\\1980\\batch_",batchnum,"_",
+#						names(test_peakflowtrends_bind$W)[[i]],"_",names(test_peakflowtrends_bind$W[[i]])[[3]],".csv", sep=""))
+#		
+#		
+#		write.csv(test_peakflowtrends_bind$AN[[i]][[1]], file=paste("C:\\Users\\tiffn_000\\Documents\\GIS\\zero_threshold\\peakflow_trends\\AN\\dams\\batch_",batchnum,"_",
+#						names(test_peakflowtrends_bind$AN)[[i]],"_",names(test_peakflowtrends_bind$AN[[i]])[[1]],".csv", sep=""))
+#		
+#		write.csv(test_peakflowtrends_bind$AN[[i]][[2]], file=paste("C:\\Users\\tiffn_000\\Documents\\GIS\\zero_threshold\\peakflow_trends\\AN\\full\\batch_",batchnum,"_",
+#						names(test_peakflowtrends_bind$AN)[[i]],"_",names(test_peakflowtrends_bind$AN[[i]])[[2]],".csv", sep=""))
+#		
+#		write.csv(test_peakflowtrends_bind$AN[[i]][[3]], file=paste("C:\\Users\\tiffn_000\\Documents\\GIS\\zero_threshold\\peakflow_trends\\AN\\1980\\batch_",batchnum,"_",
+#						names(test_peakflowtrends_bind$AN)[[i]],"_",names(test_peakflowtrends_bind$AN[[i]])[[3]],".csv", sep=""))
+#		
+#		
+#		write.csv(test_peakflowtrends_bind$BN[[i]][[1]], file=paste("C:\\Users\\tiffn_000\\Documents\\GIS\\zero_threshold\\peakflow_trends\\BN\\dams\\batch_",batchnum,"_",
+#						names(test_peakflowtrends_bind$BN)[[i]],"_",names(test_peakflowtrends_bind$BN[[i]])[[1]],".csv", sep=""))
+#		
+#		write.csv(test_peakflowtrends_bind$BN[[i]][[2]], file=paste("C:\\Users\\tiffn_000\\Documents\\GIS\\zero_threshold\\peakflow_trends\\BN\\full\\batch_",batchnum,"_",
+#						names(test_peakflowtrends_bind$BN)[[i]],"_",names(test_peakflowtrends_bind$BN[[i]])[[2]],".csv", sep=""))
+#		
+#		write.csv(test_peakflowtrends_bind$BN[[i]][[3]], file=paste("C:\\Users\\tiffn_000\\Documents\\GIS\\zero_threshold\\peakflow_trends\\BN\\1980\\batch_",batchnum,"_",
+#						names(test_peakflowtrends_bind$BN)[[i]],"_",names(test_peakflowtrends_bind$BN[[i]])[[3]],".csv", sep=""))
+#		
+#		
+#		write.csv(test_peakflowtrends_bind$D[[i]][[1]], file=paste("C:\\Users\\tiffn_000\\Documents\\GIS\\zero_threshold\\peakflow_trends\\D\\dams\\batch_",batchnum,"_",
+#						names(test_peakflowtrends_bind$D)[[i]],"_",names(test_peakflowtrends_bind$D[[i]])[[1]],".csv", sep=""))
+#		
+#		write.csv(test_peakflowtrends_bind$D[[i]][[2]], file=paste("C:\\Users\\tiffn_000\\Documents\\GIS\\zero_threshold\\peakflow_trends\\D\\full\\batch_",batchnum,"_",
+#						names(test_peakflowtrends_bind$D)[[i]],"_",names(test_peakflowtrends_bind$D[[i]])[[2]],".csv", sep=""))
+#		
+#		write.csv(test_peakflowtrends_bind$D[[i]][[3]], file=paste("C:\\Users\\tiffn_000\\Documents\\GIS\\zero_threshold\\peakflow_trends\\D\\1980\\batch_",batchnum,"_",
+#						names(test_peakflowtrends_bind$D)[[i]],"_",names(test_peakflowtrends_bind$D[[i]])[[3]],".csv", sep=""))
+#		
+#		
+#		
+#		write.csv(test_peakflowtrends_bind$C[[i]][[1]], file=paste("C:\\Users\\tiffn_000\\Documents\\GIS\\zero_threshold\\peakflow_trends\\C\\dams\\batch_",batchnum,"_",
+#						names(test_peakflowtrends_bind$C)[[i]],"_",names(test_peakflowtrends_bind$C[[i]])[[1]],".csv", sep=""))
+#		
+#		write.csv(test_peakflowtrends_bind$C[[i]][[2]], file=paste("C:\\Users\\tiffn_000\\Documents\\GIS\\zero_threshold\\peakflow_trends\\C\\full\\batch_",batchnum,"_",
+#						names(test_peakflowtrends_bind$C)[[i]],"_",names(test_peakflowtrends_bind$C[[i]])[[2]],".csv", sep=""))
+#		
+#		write.csv(test_peakflowtrends_bind$C[[i]][[3]], file=paste("C:\\Users\\tiffn_000\\Documents\\GIS\\zero_threshold\\peakflow_trends\\C\\1980\\batch_",batchnum,"_",
+#						names(test_peakflowtrends_bind$C)[[i]],"_",names(test_peakflowtrends_bind$C[[i]])[[3]],".csv", sep=""))
+	}
+	
+	save.image(paste("C:\\Users\\tiffn_000\\Documents\\workspaces\\zero_threshold_spbatch_",batchnum,".RData", sep=""))
+}
+
+
+
