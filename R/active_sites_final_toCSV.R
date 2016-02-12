@@ -1680,4 +1680,22 @@ for(z in 1:7){
 }
 
 
+### merge files####
 
+keyvec <- c("nov","dec","jan","feb","mar","apr","may","jun","jul","aug","sep","oct","hy","mon3","mon6")
+masterlist <- vector("list",length(keyvec))
+for(k in 1:length(keyvec)){
+	masterlist[[k]] <- vector("list",7)
+	for(i in 1:7){
+		masterlist[[k]][[i]] <- read.csv(paste("C:\\Users\\tiffn_000\\Documents\\GIS\\full_record\\peakflow_trends\\all\\full\\batch_",
+						i,"_",keyvec[[k]],"_trend_full.csv", sep=""))
+		
+	}
+	masterlist[[k]] <- do.call(rbind.data.frame,masterlist[[k]])
+	masterlist[[k]]$period <- keyvec[[k]]
+}
+names(masterlist)<-keyvec
+masterdf <- do.call(rbind.data.frame,masterlist)
+
+test <- masterdf[which(masterdf$measure=="totvolabv" & masterdf$window==10),]
+write.csv(masterdf,"C:\\Users\\tiffn_000\\Google Drive\\data\\full_record\\full_record_trends_full.csv")
