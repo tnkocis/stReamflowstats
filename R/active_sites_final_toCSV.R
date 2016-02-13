@@ -1699,3 +1699,7 @@ masterdf <- do.call(rbind.data.frame,masterlist)
 
 test <- masterdf[which(masterdf$measure=="totvolabv" & masterdf$window==10),]
 write.csv(masterdf,"C:\\Users\\tiffn_000\\Google Drive\\data\\full_record\\full_record_trends_full.csv")
+
+test2 <- data.frame(date=spbatch$`11447650`$prep$Date, discharge_TAF=spbatch$`11447650`$prep$Discharge_maf*1000)
+test2 <- test2[which(test2$date >= as.Date("1976-02-01", "%Y-%m-%d")),]
+write.csv(test2,"C:\\Users\\tiffn_000\\Google Drive\\data\\sac11447650_delta_dates.csv" )
