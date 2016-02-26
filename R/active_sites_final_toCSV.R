@@ -1703,3 +1703,35 @@ write.csv(masterdf,"C:\\Users\\tiffn_000\\Google Drive\\data\\full_record\\full_
 test2 <- data.frame(date=spbatch$`11447650`$prep$Date, discharge_TAF=spbatch$`11447650`$prep$Discharge_maf*1000)
 test2 <- test2[which(test2$date >= as.Date("1976-02-01", "%Y-%m-%d")),]
 write.csv(test2,"C:\\Users\\tiffn_000\\Google Drive\\data\\sac11447650_delta_dates.csv" )
+
+
+
+
+
+
+test2_peakflowtrends <- vector("list", length(spbatch))
+for(k in 1:length(spbatch)){
+	test2_peakflowtrends[[k]] <- vector("list", 6)
+	names(test2_peakflowtrends[[k]]) <- names(test_split[[k]])
+	for(i in 1:6){
+		for(l in 1:15){
+			test2_peakflowtrends[[k]][[i]][[l]] <- simplified_peakflowtrends_SN(test_split[[k]][[i]][[l]], names(test_split)[[k]],
+					analysis_year$analysis_year[which(spbatch[[k]]$raw$site_no[[1]]==analysis_year$downstreamgauge)], commonyear=1980)
+		}
+		names(test2_peakflowtrends[[k]][[i]]) <- names(test_split[[k]][[i]])
+	}
+}
+names(test2_peakflowtrends) <- names(spbatch)
+
+
+test2_peakflowtrends_bind <- test2_peakflowtrends[[1]]
+for(k in 2:length(spbatch)){
+	for(i in 1:6){
+		for(l in 1:15){
+			for(m in 1:3){
+				test2_peakflowtrends_bind[[i]][[l]][[m]] <- rbind.data.frame(test2_peakflowtrends_bind[[i]][[l]][[m]],
+						test2_peakflowtrends[[k]][[i]][[l]][[m]])	
+			}
+		}
+	}
+}
