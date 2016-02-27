@@ -20,6 +20,7 @@ simplified_peakflowtrends_SN <- function(pfstatsdf, gauge, year, commonyear){
 	library(zoo)
 	library(Kendall)
 	library(car)
+	library(fume)
 	
 	commonyear <- commonyear-1
 	
@@ -63,7 +64,7 @@ simplified_peakflowtrends_SN <- function(pfstatsdf, gauge, year, commonyear){
 	
 	
 	if(all(is.na(meantotvol1))){
-		SNmeantotvol1 <- data.frame(slope=NA,SN=NA,dwstat=NA,,data_variance=NA,window=c(1),measure=c("totvolabv"))
+		SNmeantotvol1 <- data.frame(slope=NA,SN=NA,dwstat=NA,data_variance=NA,window=c(1),measure=c("totvolabv"))
 	}else{
 		SNmeantotvol1 <- lm(meantotvol1 ~ pfstatsdf$sthyyear)
 		SNmeantotvol1 <- data.frame(slope=SNmeantotvol1$coefficients[[2]],SN=(var(fitted.values(SNmeantotvol1))/var(residuals(SNmeantotvol1))),data_variance=var(meantotvol1, na.rm=TRUE),window=c(1),measure=c("totvolabv"), dwstat=dwt(residuals(SNmeantotvol1)))
@@ -71,28 +72,28 @@ simplified_peakflowtrends_SN <- function(pfstatsdf, gauge, year, commonyear){
 	}
 	
 	if(all(is.na(meantotvol5))){
-		SNmeantotvol5 <- data.frame(slope=NA,SN=NA,dwstat=NA,,data_variance=NA,window=c(5),measure=c("totvolabv"))
+		SNmeantotvol5 <- data.frame(slope=NA,SN=NA,dwstat=NA,data_variance=NA,window=c(5),measure=c("totvolabv"))
 	}else{
 		SNmeantotvol5 <- lm(meantotvol5 ~ pfstatsdf$sthyyear)
 		SNmeantotvol5 <- data.frame(slope=SNmeantotvol5$coefficients[[2]],SN=(var(fitted.values(SNmeantotvol5))/var(residuals(SNmeantotvol5))),data_variance=var(meantotvol5, na.rm=TRUE),window=c(5),measure=c("totvolabv"), dwstat=dwt(residuals(SNmeantotvol5)))
 		
 	}
 	if(all(is.na(meantotvol10))){
-		SNmeantotvol10 <- data.frame(slope=NA,SN=NA,dwstat=NA,,data_variance=NA,window=c(10),measure=c("totvolabv"))
+		SNmeantotvol10 <- data.frame(slope=NA,SN=NA,dwstat=NA,data_variance=NA,window=c(10),measure=c("totvolabv"))
 	}else{
 		SNmeantotvol10 <- lm(meantotvol10 ~ pfstatsdf$sthyyear)
 		SNmeantotvol10 <- data.frame(slope=SNmeantotvol10$coefficients[[2]],SN=(var(fitted.values(SNmeantotvol10))/var(residuals(SNmeantotvol10))),data_variance=var(meantotvol10, na.rm=TRUE),window=c(10),measure=c("totvolabv"), dwstat=dwt(residuals(SNmeantotvol10)))
 		
 	}
 	if(all(is.na(meantotvol20))){
-		SNmeantotvol20 <- data.frame(slope=NA,SN=NA,dwstat=NA,,data_variance=NA,window=c(20),measure=c("totvolabv"))
+		SNmeantotvol20 <- data.frame(slope=NA,SN=NA,dwstat=NA,data_variance=NA,window=c(20),measure=c("totvolabv"))
 	}else{
 		SNmeantotvol20 <- lm(meantotvol20 ~ pfstatsdf$sthyyear)
 		SNmeantotvol20 <- data.frame(slope=SNmeantotvol20$coefficients[[2]],SN=(var(fitted.values(SNmeantotvol20))/var(residuals(SNmeantotvol20))),data_variance=var(meantotvol20, na.rm=TRUE),window=c(20),measure=c("totvolabv"), dwstat=dwt(residuals(SNmeantotvol20)))
 		
 	}
 	if(all(is.na(meantotvol30))){
-		SNmeantotvol30 <- data.frame(slope=NA,SN=NA,dwstat=NA,,data_variance=NA,window=c(30),measure=c("totvolabv"))
+		SNmeantotvol30 <- data.frame(slope=NA,SN=NA,dwstat=NA,data_variance=NA,window=c(30),measure=c("totvolabv"))
 	}else{
 		SNmeantotvol30 <- lm(meantotvol30 ~ pfstatsdf$sthyyear)
 		SNmeantotvol30 <- data.frame(slope=SNmeantotvol30$coefficients[[2]],SN=(var(fitted.values(SNmeantotvol30))/var(residuals(SNmeantotvol30))),data_variance=var(meantotvol30, na.rm=TRUE),window=c(30),measure=c("totvolabv"), dwstat=dwt(residuals(SNmeantotvol30)))
@@ -142,7 +143,7 @@ simplified_peakflowtrends_SN <- function(pfstatsdf, gauge, year, commonyear){
 	MKmeantotdays <- rbind.data.frame(MKmeantotdays1,MKmeantotdays5,MKmeantotdays10,MKmeantotdays20,MKmeantotdays30)
 	
 	if(all(is.na(meantotdays1))){
-		SNmeantotdays1 <- data.frame(slope=NA,SN=NA,dwstat=NA,,data_variance=NA,window=c(1),measure=c("totdaysabv"))
+		SNmeantotdays1 <- data.frame(slope=NA,SN=NA,dwstat=NA,data_variance=NA,window=c(1),measure=c("totdaysabv"))
 	}else{
 		SNmeantotdays1 <- lm(meantotdays1 ~ pfstatsdf$sthyyear)
 		SNmeantotdays1 <- data.frame(slope=SNmeantotdays1$coefficients[[2]],SN=(var(fitted.values(SNmeantotdays1))/var(residuals(SNmeantotdays1))),data_variance=var(meantotdays1, na.rm=TRUE),window=c(1),measure=c("totdaysabv"), dwstat=dwt(residuals(SNmeantotdays1)))
@@ -150,28 +151,28 @@ simplified_peakflowtrends_SN <- function(pfstatsdf, gauge, year, commonyear){
 	}
 	
 	if(all(is.na(meantotdays5))){
-		SNmeantotdays5 <- data.frame(slope=NA,SN=NA,dwstat=NA,,data_variance=NA,window=c(5),measure=c("totdaysabv"))
+		SNmeantotdays5 <- data.frame(slope=NA,SN=NA,dwstat=NA,data_variance=NA,window=c(5),measure=c("totdaysabv"))
 	}else{
 		SNmeantotdays5 <- lm(meantotdays5 ~ pfstatsdf$sthyyear)
 		SNmeantotdays5 <- data.frame(slope=SNmeantotdays5$coefficients[[2]],SN=(var(fitted.values(SNmeantotdays5))/var(residuals(SNmeantotdays5))),data_variance=var(meantotdays5, na.rm=TRUE),window=c(5),measure=c("totdaysabv"), dwstat=dwt(residuals(SNmeantotdays5)))
 		
 	}
 	if(all(is.na(meantotdays10))){
-		SNmeantotdays10 <- data.frame(slope=NA,SN=NA,dwstat=NA,,data_variance=NA,window=c(10),measure=c("totdaysabv"))
+		SNmeantotdays10 <- data.frame(slope=NA,SN=NA,dwstat=NA,data_variance=NA,window=c(10),measure=c("totdaysabv"))
 	}else{
 		SNmeantotdays10 <- lm(meantotdays10 ~ pfstatsdf$sthyyear)
 		SNmeantotdays10 <- data.frame(slope=SNmeantotdays10$coefficients[[2]],SN=(var(fitted.values(SNmeantotdays10))/var(residuals(SNmeantotdays10))),data_variance=var(meantotdays10, na.rm=TRUE),window=c(10),measure=c("totdaysabv"), dwstat=dwt(residuals(SNmeantotdays10)))
 		
 	}
 	if(all(is.na(meantotdays20))){
-		SNmeantotdays20 <- data.frame(slope=NA,SN=NA,dwstat=NA,,data_variance=NA,window=c(20),measure=c("totdaysabv"))
+		SNmeantotdays20 <- data.frame(slope=NA,SN=NA,dwstat=NA,data_variance=NA,window=c(20),measure=c("totdaysabv"))
 	}else{
 		SNmeantotdays20 <- lm(meantotdays20 ~ pfstatsdf$sthyyear)
 		SNmeantotdays20 <- data.frame(slope=SNmeantotdays20$coefficients[[2]],SN=(var(fitted.values(SNmeantotdays20))/var(residuals(SNmeantotdays20))),data_variance=var(meantotdays20, na.rm=TRUE),window=c(20),measure=c("totdaysabv"), dwstat=dwt(residuals(SNmeantotdays20)))
 		
 	}
 	if(all(is.na(meantotdays30))){
-		SNmeantotdays30 <- data.frame(slope=NA,SN=NA,dwstat=NA,,data_variance=NA,window=c(30),measure=c("totdaysabv"))
+		SNmeantotdays30 <- data.frame(slope=NA,SN=NA,dwstat=NA,data_variance=NA,window=c(30),measure=c("totdaysabv"))
 	}else{
 		SNmeantotdays30 <- lm(meantotdays30 ~ pfstatsdf$sthyyear)
 		SNmeantotdays30 <- data.frame(slope=SNmeantotdays30$coefficients[[2]],SN=(var(fitted.values(SNmeantotdays30))/var(residuals(SNmeantotdays30))),data_variance=var(meantotdays30, na.rm=TRUE),window=c(30),measure=c("totdaysabv"), dwstat=dwt(residuals(SNmeantotdays30)))
@@ -220,7 +221,7 @@ simplified_peakflowtrends_SN <- function(pfstatsdf, gauge, year, commonyear){
 	MKmeannumpks <- rbind.data.frame(MKmeannumpks1,MKmeannumpks5,MKmeannumpks10,MKmeannumpks20,MKmeannumpks30)
 	
 	if(all(is.na(meannumpks1))){
-		SNmeannumpks1 <- data.frame(slope=NA,SN=NA,dwstat=NA,,data_variance=NA,window=c(1),measure=c("numpeaksabv"))
+		SNmeannumpks1 <- data.frame(slope=NA,SN=NA,dwstat=NA,data_variance=NA,window=c(1),measure=c("numpeaksabv"))
 	}else{
 		SNmeannumpks1 <- lm(meannumpks1 ~ pfstatsdf$sthyyear)
 		SNmeannumpks1 <- data.frame(slope=SNmeannumpks1$coefficients[[2]],SN=(var(fitted.values(SNmeannumpks1))/var(residuals(SNmeannumpks1))),data_variance=var(meannumpks1, na.rm=TRUE),window=c(1),measure=c("numpeaksabv"), dwstat=dwt(residuals(SNmeannumpks1)))
@@ -228,28 +229,28 @@ simplified_peakflowtrends_SN <- function(pfstatsdf, gauge, year, commonyear){
 	}
 	
 	if(all(is.na(meannumpks5))){
-		SNmeannumpks5 <- data.frame(slope=NA,SN=NA,dwstat=NA,,data_variance=NA,window=c(5),measure=c("numpeaksabv"))
+		SNmeannumpks5 <- data.frame(slope=NA,SN=NA,dwstat=NA,data_variance=NA,window=c(5),measure=c("numpeaksabv"))
 	}else{
 		SNmeannumpks5 <- lm(meannumpks5 ~ pfstatsdf$sthyyear)
 		SNmeannumpks5 <- data.frame(slope=SNmeannumpks5$coefficients[[2]],SN=(var(fitted.values(SNmeannumpks5))/var(residuals(SNmeannumpks5))),data_variance=var(meannumpks5, na.rm=TRUE),window=c(5),measure=c("numpeaksabv"), dwstat=dwt(residuals(SNmeannumpks5)))
 		
 	}
 	if(all(is.na(meannumpks10))){
-		SNmeannumpks10 <- data.frame(slope=NA,SN=NA,dwstat=NA,,data_variance=NA,window=c(10),measure=c("numpeaksabv"))
+		SNmeannumpks10 <- data.frame(slope=NA,SN=NA,dwstat=NA,data_variance=NA,window=c(10),measure=c("numpeaksabv"))
 	}else{
 		SNmeannumpks10 <- lm(meannumpks10 ~ pfstatsdf$sthyyear)
 		SNmeannumpks10 <- data.frame(slope=SNmeannumpks10$coefficients[[2]],SN=(var(fitted.values(SNmeannumpks10))/var(residuals(SNmeannumpks10))),data_variance=var(meannumpks10, na.rm=TRUE),window=c(10),measure=c("numpeaksabv"), dwstat=dwt(residuals(SNmeannumpks10)))
 		
 	}
 	if(all(is.na(meannumpks20))){
-		SNmeannumpks20 <- data.frame(slope=NA,SN=NA,dwstat=NA,,data_variance=NA,window=c(20),measure=c("numpeaksabv"))
+		SNmeannumpks20 <- data.frame(slope=NA,SN=NA,dwstat=NA,data_variance=NA,window=c(20),measure=c("numpeaksabv"))
 	}else{
 		SNmeannumpks20 <- lm(meannumpks20 ~ pfstatsdf$sthyyear)
 		SNmeannumpks20 <- data.frame(slope=SNmeannumpks20$coefficients[[2]],SN=(var(fitted.values(SNmeannumpks20))/var(residuals(SNmeannumpks20))),data_variance=var(meannumpks20, na.rm=TRUE),window=c(20),measure=c("numpeaksabv"), dwstat=dwt(residuals(SNmeannumpks20)))
 		
 	}
 	if(all(is.na(meannumpks30))){
-		SNmeannumpks30 <- data.frame(slope=NA,SN=NA,dwstat=NA,,data_variance=NA,window=c(30),measure=c("numpeaksabv"))
+		SNmeannumpks30 <- data.frame(slope=NA,SN=NA,dwstat=NA,data_variance=NA,window=c(30),measure=c("numpeaksabv"))
 	}else{
 		SNmeannumpks30 <- lm(meannumpks30 ~ pfstatsdf$sthyyear)
 		SNmeannumpks30 <- data.frame(slope=SNmeannumpks30$coefficients[[2]],SN=(var(fitted.values(SNmeannumpks30))/var(residuals(SNmeannumpks30))),data_variance=var(meannumpks30, na.rm=TRUE),window=c(30),measure=c("numpeaksabv"), dwstat=dwt(residuals(SNmeannumpks30)))
@@ -299,7 +300,7 @@ simplified_peakflowtrends_SN <- function(pfstatsdf, gauge, year, commonyear){
 	MKmeanmeanpks <- rbind.data.frame(MKmeanmeanpks1,MKmeanmeanpks5,MKmeanmeanpks10,MKmeanmeanpks20,MKmeanmeanpks30)
 	
 	if(all(is.na(meanmeanpks1))){
-		SNmeanmeanpks1 <- data.frame(slope=NA,SN=NA,dwstat=NA,,data_variance=NA,window=c(1),measure=c("meanpeaksabv"))
+		SNmeanmeanpks1 <- data.frame(slope=NA,SN=NA,dwstat=NA,data_variance=NA,window=c(1),measure=c("meanpeaksabv"))
 	}else{
 		SNmeanmeanpks1 <- lm(meanmeanpks1 ~ pfstatsdf$sthyyear)
 		SNmeanmeanpks1 <- data.frame(slope=SNmeanmeanpks1$coefficients[[2]],SN=(var(fitted.values(SNmeanmeanpks1))/var(residuals(SNmeanmeanpks1))),data_variance=var(meanmeanpks1, na.rm=TRUE),window=c(1),measure=c("meanpeaksabv"), dwstat=dwt(residuals(SNmeanmeanpks1)))
@@ -307,28 +308,28 @@ simplified_peakflowtrends_SN <- function(pfstatsdf, gauge, year, commonyear){
 	}
 	
 	if(all(is.na(meanmeanpks5))){
-		SNmeanmeanpks5 <- data.frame(slope=NA,SN=NA,dwstat=NA,,data_variance=NA,window=c(5),measure=c("meanpeaksabv"))
+		SNmeanmeanpks5 <- data.frame(slope=NA,SN=NA,dwstat=NA,data_variance=NA,window=c(5),measure=c("meanpeaksabv"))
 	}else{
 		SNmeanmeanpks5 <- lm(meanmeanpks5 ~ pfstatsdf$sthyyear)
 		SNmeanmeanpks5 <- data.frame(slope=SNmeanmeanpks5$coefficients[[2]],SN=(var(fitted.values(SNmeanmeanpks5))/var(residuals(SNmeanmeanpks5))),data_variance=var(meanmeanpks5, na.rm=TRUE),window=c(5),measure=c("meanpeaksabv"), dwstat=dwt(residuals(SNmeanmeanpks5)))
 		
 	}
 	if(all(is.na(meanmeanpks10))){
-		SNmeanmeanpks10 <- data.frame(slope=NA,SN=NA,dwstat=NA,,data_variance=NA,window=c(10),measure=c("meanpeaksabv"))
+		SNmeanmeanpks10 <- data.frame(slope=NA,SN=NA,dwstat=NA,data_variance=NA,window=c(10),measure=c("meanpeaksabv"))
 	}else{
 		SNmeanmeanpks10 <- lm(meanmeanpks10 ~ pfstatsdf$sthyyear)
 		SNmeanmeanpks10 <- data.frame(slope=SNmeanmeanpks10$coefficients[[2]],SN=(var(fitted.values(SNmeanmeanpks10))/var(residuals(SNmeanmeanpks10))),data_variance=var(meanmeanpks10, na.rm=TRUE),window=c(10),measure=c("meanpeaksabv"), dwstat=dwt(residuals(SNmeanmeanpks10)))
 		
 	}
 	if(all(is.na(meanmeanpks20))){
-		SNmeanmeanpks20 <- data.frame(slope=NA,SN=NA,dwstat=NA,,data_variance=NA,window=c(20),measure=c("meanpeaksabv"))
+		SNmeanmeanpks20 <- data.frame(slope=NA,SN=NA,dwstat=NA,data_variance=NA,window=c(20),measure=c("meanpeaksabv"))
 	}else{
 		SNmeanmeanpks20 <- lm(meanmeanpks20 ~ pfstatsdf$sthyyear)
 		SNmeanmeanpks20 <- data.frame(slope=SNmeanmeanpks20$coefficients[[2]],SN=(var(fitted.values(SNmeanmeanpks20))/var(residuals(SNmeanmeanpks20))),data_variance=var(meanmeanpks20, na.rm=TRUE),window=c(20),measure=c("meanpeaksabv"), dwstat=dwt(residuals(SNmeanmeanpks20)))
 		
 	}
 	if(all(is.na(meanmeanpks30))){
-		SNmeanmeanpks30 <- data.frame(slope=NA,SN=NA,dwstat=NA,,data_variance=NA,window=c(30),measure=c("meanpeaksabv"))
+		SNmeanmeanpks30 <- data.frame(slope=NA,SN=NA,dwstat=NA,data_variance=NA,window=c(30),measure=c("meanpeaksabv"))
 	}else{
 		SNmeanmeanpks30 <- lm(meanmeanpks30 ~ pfstatsdf$sthyyear)
 		SNmeanmeanpks30 <- data.frame(slope=SNmeanmeanpks30$coefficients[[2]],SN=(var(fitted.values(SNmeanmeanpks30))/var(residuals(SNmeanmeanpks30))),data_variance=var(meanmeanpks30, na.rm=TRUE),window=c(30),measure=c("meanpeaksabv"), dwstat=dwt(residuals(SNmeanmeanpks30)))
@@ -377,7 +378,7 @@ simplified_peakflowtrends_SN <- function(pfstatsdf, gauge, year, commonyear){
 	MKmeantotpks <- rbind.data.frame(MKmeantotpks1,MKmeantotpks5,MKmeantotpks10,MKmeantotpks20,MKmeantotpks30)
 	
 	if(all(is.na(meantotpks1))){
-		SNmeantotpks1 <- data.frame(slope=NA,SN=NA,dwstat=NA,,data_variance=NA,window=c(1),measure=c("totpeakflwabv"))
+		SNmeantotpks1 <- data.frame(slope=NA,SN=NA,dwstat=NA,data_variance=NA,window=c(1),measure=c("totpeakflwabv"))
 	}else{
 		SNmeantotpks1 <- lm(meantotpks1 ~ pfstatsdf$sthyyear)
 		SNmeantotpks1 <- data.frame(slope=SNmeantotpks1$coefficients[[2]],SN=(var(fitted.values(SNmeantotpks1))/var(residuals(SNmeantotpks1))),data_variance=var(meantotpks1, na.rm=TRUE),window=c(1),measure=c("totpeakflwabv"), dwstat=dwt(residuals(SNmeantotpks1)))
@@ -385,28 +386,28 @@ simplified_peakflowtrends_SN <- function(pfstatsdf, gauge, year, commonyear){
 	}
 	
 	if(all(is.na(meantotpks5))){
-		SNmeantotpks5 <- data.frame(slope=NA,SN=NA,dwstat=NA,,data_variance=NA,window=c(5),measure=c("totpeakflwabv"))
+		SNmeantotpks5 <- data.frame(slope=NA,SN=NA,dwstat=NA,data_variance=NA,window=c(5),measure=c("totpeakflwabv"))
 	}else{
 		SNmeantotpks5 <- lm(meantotpks5 ~ pfstatsdf$sthyyear)
 		SNmeantotpks5 <- data.frame(slope=SNmeantotpks5$coefficients[[2]],SN=(var(fitted.values(SNmeantotpks5))/var(residuals(SNmeantotpks5))),data_variance=var(meantotpks5, na.rm=TRUE),window=c(5),measure=c("totpeakflwabv"), dwstat=dwt(residuals(SNmeantotpks5)))
 		
 	}
 	if(all(is.na(meantotpks10))){
-		SNmeantotpks10 <- data.frame(slope=NA,SN=NA,dwstat=NA,,data_variance=NA,window=c(10),measure=c("totpeakflwabv"))
+		SNmeantotpks10 <- data.frame(slope=NA,SN=NA,dwstat=NA,data_variance=NA,window=c(10),measure=c("totpeakflwabv"))
 	}else{
 		SNmeantotpks10 <- lm(meantotpks10 ~ pfstatsdf$sthyyear)
 		SNmeantotpks10 <- data.frame(slope=SNmeantotpks10$coefficients[[2]],SN=(var(fitted.values(SNmeantotpks10))/var(residuals(SNmeantotpks10))),data_variance=var(meantotpks10, na.rm=TRUE),window=c(10),measure=c("totpeakflwabv"), dwstat=dwt(residuals(SNmeantotpks10)))
 		
 	}
 	if(all(is.na(meantotpks20))){
-		SNmeantotpks20 <- data.frame(slope=NA,SN=NA,dwstat=NA,,data_variance=NA,window=c(20),measure=c("totpeakflwabv"))
+		SNmeantotpks20 <- data.frame(slope=NA,SN=NA,dwstat=NA,data_variance=NA,window=c(20),measure=c("totpeakflwabv"))
 	}else{
 		SNmeantotpks20 <- lm(meantotpks20 ~ pfstatsdf$sthyyear)
 		SNmeantotpks20 <- data.frame(slope=SNmeantotpks20$coefficients[[2]],SN=(var(fitted.values(SNmeantotpks20))/var(residuals(SNmeantotpks20))),data_variance=var(meantotpks20, na.rm=TRUE),window=c(20),measure=c("totpeakflwabv"), dwstat=dwt(residuals(SNmeantotpks20)))
 		
 	}
 	if(all(is.na(meantotpks30))){
-		SNmeantotpks30 <- data.frame(slope=NA,SN=NA,dwstat=NA,,data_variance=NA,window=c(30),measure=c("totpeakflwabv"))
+		SNmeantotpks30 <- data.frame(slope=NA,SN=NA,dwstat=NA,data_variance=NA,window=c(30),measure=c("totpeakflwabv"))
 	}else{
 		SNmeantotpks30 <- lm(meantotpks30 ~ pfstatsdf$sthyyear)
 		SNmeantotpks30 <- data.frame(slope=SNmeantotpks30$coefficients[[2]],SN=(var(fitted.values(SNmeantotpks30))/var(residuals(SNmeantotpks30))),data_variance=var(meantotpks30, na.rm=TRUE),window=c(30),measure=c("totpeakflwabv"), dwstat=dwt(residuals(SNmeantotpks30)))
@@ -482,7 +483,7 @@ simplified_peakflowtrends_SN <- function(pfstatsdf, gauge, year, commonyear){
 	
 	
 	if(all(is.na(meantotvol1))){
-		SNmeantotvol1 <- data.frame(slope=NA,SN=NA,dwstat=NA,,data_variance=NA,window=c(1),measure=c("totvolabv"))
+		SNmeantotvol1 <- data.frame(slope=NA,SN=NA,dwstat=NA,data_variance=NA,window=c(1),measure=c("totvolabv"))
 	}else{
 		SNmeantotvol1 <- lm(meantotvol1 ~ yearvec)
 		SNmeantotvol1 <- data.frame(slope=SNmeantotvol1$coefficients[[2]],SN=(var(fitted.values(SNmeantotvol1))/var(residuals(SNmeantotvol1))),data_variance=var(meantotvol1, na.rm=TRUE),window=c(1),measure=c("totvolabv"), dwstat=dwt(residuals(SNmeantotvol1)))
@@ -490,28 +491,28 @@ simplified_peakflowtrends_SN <- function(pfstatsdf, gauge, year, commonyear){
 	}
 	
 	if(all(is.na(meantotvol5))){
-		SNmeantotvol5 <- data.frame(slope=NA,SN=NA,dwstat=NA,,data_variance=NA,window=c(5),measure=c("totvolabv"))
+		SNmeantotvol5 <- data.frame(slope=NA,SN=NA,dwstat=NA,data_variance=NA,window=c(5),measure=c("totvolabv"))
 	}else{
 		SNmeantotvol5 <- lm(meantotvol5 ~ yearvec)
 		SNmeantotvol5 <- data.frame(slope=SNmeantotvol5$coefficients[[2]],SN=(var(fitted.values(SNmeantotvol5))/var(residuals(SNmeantotvol5))),data_variance=var(meantotvol5, na.rm=TRUE),window=c(5),measure=c("totvolabv"), dwstat=dwt(residuals(SNmeantotvol5)))
 		
 	}
 	if(all(is.na(meantotvol10))){
-		SNmeantotvol10 <- data.frame(slope=NA,SN=NA,dwstat=NA,,data_variance=NA,window=c(10),measure=c("totvolabv"))
+		SNmeantotvol10 <- data.frame(slope=NA,SN=NA,dwstat=NA,data_variance=NA,window=c(10),measure=c("totvolabv"))
 	}else{
 		SNmeantotvol10 <- lm(meantotvol10 ~ yearvec)
 		SNmeantotvol10 <- data.frame(slope=SNmeantotvol10$coefficients[[2]],SN=(var(fitted.values(SNmeantotvol10))/var(residuals(SNmeantotvol10))),data_variance=var(meantotvol10, na.rm=TRUE),window=c(10),measure=c("totvolabv"), dwstat=dwt(residuals(SNmeantotvol10)))
 		
 	}
 	if(all(is.na(meantotvol20))){
-		SNmeantotvol20 <- data.frame(slope=NA,SN=NA,dwstat=NA,,data_variance=NA,window=c(20),measure=c("totvolabv"))
+		SNmeantotvol20 <- data.frame(slope=NA,SN=NA,dwstat=NA,data_variance=NA,window=c(20),measure=c("totvolabv"))
 	}else{
 		SNmeantotvol20 <- lm(meantotvol20 ~ yearvec)
 		SNmeantotvol20 <- data.frame(slope=SNmeantotvol20$coefficients[[2]],SN=(var(fitted.values(SNmeantotvol20))/var(residuals(SNmeantotvol20))),data_variance=var(meantotvol20, na.rm=TRUE),window=c(20),measure=c("totvolabv"), dwstat=dwt(residuals(SNmeantotvol20)))
 		
 	}
 	if(all(is.na(meantotvol30))){
-		SNmeantotvol30 <- data.frame(slope=NA,SN=NA,dwstat=NA,,data_variance=NA,window=c(30),measure=c("totvolabv"))
+		SNmeantotvol30 <- data.frame(slope=NA,SN=NA,dwstat=NA,data_variance=NA,window=c(30),measure=c("totvolabv"))
 	}else{
 		SNmeantotvol30 <- lm(meantotvol30 ~ yearvec)
 		SNmeantotvol30 <- data.frame(slope=SNmeantotvol30$coefficients[[2]],SN=(var(fitted.values(SNmeantotvol30))/var(residuals(SNmeantotvol30))),data_variance=var(meantotvol30, na.rm=TRUE),window=c(30),measure=c("totvolabv"), dwstat=dwt(residuals(SNmeantotvol30)))
@@ -561,7 +562,7 @@ simplified_peakflowtrends_SN <- function(pfstatsdf, gauge, year, commonyear){
 	MKmeantotdays <- rbind.data.frame(MKmeantotdays1,MKmeantotdays5,MKmeantotdays10,MKmeantotdays20,MKmeantotdays30)
 	
 	if(all(is.na(meantotdays1))){
-		SNmeantotdays1 <- data.frame(slope=NA,SN=NA,dwstat=NA,,data_variance=NA,window=c(1),measure=c("totdaysabv"))
+		SNmeantotdays1 <- data.frame(slope=NA,SN=NA,dwstat=NA,data_variance=NA,window=c(1),measure=c("totdaysabv"))
 	}else{
 		SNmeantotdays1 <- lm(meantotdays1 ~ yearvec)
 		SNmeantotdays1 <- data.frame(slope=SNmeantotdays1$coefficients[[2]],SN=(var(fitted.values(SNmeantotdays1))/var(residuals(SNmeantotdays1))),data_variance=var(meantotdays1, na.rm=TRUE),window=c(1),measure=c("totdaysabv"), dwstat=dwt(residuals(SNmeantotdays1)))
@@ -569,28 +570,28 @@ simplified_peakflowtrends_SN <- function(pfstatsdf, gauge, year, commonyear){
 	}
 	
 	if(all(is.na(meantotdays5))){
-		SNmeantotdays5 <- data.frame(slope=NA,SN=NA,dwstat=NA,,data_variance=NA,window=c(5),measure=c("totdaysabv"))
+		SNmeantotdays5 <- data.frame(slope=NA,SN=NA,dwstat=NA,data_variance=NA,window=c(5),measure=c("totdaysabv"))
 	}else{
 		SNmeantotdays5 <- lm(meantotdays5 ~ yearvec)
 		SNmeantotdays5 <- data.frame(slope=SNmeantotdays5$coefficients[[2]],SN=(var(fitted.values(SNmeantotdays5))/var(residuals(SNmeantotdays5))),data_variance=var(meantotdays5, na.rm=TRUE),window=c(5),measure=c("totdaysabv"), dwstat=dwt(residuals(SNmeantotdays5)))
 		
 	}
 	if(all(is.na(meantotdays10))){
-		SNmeantotdays10 <- data.frame(slope=NA,SN=NA,dwstat=NA,,data_variance=NA,window=c(10),measure=c("totdaysabv"))
+		SNmeantotdays10 <- data.frame(slope=NA,SN=NA,dwstat=NA,data_variance=NA,window=c(10),measure=c("totdaysabv"))
 	}else{
 		SNmeantotdays10 <- lm(meantotdays10 ~ yearvec)
 		SNmeantotdays10 <- data.frame(slope=SNmeantotdays10$coefficients[[2]],SN=(var(fitted.values(SNmeantotdays10))/var(residuals(SNmeantotdays10))),data_variance=var(meantotdays10, na.rm=TRUE),window=c(10),measure=c("totdaysabv"), dwstat=dwt(residuals(SNmeantotdays10)))
 		
 	}
 	if(all(is.na(meantotdays20))){
-		SNmeantotdays20 <- data.frame(slope=NA,SN=NA,dwstat=NA,,data_variance=NA,window=c(20),measure=c("totdaysabv"))
+		SNmeantotdays20 <- data.frame(slope=NA,SN=NA,dwstat=NA,data_variance=NA,window=c(20),measure=c("totdaysabv"))
 	}else{
 		SNmeantotdays20 <- lm(meantotdays20 ~ yearvec)
 		SNmeantotdays20 <- data.frame(slope=SNmeantotdays20$coefficients[[2]],SN=(var(fitted.values(SNmeantotdays20))/var(residuals(SNmeantotdays20))),data_variance=var(meantotdays20, na.rm=TRUE),window=c(20),measure=c("totdaysabv"), dwstat=dwt(residuals(SNmeantotdays20)))
 		
 	}
 	if(all(is.na(meantotdays30))){
-		SNmeantotdays30 <- data.frame(slope=NA,SN=NA,dwstat=NA,,data_variance=NA,window=c(30),measure=c("totdaysabv"))
+		SNmeantotdays30 <- data.frame(slope=NA,SN=NA,dwstat=NA,data_variance=NA,window=c(30),measure=c("totdaysabv"))
 	}else{
 		SNmeantotdays30 <- lm(meantotdays30 ~ yearvec)
 		SNmeantotdays30 <- data.frame(slope=SNmeantotdays30$coefficients[[2]],SN=(var(fitted.values(SNmeantotdays30))/var(residuals(SNmeantotdays30))),data_variance=var(meantotdays30, na.rm=TRUE),window=c(30),measure=c("totdaysabv"), dwstat=dwt(residuals(SNmeantotdays30)))
@@ -639,7 +640,7 @@ simplified_peakflowtrends_SN <- function(pfstatsdf, gauge, year, commonyear){
 	MKmeannumpks <- rbind.data.frame(MKmeannumpks1,MKmeannumpks5,MKmeannumpks10,MKmeannumpks20,MKmeannumpks30)
 	
 	if(all(is.na(meannumpks1))){
-		SNmeannumpks1 <- data.frame(slope=NA,SN=NA,dwstat=NA,,data_variance=NA,window=c(1),measure=c("numpeaksabv"))
+		SNmeannumpks1 <- data.frame(slope=NA,SN=NA,dwstat=NA,data_variance=NA,window=c(1),measure=c("numpeaksabv"))
 	}else{
 		SNmeannumpks1 <- lm(meannumpks1 ~ yearvec)
 		SNmeannumpks1 <- data.frame(slope=SNmeannumpks1$coefficients[[2]],SN=(var(fitted.values(SNmeannumpks1))/var(residuals(SNmeannumpks1))),data_variance=var(meannumpks1, na.rm=TRUE),window=c(1),measure=c("numpeaksabv"), dwstat=dwt(residuals(SNmeannumpks1)))
@@ -647,28 +648,28 @@ simplified_peakflowtrends_SN <- function(pfstatsdf, gauge, year, commonyear){
 	}
 	
 	if(all(is.na(meannumpks5))){
-		SNmeannumpks5 <- data.frame(slope=NA,SN=NA,dwstat=NA,,data_variance=NA,window=c(5),measure=c("numpeaksabv"))
+		SNmeannumpks5 <- data.frame(slope=NA,SN=NA,dwstat=NA,data_variance=NA,window=c(5),measure=c("numpeaksabv"))
 	}else{
 		SNmeannumpks5 <- lm(meannumpks5 ~ yearvec)
 		SNmeannumpks5 <- data.frame(slope=SNmeannumpks5$coefficients[[2]],SN=(var(fitted.values(SNmeannumpks5))/var(residuals(SNmeannumpks5))),data_variance=var(meannumpks5, na.rm=TRUE),window=c(5),measure=c("numpeaksabv"), dwstat=dwt(residuals(SNmeannumpks5)))
 		
 	}
 	if(all(is.na(meannumpks10))){
-		SNmeannumpks10 <- data.frame(slope=NA,SN=NA,dwstat=NA,,data_variance=NA,window=c(10),measure=c("numpeaksabv"))
+		SNmeannumpks10 <- data.frame(slope=NA,SN=NA,dwstat=NA,data_variance=NA,window=c(10),measure=c("numpeaksabv"))
 	}else{
 		SNmeannumpks10 <- lm(meannumpks10 ~ yearvec)
 		SNmeannumpks10 <- data.frame(slope=SNmeannumpks10$coefficients[[2]],SN=(var(fitted.values(SNmeannumpks10))/var(residuals(SNmeannumpks10))),data_variance=var(meannumpks10, na.rm=TRUE),window=c(10),measure=c("numpeaksabv"), dwstat=dwt(residuals(SNmeannumpks10)))
 		
 	}
 	if(all(is.na(meannumpks20))){
-		SNmeannumpks20 <- data.frame(slope=NA,SN=NA,dwstat=NA,,data_variance=NA,window=c(20),measure=c("numpeaksabv"))
+		SNmeannumpks20 <- data.frame(slope=NA,SN=NA,dwstat=NA,data_variance=NA,window=c(20),measure=c("numpeaksabv"))
 	}else{
 		SNmeannumpks20 <- lm(meannumpks20 ~ yearvec)
 		SNmeannumpks20 <- data.frame(slope=SNmeannumpks20$coefficients[[2]],SN=(var(fitted.values(SNmeannumpks20))/var(residuals(SNmeannumpks20))),data_variance=var(meannumpks20, na.rm=TRUE),window=c(20),measure=c("numpeaksabv"), dwstat=dwt(residuals(SNmeannumpks20)))
 		
 	}
 	if(all(is.na(meannumpks30))){
-		SNmeannumpks30 <- data.frame(slope=NA,SN=NA,dwstat=NA,,data_variance=NA,window=c(30),measure=c("numpeaksabv"))
+		SNmeannumpks30 <- data.frame(slope=NA,SN=NA,dwstat=NA,data_variance=NA,window=c(30),measure=c("numpeaksabv"))
 	}else{
 		SNmeannumpks30 <- lm(meannumpks30 ~ yearvec)
 		SNmeannumpks30 <- data.frame(slope=SNmeannumpks30$coefficients[[2]],SN=(var(fitted.values(SNmeannumpks30))/var(residuals(SNmeannumpks30))),data_variance=var(meannumpks30, na.rm=TRUE),window=c(30),measure=c("numpeaksabv"), dwstat=dwt(residuals(SNmeannumpks30)))
@@ -718,7 +719,7 @@ simplified_peakflowtrends_SN <- function(pfstatsdf, gauge, year, commonyear){
 	MKmeanmeanpks <- rbind.data.frame(MKmeanmeanpks1,MKmeanmeanpks5,MKmeanmeanpks10,MKmeanmeanpks20,MKmeanmeanpks30)
 	
 	if(all(is.na(meanmeanpks1))){
-		SNmeanmeanpks1 <- data.frame(slope=NA,SN=NA,dwstat=NA,,data_variance=NA,window=c(1),measure=c("meanpeaksabv"))
+		SNmeanmeanpks1 <- data.frame(slope=NA,SN=NA,dwstat=NA,data_variance=NA,window=c(1),measure=c("meanpeaksabv"))
 	}else{
 		SNmeanmeanpks1 <- lm(meanmeanpks1 ~ yearvec)
 		SNmeanmeanpks1 <- data.frame(slope=SNmeanmeanpks1$coefficients[[2]],SN=(var(fitted.values(SNmeanmeanpks1))/var(residuals(SNmeanmeanpks1))),data_variance=var(meanmeanpks1, na.rm=TRUE),window=c(1),measure=c("meanpeaksabv"), dwstat=dwt(residuals(SNmeanmeanpks1)))
@@ -726,28 +727,28 @@ simplified_peakflowtrends_SN <- function(pfstatsdf, gauge, year, commonyear){
 	}
 	
 	if(all(is.na(meanmeanpks5))){
-		SNmeanmeanpks5 <- data.frame(slope=NA,SN=NA,dwstat=NA,,data_variance=NA,window=c(5),measure=c("meanpeaksabv"))
+		SNmeanmeanpks5 <- data.frame(slope=NA,SN=NA,dwstat=NA,data_variance=NA,window=c(5),measure=c("meanpeaksabv"))
 	}else{
 		SNmeanmeanpks5 <- lm(meanmeanpks5 ~ yearvec)
 		SNmeanmeanpks5 <- data.frame(slope=SNmeanmeanpks5$coefficients[[2]],SN=(var(fitted.values(SNmeanmeanpks5))/var(residuals(SNmeanmeanpks5))),data_variance=var(meanmeanpks5, na.rm=TRUE),window=c(5),measure=c("meanpeaksabv"), dwstat=dwt(residuals(SNmeanmeanpks5)))
 		
 	}
 	if(all(is.na(meanmeanpks10))){
-		SNmeanmeanpks10 <- data.frame(slope=NA,SN=NA,dwstat=NA,,data_variance=NA,window=c(10),measure=c("meanpeaksabv"))
+		SNmeanmeanpks10 <- data.frame(slope=NA,SN=NA,dwstat=NA,data_variance=NA,window=c(10),measure=c("meanpeaksabv"))
 	}else{
 		SNmeanmeanpks10 <- lm(meanmeanpks10 ~ yearvec)
 		SNmeanmeanpks10 <- data.frame(slope=SNmeanmeanpks10$coefficients[[2]],SN=(var(fitted.values(SNmeanmeanpks10))/var(residuals(SNmeanmeanpks10))),data_variance=var(meanmeanpks10, na.rm=TRUE),window=c(10),measure=c("meanpeaksabv"), dwstat=dwt(residuals(SNmeanmeanpks10)))
 		
 	}
 	if(all(is.na(meanmeanpks20))){
-		SNmeanmeanpks20 <- data.frame(slope=NA,SN=NA,dwstat=NA,,data_variance=NA,window=c(20),measure=c("meanpeaksabv"))
+		SNmeanmeanpks20 <- data.frame(slope=NA,SN=NA,dwstat=NA,data_variance=NA,window=c(20),measure=c("meanpeaksabv"))
 	}else{
 		SNmeanmeanpks20 <- lm(meanmeanpks20 ~ yearvec)
 		SNmeanmeanpks20 <- data.frame(slope=SNmeanmeanpks20$coefficients[[2]],SN=(var(fitted.values(SNmeanmeanpks20))/var(residuals(SNmeanmeanpks20))),data_variance=var(meanmeanpks20, na.rm=TRUE),window=c(20),measure=c("meanpeaksabv"), dwstat=dwt(residuals(SNmeanmeanpks20)))
 		
 	}
 	if(all(is.na(meanmeanpks30))){
-		SNmeanmeanpks30 <- data.frame(slope=NA,SN=NA,dwstat=NA,,data_variance=NA,window=c(30),measure=c("meanpeaksabv"))
+		SNmeanmeanpks30 <- data.frame(slope=NA,SN=NA,dwstat=NA,data_variance=NA,window=c(30),measure=c("meanpeaksabv"))
 	}else{
 		SNmeanmeanpks30 <- lm(meanmeanpks30 ~ yearvec)
 		SNmeanmeanpks30 <- data.frame(slope=SNmeanmeanpks30$coefficients[[2]],SN=(var(fitted.values(SNmeanmeanpks30))/var(residuals(SNmeanmeanpks30))),data_variance=var(meanmeanpks30, na.rm=TRUE),window=c(30),measure=c("meanpeaksabv"), dwstat=dwt(residuals(SNmeanmeanpks30)))
@@ -796,7 +797,7 @@ simplified_peakflowtrends_SN <- function(pfstatsdf, gauge, year, commonyear){
 	MKmeantotpks <- rbind.data.frame(MKmeantotpks1,MKmeantotpks5,MKmeantotpks10,MKmeantotpks20,MKmeantotpks30)
 	
 	if(all(is.na(meantotpks1))){
-		SNmeantotpks1 <- data.frame(slope=NA,SN=NA,dwstat=NA,,data_variance=NA,window=c(1),measure=c("totpeakflwabv"))
+		SNmeantotpks1 <- data.frame(slope=NA,SN=NA,dwstat=NA,data_variance=NA,window=c(1),measure=c("totpeakflwabv"))
 	}else{
 		SNmeantotpks1 <- lm(meantotpks1 ~ yearvec)
 		SNmeantotpks1 <- data.frame(slope=SNmeantotpks1$coefficients[[2]],SN=(var(fitted.values(SNmeantotpks1))/var(residuals(SNmeantotpks1))),data_variance=var(meantotpks1, na.rm=TRUE),window=c(1),measure=c("totpeakflwabv"), dwstat=dwt(residuals(SNmeantotpks1)))
@@ -804,28 +805,28 @@ simplified_peakflowtrends_SN <- function(pfstatsdf, gauge, year, commonyear){
 	}
 	
 	if(all(is.na(meantotpks5))){
-		SNmeantotpks5 <- data.frame(slope=NA,SN=NA,dwstat=NA,,data_variance=NA,window=c(5),measure=c("totpeakflwabv"))
+		SNmeantotpks5 <- data.frame(slope=NA,SN=NA,dwstat=NA,data_variance=NA,window=c(5),measure=c("totpeakflwabv"))
 	}else{
 		SNmeantotpks5 <- lm(meantotpks5 ~ yearvec)
 		SNmeantotpks5 <- data.frame(slope=SNmeantotpks5$coefficients[[2]],SN=(var(fitted.values(SNmeantotpks5))/var(residuals(SNmeantotpks5))),data_variance=var(meantotpks5, na.rm=TRUE),window=c(5),measure=c("totpeakflwabv"), dwstat=dwt(residuals(SNmeantotpks5)))
 		
 	}
 	if(all(is.na(meantotpks10))){
-		SNmeantotpks10 <- data.frame(slope=NA,SN=NA,dwstat=NA,,data_variance=NA,window=c(10),measure=c("totpeakflwabv"))
+		SNmeantotpks10 <- data.frame(slope=NA,SN=NA,dwstat=NA,data_variance=NA,window=c(10),measure=c("totpeakflwabv"))
 	}else{
 		SNmeantotpks10 <- lm(meantotpks10 ~ yearvec)
 		SNmeantotpks10 <- data.frame(slope=SNmeantotpks10$coefficients[[2]],SN=(var(fitted.values(SNmeantotpks10))/var(residuals(SNmeantotpks10))),data_variance=var(meantotpks10, na.rm=TRUE),window=c(10),measure=c("totpeakflwabv"), dwstat=dwt(residuals(SNmeantotpks10)))
 		
 	}
 	if(all(is.na(meantotpks20))){
-		SNmeantotpks20 <- data.frame(slope=NA,SN=NA,dwstat=NA,,data_variance=NA,window=c(20),measure=c("totpeakflwabv"))
+		SNmeantotpks20 <- data.frame(slope=NA,SN=NA,dwstat=NA,data_variance=NA,window=c(20),measure=c("totpeakflwabv"))
 	}else{
 		SNmeantotpks20 <- lm(meantotpks20 ~ yearvec)
 		SNmeantotpks20 <- data.frame(slope=SNmeantotpks20$coefficients[[2]],SN=(var(fitted.values(SNmeantotpks20))/var(residuals(SNmeantotpks20))),data_variance=var(meantotpks20, na.rm=TRUE),window=c(20),measure=c("totpeakflwabv"), dwstat=dwt(residuals(SNmeantotpks20)))
 		
 	}
 	if(all(is.na(meantotpks30))){
-		SNmeantotpks30 <- data.frame(slope=NA,SN=NA,dwstat=NA,,data_variance=NA,window=c(30),measure=c("totpeakflwabv"))
+		SNmeantotpks30 <- data.frame(slope=NA,SN=NA,dwstat=NA,data_variance=NA,window=c(30),measure=c("totpeakflwabv"))
 	}else{
 		SNmeantotpks30 <- lm(meantotpks30 ~ yearvec)
 		SNmeantotpks30 <- data.frame(slope=SNmeantotpks30$coefficients[[2]],SN=(var(fitted.values(SNmeantotpks30))/var(residuals(SNmeantotpks30))),data_variance=var(meantotpks30, na.rm=TRUE),window=c(30),measure=c("totpeakflwabv"), dwstat=dwt(residuals(SNmeantotpks30)))
