@@ -4,28 +4,28 @@
 ###############################################################################
 
 
-SNtest <- function(x,t, movingwindow,dwt){
+SNtest <- function(x,t, movingwindow,dwt, gauge){
 	library(car)
 	library(zoo)
 	if(missing(movingwindow)&dwt==TRUE){
 		SN <- lm(x ~ t)
-		SNdf <- data.frame(slope=SN$coefficients[[2]],SN=(var(fitted.values(SN))/var(residuals(SN))),data_variance=var(x, na.rm=TRUE), dwstat=dwt(residuals(SN), max.lag=1))
+		SNdf <- data.frame(slope=SN$coefficients[[2]],SN=(var(fitted.values(SN))/var(residuals(SN))),data_variance=var(x, na.rm=TRUE), dwstat=dwt(residuals(SN), max.lag=1), windowsize=NA, gauge=gauge)
 		
 	}else if(missing(movingwindow)&dwt==FALSE){
 			SN <- lm(x ~ t)
-			SNdf <- data.frame(slope=SN$coefficients[[2]],SN=(var(fitted.values(SN))/var(residuals(SN))),data_variance=var(x, na.rm=TRUE), dwstat=NA)
+			SNdf <- data.frame(slope=SN$coefficients[[2]],SN=(var(fitted.values(SN))/var(residuals(SN))),data_variance=var(x, na.rm=TRUE), dwstat=NA, windowsize=NA, gauge=gauge)
 			
 	}else if(dwt==FALSE){
 		x <- rollmean(x,movingwindow,na.pad=TRUE)
 		t <- seq(1,length(x),1)
 		SN <- lm(x ~ t)
-		SNdf <- data.frame(slope=SN$coefficients[[2]],SN=(var(fitted.values(SN))/var(residuals(SN))),data_variance=var(x, na.rm=TRUE), dwstat=NA)
+		SNdf <- data.frame(slope=SN$coefficients[[2]],SN=(var(fitted.values(SN))/var(residuals(SN))),data_variance=var(x, na.rm=TRUE), dwstat=NA, windowsize=movingwindow, gauge=gauge)
 		
 	}else{
 		x <- rollmean(x,movingwindow,na.pad=TRUE)
 		t <- seq(1,length(x),1)
 		SN <- lm(x ~ t)
-		SNdf <- data.frame(slope=SN$coefficients[[2]],SN=(var(fitted.values(SN))/var(residuals(SN))),data_variance=var(x, na.rm=TRUE), dwstat=dwt(residuals(SN), max.lag=1))
+		SNdf <- data.frame(slope=SN$coefficients[[2]],SN=(var(fitted.values(SN))/var(residuals(SN))),data_variance=var(x, na.rm=TRUE), dwstat=dwt(residuals(SN), max.lag=1), windowsize=movingwindow, gauge=gauge)
 		
 	}
 	return(SNdf)
@@ -107,3 +107,8 @@ plot(rollmean(spbatch$`11452500`$Winter_monthly$All$JAN$Data$Discharge_acfte6_da
 
 
 plot(rollmean(spbatch$`11452500`$Winter_monthly$All$JAN$Data$Discharge_acfte6_day*1e6,110*30, na.pad=FALSE),type="l")
+
+
+mux <- mean(test_split$`11452500`$all$hy$TotVolAbv_acft, na.rm=TRUE)
+varx <- var(test_split$`11452500`$all$hy$TotVolAbv_acft, na.rm=TRUE)
+p1 <- acf(test_split$`11452500`$all$hy$TotVolAbv_acft, na.action=na.pass, plot=FALSE)$acf[2]
