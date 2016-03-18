@@ -181,3 +181,87 @@ for(i in 1:length(unimpaired_13_split_data)){ #gauge
 }
 
 
+
+
+two_gauges_zero <- c(11447650,11303500)
+two_gauges_list_zero  <- vector("list",length(two_gauges_zero))
+names(two_gauges_list_zero) <- two_gauges_zero
+two_gauges_split_zero  <- vector("list",length(two_gauges_zero))
+names(two_gauges_split_zero) <- two_gauges_zero
+
+for(z in 1:7){
+	batchnum <- z
+	load(paste("C:\\Users\\tiffn_000\\Documents\\workspaces\\zero_threshold_spbatch_",batchnum,".RData", sep=""))
+	if(any(names(spbatch)%in%two_gauges_zero)){
+		un <- which(names(spbatch)%in%two_gauges_zero)
+		for(i in 1:length(un)){
+			position <- which(names(two_gauges_list_zero)==names(spbatch)[[un[[i]]]])
+			two_gauges_list_zero[[position]] <- spbatch[[un[[i]]]]
+			two_gauges_split_zero[[position]] <-test_split[[un[[i]]]]
+		}
+	}
+}
+
+load("C:\\Users\\tiffn_000\\Documents\\workspaces\\mar_16_activesites.RData")
+
+two_gauges_full90 <- c(11447650,11303500)
+two_gauges_list_full90  <- vector("list",length(two_gauges_full90))
+names(two_gauges_list_full90) <- two_gauges_full90
+two_gauges_split_full90  <- vector("list",length(two_gauges_full90))
+names(two_gauges_split_full90) <- two_gauges_full90
+
+for(z in 1:7){
+	batchnum <- z
+	load(paste("C:\\Users\\tiffn_000\\Documents\\workspaces\\full_record_spbatch_",batchnum,".RData", sep=""))
+	if(any(names(spbatch)%in%two_gauges_full90)){
+		un <- which(names(spbatch)%in%two_gauges_full90)
+		for(i in 1:length(un)){
+			position <- which(names(two_gauges_list_full90)==names(spbatch)[[un[[i]]]])
+			two_gauges_list_full90[[position]] <- spbatch[[un[[i]]]]
+			two_gauges_split_full90[[position]] <-test_split[[un[[i]]]]
+		}
+	}
+}
+
+load("C:\\Users\\tiffn_000\\Documents\\workspaces\\mar_16_activesites.RData")
+
+
+for(i in 1:length(unimpaired_13_split_data)){ #gauge
+	for(j in 1:1){ #yeartype  length(unimpaired_13_split_data[[i]])
+		for(k in 1:length(unimpaired_13_split_data[[i]][[j]])){ #plotperiod
+cs0vol <- cumsum(unimpaired_13_split_data[[i]][[j]][[k]]$TotVolAbv_acft==0)
+loessfit <- loess(cs0vol~unimpaired_13_split_data[[i]][[j]][[k]]$sthyyear,na.action=na.exclude)
+loesspred <- predict(loessfit,unimpaired_13_split_data[[i]][[j]][[k]]$sthyyear)
+loesspred_diff <- diff(loesspred)
+loessfitted <- data.frame(sthyyear=unimpaired_13_split_data[[i]][[j]][[k]]$sthyyear,
+		loesspred=loesspred, loess_diff=c(loesspred_diff,NA))
+
+plotvol <- ggplot(n0abv,aes(x=index,y=volAF))+geom_line(color="deepskyblue4")+ geom_line(aes(index,lmvol))+
+		labs(title=paste(
+						"Volume Above 90% for ",plotperiod," at USGS ",gauge,"\n For ",yeartype," Year Types","\nMKT tau=",
+						MKTtauvol," MKT p =",MKTpvol, sep=""),y="Volume Above 90% (ACFT)",
+				x="time proxy")
+
+COM_90 <- vector("list",length(unimpaired_13_data))
+for(k in 1:length(unimpaired_13_data)){
+	blahday <- rep(NA,length(unimpaired_13_data[[k]]$HydroYear$Data))
+	blahyear <- rep(NA,length(unimpaired_13_data[[k]]$HydroYear$Data))
+	for(i in 1:length(unimpaired_13_data[[k]]$HydroYear$Data)){
+		blah <- unimpaired_13_data[[k]]$HydroYear$Data[[i]]$Discharge_acft_day
+		blah[blah<(unimpaired_13_data[[k]]$thresholds_maf$P90maf*1e6)] <- 0
+		blahday[[i]] <- which(cumsum(blah)>=(sum(blah,na.rm=TRUE)/2))[[1]]
+		blahyear[[i]] <- as.numeric(format(unimpaired_13_data[[k]]$HydroYear$Data[[i]]$Date[[1]],"%Y"))
+	}
+	COM_90[[k]] <- data.frame(COMday=blahday,year=blahyear)
+}
+
+COM_90_df <- data.frame(year=seq(1900,2015,1))
+for(i in 1:length(COM_90)){
+	COM_90_df <- merge(COM_90_df,COM_90[[i]], by.x="year",by.y="year", all.x=TRUE)
+}
+names(COM_90_df) <- c("year",paste("COM",as.numeric(names(unimpaired_13_data)),sep=""))
+COM_90_df[COM_90_df==1] <- NA
+library(reshape2)
+melt_COM_90 <- melt(COM_90_df, id.vars="year")
+library(ggplot2)
+ggplot(melt_COM_90,aes(year,value))+geom_point()
