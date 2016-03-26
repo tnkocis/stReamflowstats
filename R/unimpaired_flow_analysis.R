@@ -264,4 +264,18 @@ COM_90_df[COM_90_df==1] <- NA
 library(reshape2)
 melt_COM_90 <- melt(COM_90_df, id.vars="year")
 library(ggplot2)
-ggplot(melt_COM_90,aes(year,value))+geom_point()
+ggplot(melt_COM_90,aes(year,value,color=variable))+geom_point() +scale_color_brewer(palette="Spectral")
+
+
+#### threshold shift ###
+quantroll <- function(x,threshold){
+	num <- quantile(x,threshold,na.rm=TRUE)[[1]]
+	return(num)
+}
+
+test_thresh_shift_25 <- rollapply(unimpaired_13_data$`11202001`$HydroYear$All$Data$Discharge_acfte6_day,
+		width=365*20,FUN=quantroll,threshold=0.25,fill=NA)
+test_thresh_mean <- rollapply(unimpaired_13_data$`11202001`$HydroYear$All$Data$Discharge_acfte6_day,
+		width=365*20, function(x) mean(x, na.rm=TRUE), fill=NA)
+test_thresh_var <- rollapply(unimpaired_13_data$`11202001`$HydroYear$All$Data$Discharge_acfte6_day,
+		width=365*20, function(x) var(x, na.rm=TRUE), fill=NA)
