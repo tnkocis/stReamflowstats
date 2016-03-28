@@ -313,3 +313,64 @@ test_thresh_mean <- rollapply(unimpaired_13_data$`11202001`$HydroYear$All$Data$D
 		width=365*20, function(x) mean(x, na.rm=TRUE), fill=NA)
 test_thresh_var <- rollapply(unimpaired_13_data$`11202001`$HydroYear$All$Data$Discharge_acfte6_day,
 		width=365*20, function(x) var(x, na.rm=TRUE), fill=NA)
+
+
+
+###extract total volume time sereis###
+all_totalvol_jan <- vector("list",93)
+all_totalvol_feb <- vector("list",93)
+all_totalvol_mar <- vector("list",93)
+all_totalvol_apr <- vector("list",93)
+all_totalvol_may <- vector("list",93)
+all_totalvol_jun <- vector("list",93)
+all_totalvol_jul <- vector("list",93)
+all_totalvol_aug <- vector("list",93)
+all_totalvol_sep <- vector("list",93)
+all_totalvol_oct <- vector("list",93)
+all_totalvol_nov <- vector("list",93)
+all_totalvol_dec <- vector("list",93)
+
+all_names <- rep(NA,93)
+for(z in 1:7){
+	batchnum <- z
+	load(paste("C:\\Users\\tiffn_000\\Documents\\workspaces\\full_record_spbatch_",batchnum,".RData", sep=""))
+		for(i in 1:length(test_split)){
+			testnull <- which(sapply(all_totalvol_jan,is.null)==TRUE)[[1]]
+			all_totalvol_jan[[testnull]] <- data.frame(stjanyear=test_split[[i]]$all$jan$sthyyear,
+					TotVolAbv_acft=test_split[[i]]$all$jan$TotVolAbv_acft)
+			all_totalvol_feb[[testnull]] <- data.frame(stfebyear=test_split[[i]]$all$feb$sthyyear,
+					TotVolAbv_acft=test_split[[i]]$all$feb$TotVolAbv_acft)
+			all_totalvol_mar[[testnull]] <- data.frame(stmaryear=test_split[[i]]$all$mar$sthyyear,
+					TotVolAbv_acft=test_split[[i]]$all$mar$TotVolAbv_acft)
+			all_totalvol_apr[[testnull]] <- data.frame(stapryear=test_split[[i]]$all$apr$sthyyear,
+					TotVolAbv_acft=test_split[[i]]$all$apr$TotVolAbv_acft)
+			all_totalvol_may[[testnull]] <- data.frame(stmayyear=test_split[[i]]$all$may$sthyyear,
+					TotVolAbv_acft=test_split[[i]]$all$may$TotVolAbv_acft)
+			all_totalvol_jun[[testnull]] <- data.frame(stjunyear=test_split[[i]]$all$jun$sthyyear,
+					TotVolAbv_acft=test_split[[i]]$all$jun$TotVolAbv_acft)
+			all_totalvol_jul[[testnull]] <- data.frame(stjulyear=test_split[[i]]$all$jul$sthyyear,
+					TotVolAbv_acft=test_split[[i]]$all$jul$TotVolAbv_acft)
+			all_totalvol_aug[[testnull]] <- data.frame(staugyear=test_split[[i]]$all$aug$sthyyear,
+					TotVolAbv_acft=test_split[[i]]$all$aug$TotVolAbv_acft)
+			all_totalvol_sep[[testnull]] <- data.frame(stsepyear=test_split[[i]]$all$sep$sthyyear,
+					TotVolAbv_acft=test_split[[i]]$all$sep$TotVolAbv_acft)
+			all_totalvol_oct[[testnull]] <- data.frame(stoctyear=test_split[[i]]$all$oct$sthyyear,
+					TotVolAbv_acft=test_split[[i]]$all$oct$TotVolAbv_acft)
+			all_totalvol_nov[[testnull]] <- data.frame(stnovyear=test_split[[i]]$all$nov$sthyyear,
+					TotVolAbv_acft=test_split[[i]]$all$nov$TotVolAbv_acft)
+			all_totalvol_dec[[testnull]] <- data.frame(stdecyear=test_split[[i]]$all$dec$sthyyear,
+					TotVolAbv_acft=test_split[[i]]$all$dec$TotVolAbv_acft)
+			all_names[[testnull]] <- names(test_split)[[i]]
+		}
+	}
+
+totvol_90_hy <- data.frame(year=seq(1900,2015,1))
+totvol_90_mon6 <- data.frame(year=seq(1900,2015,1))
+totvol_90_mon3 <- data.frame(year=seq(1900,2015,1))
+
+for(i in 1:length(all_totalvol_hy)){
+	totvol_90_hy <- merge(totvol_90_hy,all_totalvol_hy[[i]],by.x="year")
+}
+
+unimpaired_13_data <- unimpaired_13
+unimpaired_13_split_data <- unimpaired_13_split
