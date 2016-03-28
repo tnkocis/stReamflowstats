@@ -267,6 +267,40 @@ library(ggplot2)
 ggplot(melt_COM_90,aes(year,value,color=variable))+geom_point() +scale_color_brewer(palette="Spectral")
 
 
+COM_0 <- vector("list",length(unimpaired_13_data))
+for(k in 1:length(unimpaired_13_data)){
+	blahday <- rep(NA,length(unimpaired_13_data[[k]]$HydroYear$Data))
+	blahyear <- rep(NA,length(unimpaired_13_data[[k]]$HydroYear$Data))
+	for(i in 1:length(unimpaired_13_data[[k]]$HydroYear$Data)){
+		blah <- unimpaired_13_data[[k]]$HydroYear$Data[[i]]$Discharge_acft_day
+#		blah[blah<(unimpaired_13_data[[k]]$thresholds_maf$P0maf*1e6)] <- 0
+		blahday[[i]] <- which(cumsum(blah)>=(sum(blah,na.rm=TRUE)/2))[[1]]
+		blahyear[[i]] <- as.numeric(format(unimpaired_13_data[[k]]$HydroYear$Data[[i]]$Date[[1]],"%Y"))
+	}
+	COM_0[[k]] <- data.frame(COMday=blahday,year=blahyear)
+}
+
+COM_0_df <- data.frame(year=seq(1900,2015,1))
+for(i in 1:length(COM_0)){
+	COM_0_df <- merge(COM_0_df,COM_0[[i]], by.x="year",by.y="year", all.x=TRUE)
+}
+names(COM_0_df) <- c("year",paste("COM",as.numeric(names(unimpaired_13_data)),sep=""))
+COM_0_df[COM_0_df==1|COM_0_df==365] <- NA
+library(reshape2)
+melt_COM_0 <- melt(COM_0_df, id.vars="year")
+library(ggplot2)
+ggplot(melt_COM_0,aes(year,value,color=variable))+geom_point()  
++geom_line(data=COM_0_df,aes(x=year,y=meanrw, color="blue"))
+
+ggplot(COM_0_df, aes(year,COM11230500)) + geom_line()
+
+COM_0_df$meanrw<- rowMeans(COM_0_df[2:14],na.rm=TRUE)
+COM_0_df$meanrw[is.na(COM_0_df$meanrw)] <- NA
+
+ats <- cpt.var(COM_0_df$COM11230500[!is.na(COM_0_df$COM11230500)],penalty="Asymptotic",pen.value=0.05,method="AMOC")
+plot(COM_0_df$year[!is.na(COM_0_df$COM11237500)],rollmean(COM_0_df$COM11237500[!is.na(COM_0_df$COM11237500)],10,fill=NA),type="l")
+
+
 #### threshold shift ###
 quantroll <- function(x,threshold){
 	num <- quantile(x,threshold,na.rm=TRUE)[[1]]
