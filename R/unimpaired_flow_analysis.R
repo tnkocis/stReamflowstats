@@ -374,3 +374,73 @@ for(i in 1:length(all_totalvol_hy)){
 
 unimpaired_13_data <- unimpaired_13
 unimpaired_13_split_data <- unimpaired_13_split
+
+library(nlme)
+library(ggplot2)
+statistic_tests <- names(unimpaired_13_split_data$`11202001`$all$hy)[1:5]
+for(i in 4:length(unimpaired_13_split_data)){
+	for(k in 1:3){
+		gauge <- names(unimpaired_13_split_data)[[i]]
+		period <- names(unimpaired_13_split_data[[i]]$all)[[k]]
+		testplotdf <- unimpaired_13_split_data[[i]]$all[[k]]
+		testplotdf[which(testplotdf$TotVolAbv_acft==0),!names(testplotdf)%in%c("sthyyear")] <- NA
+		for(j in 1:length(statistic_tests)){
+			if(statistic_tests[[j]]=="TotVolAbv_acft"){
+				statlabel <- c("Total Volume Above 90% (acft)")
+				title <- c("Zero-Deflated Volume Above")
+			}else if(statistic_tests[[j]]=="TotDaysAbv"){
+				statlabel <- c("Total Days Above 90%")
+				title <- c("Zero-Deflated Days Above")
+			}else if(statistic_tests[[j]]=="numpeaks"){
+				statlabel <- c("Number of Peaks Above 90%")
+				title <- c("Zero-Deflated Number of Peaks Above")
+			}else if(statistic_tests[[j]]=="mean_peakflow"){
+				statlabel <- c("Mean Magnitude of Peaks Above 90%")
+				title <- c("Zero-Deflated Mean Magnitude of Peaks Above")
+			}else if(statistic_tests[[j]]=="total_peakflow"){
+				statlabel <- c("Total Magnitude of Peaks Above 90%")
+				title <- c("Zero-Deflated Total Magnitude of Peaks Above")
+			}
+				vol_gls <- gls(as.formula(paste(statistic_tests[[j]]," ~ sthyyear",sep="")),testplotdf, method="ML", na.action=na.exclude)
+				testplotdf$gls_fitted <- predict(vol_gls, data.frame(sthyyear=testplotdf$sthyyear))
+				vol_loess <- loess(as.formula(paste(statistic_tests[[j]]," ~ sthyyear",sep="")),testplotdf, na.action=na.exclude)
+				testplotdf$loess_fitted <- predict(vol_loess, data.frame(sthyyear=testplotdf$sthyyear))
+				vol_3poly <- lm(as.formula(paste(statistic_tests[[j]]," ~ poly(sthyyear,3)",sep="")),testplotdf, na.action=na.exclude)
+				testplotdf$poly3_fitted <- predict(vol_3poly, data.frame(sthyyear=testplotdf$sthyyear))
+				vol_MKTtau <- round(MannKendall(testplotdf[[statistic_tests[[j]]]])$tau[[1]],3)
+				vol_MKTp <- round(MannKendall(testplotdf[[statistic_tests[[j]]]])$sl[[1]],3)
+				fitted_vol_plots <- ggplot(testplotdf,aes_string("sthyyear",statistic_tests[[j]]))+geom_point()+ geom_line(aes(sthyyear,gls_fitted,color="gls"))+
+						geom_line(aes(sthyyear,loess_fitted,color="loess")) +geom_line(aes(sthyyear,poly3_fitted, color="poly3"))+
+						scale_color_manual("Legend", labels=c("GLS","Loess","3rd Order Polynomial"),
+								values=c(gls="blue", loess="red", poly3="green")) + xlab("Hydrologic Year (start year)")+
+						ylab(paste(statlabel,sep="")) + ggtitle(paste(title," v Year (USGS",gauge,", ",period,")\nMKT tau= ",vol_MKTtau," p= ",vol_MKTp,sep=""))+
+						theme(axis.text=element_text(size=12, face="bold"),
+								axis.title=element_text(size=14,face="bold"),
+								plot.title=element_text(size=16))
+				ggsave(fitted_vol_plots, file=paste("C:\\Users\\tiffn_000\\Google Drive\\unimp_plots_3_28\\test\\",statistic_tests[[j]],"\\USGS",gauge,"_",period,".png",sep=""), height=8.5, width=11, units="in")
+			
+		}
+		
+	}
+}
+testplotdf <- unimpaired_13_split_data$`11202001`$all$hy
+testplotdf[which(testplotdf$TotVolAbv_acft==0),!names(testplotdf)%in%c("sthyyear")] <- NA
+vol_gls <- gls(TotVolAbv_acft ~ sthyyear,testplotdf, method="ML", na.action=na.exclude)
+testplotdf$gls_fitted <- predict(vol_gls, data.frame(sthyyear=testplotdf$sthyyear))
+vol_loess <- loess(TotVolAbv_acft ~ sthyyear,testplotdf, na.action=na.exclude)
+testplotdf$loess_fitted <- predict(vol_loess, data.frame(sthyyear=testplotdf$sthyyear))
+vol_3poly <- lm(TotVolAbv_acft ~ poly(sthyyear,3),testplotdf, na.action=na.exclude)
+testplotdf$poly3_fitted <- predict(vol_3poly, data.frame(sthyyear=testplotdf$sthyyear))
+vol_MKTtau <- round(MannKendall(testplotdf$TotVolAbv_acft)$tau[[1]],3)
+vol_MKTp <- round(MannKendall(testplotdf$TotVolAbv_acft)$sl[[1]],3)
+fitted_vol_plots <- ggplot(testplotdf,aes(sthyyear,TotVolAbv_acft))+geom_point()+ geom_line(aes(sthyyear,gls_fitted,color="gls"))+
+		geom_line(aes(sthyyear,loess_fitted,color="loess")) +geom_line(aes(sthyyear,poly3_fitted, color="poly3"))+
+		scale_color_manual("Legend", labels=c("GLS","Loess","3rd Order Polynomial"),
+				values=c(gls="blue", loess="red", poly3="green")) + xlab("Hydrologic Year (start year)")+
+		ylab("Total Volume Above 90% (acft)") + ggtitle(paste("Zero-Deflated Volume Above v Year (USGS",gauge,", ",period,")\nMKT tau= ",vol_MKTtau," p= ",vol_MKTp,sep=""))+
+		theme(axis.text=element_text(size=12, face="bold"),
+				axis.title=element_text(size=14,face="bold"),
+				plot.title=element_text(size=16))
+
+		
+		
