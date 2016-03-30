@@ -377,8 +377,9 @@ unimpaired_13_split_data <- unimpaired_13_split
 
 library(nlme)
 library(ggplot2)
+library(Kendall)
 statistic_tests <- names(unimpaired_13_split_data$`11202001`$all$hy)[1:5]
-for(i in 4:length(unimpaired_13_split_data)){
+for(i in 1:length(unimpaired_13_split_data)){
 	for(k in 1:3){
 		gauge <- names(unimpaired_13_split_data)[[i]]
 		period <- names(unimpaired_13_split_data[[i]]$all)[[k]]
@@ -407,22 +408,223 @@ for(i in 4:length(unimpaired_13_split_data)){
 				testplotdf$loess_fitted <- predict(vol_loess, data.frame(sthyyear=testplotdf$sthyyear))
 				vol_3poly <- lm(as.formula(paste(statistic_tests[[j]]," ~ poly(sthyyear,3)",sep="")),testplotdf, na.action=na.exclude)
 				testplotdf$poly3_fitted <- predict(vol_3poly, data.frame(sthyyear=testplotdf$sthyyear))
+				vol_4poly <- lm(as.formula(paste(statistic_tests[[j]]," ~ poly(sthyyear,4)",sep="")),testplotdf, na.action=na.exclude)
+				testplotdf$poly4_fitted <- predict(vol_4poly, data.frame(sthyyear=testplotdf$sthyyear))
+				vol_5poly <- lm(as.formula(paste(statistic_tests[[j]]," ~ poly(sthyyear,5)",sep="")),testplotdf, na.action=na.exclude)
+				testplotdf$poly5_fitted <- predict(vol_5poly, data.frame(sthyyear=testplotdf$sthyyear))
 				vol_MKTtau <- round(MannKendall(testplotdf[[statistic_tests[[j]]]])$tau[[1]],3)
 				vol_MKTp <- round(MannKendall(testplotdf[[statistic_tests[[j]]]])$sl[[1]],3)
 				fitted_vol_plots <- ggplot(testplotdf,aes_string("sthyyear",statistic_tests[[j]]))+geom_point()+ geom_line(aes(sthyyear,gls_fitted,color="gls"))+
 						geom_line(aes(sthyyear,loess_fitted,color="loess")) +geom_line(aes(sthyyear,poly3_fitted, color="poly3"))+
-						scale_color_manual("Legend", labels=c("GLS","Loess","3rd Order Polynomial"),
-								values=c(gls="blue", loess="red", poly3="green")) + xlab("Hydrologic Year (start year)")+
+						geom_line(aes(sthyyear,poly4_fitted, color="poly4"))+
+						geom_line(aes(sthyyear,poly5_fitted, color="poly5"))+
+						scale_color_manual("Legend", labels=c("GLS","Loess","3rd Order Polynomial", "4th Order Polynomial", "5th Order Polynomial"),
+								values=c(gls="blue", loess="red", poly3="green", poly4="purple", poly5="orange")) + xlab("Hydrologic Year (start year)")+
 						ylab(paste(statlabel,sep="")) + ggtitle(paste(title," v Year (USGS",gauge,", ",period,")\nMKT tau= ",vol_MKTtau," p= ",vol_MKTp,sep=""))+
 						theme(axis.text=element_text(size=12, face="bold"),
 								axis.title=element_text(size=14,face="bold"),
 								plot.title=element_text(size=16))
-				ggsave(fitted_vol_plots, file=paste("C:\\Users\\tiffn_000\\Google Drive\\unimp_plots_3_28\\test\\",statistic_tests[[j]],"\\USGS",gauge,"_",period,".png",sep=""), height=8.5, width=11, units="in")
+				ggsave(fitted_vol_plots, file=paste("C:\\Users\\tiffn_000\\Google Drive\\unimp_plots_3_28\\test_4_5\\",statistic_tests[[j]],"\\USGS",gauge,"_",period,".png",sep=""), height=8.5, width=11, units="in")
 			
-		}
-		
+		}	
 	}
 }
+
+unimpaired_13_zthr_data <- vector("list",length(unimp_13))
+names(unimpaired_13_zthr_data) <- unimp_13
+unimpaired_13_zthr_split_data <- vector("list",length(unimp_13))
+names(unimpaired_13_zthr_split_data) <- unimp_13
+
+for(z in 1:7){
+	batchnum <- z
+	load(paste("C:\\Users\\tiffn_000\\Documents\\workspaces\\zero_threshold_spbatch_",batchnum,".RData", sep=""))
+	if(any(names(spbatch)%in%unimp_13)){
+		un <- which(names(spbatch)%in%unimp_13)
+		for(i in 1:length(un)){
+			position <- which(names(unimpaired_13)==names(spbatch)[[un[[i]]]])
+			unimpaired_13_zthr_data[[position]] <- spbatch[[un[[i]]]]
+			unimpaired_13_zthr_split_data[[position]] <-test_split[[un[[i]]]]
+		}
+	}
+}
+
+load("C:\\Users\\tiffn_000\\Documents\\workspaces\\mar_28_activesites.RData")
+
+for(i in 1:length(unimpaired_13_zthr_split_data)){
+	for(k in 1:3){
+		gauge <- names(unimpaired_13_zthr_split_data)[[i]]
+		period <- names(unimpaired_13_zthr_split_data[[i]]$all)[[k]]
+		testplotdf <- unimpaired_13_zthr_split_data[[i]]$all[[k]]
+#		testplotdf[which(testplotdf$TotVolAbv_acft==0),!names(testplotdf)%in%c("sthyyear")] <- NA
+		for(j in 1:1){
+			if(statistic_tests[[j]]=="TotVolAbv_acft"){
+				statlabel <- c("Total Volume (acft)")
+				title <- c("Total Volume")
+			}else if(statistic_tests[[j]]=="TotDaysAbv"){
+				statlabel <- c("Total Days Above 90%")
+				title <- c("Zero-Deflated Days Above")
+			}else if(statistic_tests[[j]]=="numpeaks"){
+				statlabel <- c("Number of Peaks Above 90%")
+				title <- c("Zero-Deflated Number of Peaks Above")
+			}else if(statistic_tests[[j]]=="mean_peakflow"){
+				statlabel <- c("Mean Magnitude of Peaks Above 90%")
+				title <- c("Zero-Deflated Mean Magnitude of Peaks Above")
+			}else if(statistic_tests[[j]]=="total_peakflow"){
+				statlabel <- c("Total Magnitude of Peaks Above 90%")
+				title <- c("Zero-Deflated Total Magnitude of Peaks Above")
+			}
+			vol_gls <- gls(as.formula(paste(statistic_tests[[j]]," ~ sthyyear",sep="")),testplotdf, method="ML", na.action=na.exclude)
+			testplotdf$gls_fitted <- predict(vol_gls, data.frame(sthyyear=testplotdf$sthyyear))
+			vol_loess <- loess(as.formula(paste(statistic_tests[[j]]," ~ sthyyear",sep="")),testplotdf, na.action=na.exclude)
+			testplotdf$loess_fitted <- predict(vol_loess, data.frame(sthyyear=testplotdf$sthyyear))
+			vol_3poly <- lm(as.formula(paste(statistic_tests[[j]]," ~ poly(sthyyear,3)",sep="")),testplotdf, na.action=na.exclude)
+			testplotdf$poly3_fitted <- predict(vol_3poly, data.frame(sthyyear=testplotdf$sthyyear))
+			vol_4poly <- lm(as.formula(paste(statistic_tests[[j]]," ~ poly(sthyyear,4)",sep="")),testplotdf, na.action=na.exclude)
+			testplotdf$poly4_fitted <- predict(vol_4poly, data.frame(sthyyear=testplotdf$sthyyear))
+			vol_5poly <- lm(as.formula(paste(statistic_tests[[j]]," ~ poly(sthyyear,5)",sep="")),testplotdf, na.action=na.exclude)
+			testplotdf$poly5_fitted <- predict(vol_5poly, data.frame(sthyyear=testplotdf$sthyyear))
+			vol_MKTtau <- round(MannKendall(testplotdf[[statistic_tests[[j]]]])$tau[[1]],3)
+			vol_MKTp <- round(MannKendall(testplotdf[[statistic_tests[[j]]]])$sl[[1]],3)
+			fitted_vol_plots <- ggplot(testplotdf,aes_string("sthyyear",statistic_tests[[j]]))+geom_point()+ geom_line(aes(sthyyear,gls_fitted,color="gls"))+
+					geom_line(aes(sthyyear,loess_fitted,color="loess")) +geom_line(aes(sthyyear,poly3_fitted, color="poly3"))+
+					geom_line(aes(sthyyear,poly4_fitted, color="poly4"))+
+					geom_line(aes(sthyyear,poly5_fitted, color="poly5"))+
+					scale_color_manual("Legend", labels=c("GLS","Loess","3rd Order Polynomial", "4th Order Polynomial", "5th Order Polynomial"),
+							values=c(gls="blue", loess="red", poly3="green", poly4="purple", poly5="orange")) + xlab("Hydrologic Year (start year)")+
+					ylab(paste(statlabel,sep="")) + ggtitle(paste(title," v Year (USGS",gauge,", ",period,")\nMKT tau= ",vol_MKTtau," p= ",vol_MKTp,sep=""))+
+					theme(axis.text=element_text(size=12, face="bold"),
+							axis.title=element_text(size=14,face="bold"),
+							plot.title=element_text(size=16))
+			ggsave(fitted_vol_plots, file=paste("C:\\Users\\tiffn_000\\Google Drive\\unimp_plots_3_28\\test_zero_threshold\\",statistic_tests[[j]],"\\USGS",gauge,"_",period,".png",sep=""), height=8.5, width=11, units="in")
+			
+		}	
+	}
+}
+
+trend_zr_hy_df <- data.frame(gauge=names(unimpaired_13),gls_slope= rep(NA,13), gls_p = rep(NA,13),
+				MKT_tau=rep(NA,13), MKT_p=rep(NA,13), SN_lm_slope=rep(NA,13), SN_ratio = rep(NA,13))
+trend_zr_mon3_df <- data.frame(gauge=names(unimpaired_13),gls_slope= rep(NA,13), gls_p = rep(NA,13),
+				MKT_tau=rep(NA,13), MKT_p=rep(NA,13), SN_lm_slope=rep(NA,13), SN_ratio = rep(NA,13))
+trend_zr_mon6_df <- data.frame(gauge=names(unimpaired_13),gls_slope= rep(NA,13), gls_p = rep(NA,13),
+				MKT_tau=rep(NA,13), MKT_p=rep(NA,13), SN_lm_slope=rep(NA,13), SN_ratio = rep(NA,13))
+trend_90_hy_df <- data.frame(gauge=names(unimpaired_13),gls_slope= rep(NA,13), gls_p = rep(NA,13),
+				MKT_tau=rep(NA,13), MKT_p=rep(NA,13), SN_lm_slope=rep(NA,13), SN_ratio = rep(NA,13))
+trend_90_mon3_df <- data.frame(gauge=names(unimpaired_13),gls_slope= rep(NA,13), gls_p = rep(NA,13),
+				MKT_tau=rep(NA,13), MKT_p=rep(NA,13), SN_lm_slope=rep(NA,13), SN_ratio = rep(NA,13))
+trend_90_mon6_df <- data.frame(gauge=names(unimpaired_13),gls_slope= rep(NA,13), gls_p = rep(NA,13),
+				MKT_tau=rep(NA,13), MKT_p=rep(NA,13), SN_lm_slope=rep(NA,13), SN_ratio = rep(NA,13))
+		
+for(i in 1:length(unimpaired_13)){
+	testplotdf <- unimpaired_13_zthr_split_data[[i]]$all$hy
+	vol_gls <- gls(TotVolAbv_acft ~ sthyyear,testplotdf,correlation = corAR1(form=~1), method="ML", na.action=na.exclude)
+	vol_gls <- as.data.frame(summary(vol_gls)$tTable)
+	vol_gls_p <- vol_gls$p[[2]]
+	vol_gls_slope <- vol_gls$Value[[2]]
+	vol_MKTtau <- round(MannKendall(testplotdf[[statistic_tests[[j]]]])$tau[[1]],3)
+	vol_MKTp <- round(MannKendall(testplotdf[[statistic_tests[[j]]]])$sl[[1]],3)
+	SNmodel <- lm(TotVolAbv_acft ~ sthyyear,testplotdf)
+	SN_slope <- SNmodel$coefficients[[2]]
+	SN_ratio <- var(fitted.values(SNmodel))/var(residuals(SNmodel))
+	trend_zr_hy_df$gls_slope[[i]] <- vol_gls_slope
+	trend_zr_hy_df$gls_p[[i]] <- vol_gls_p
+	trend_zr_hy_df$MKT_tau[[i]] <- vol_MKTtau
+	trend_zr_hy_df$MKT_p[[i]] <- vol_MKTp
+	trend_zr_hy_df$SN_lm_slope[[i]] <- SN_slope
+	trend_zr_hy_df$SN_ratio[[i]] <- SN_ratio
+	
+	testplotdf <- unimpaired_13_zthr_split_data[[i]]$all$mon3
+	vol_gls <- gls(TotVolAbv_acft ~ sthyyear,testplotdf,correlation = corAR1(form=~1), method="ML", na.action=na.exclude)
+	vol_gls <- as.data.frame(summary(vol_gls)$tTable)
+	vol_gls_p <- vol_gls$p[[2]]
+	vol_gls_slope <- vol_gls$Value[[2]]
+	vol_MKTtau <- round(MannKendall(testplotdf[[statistic_tests[[j]]]])$tau[[1]],3)
+	vol_MKTp <- round(MannKendall(testplotdf[[statistic_tests[[j]]]])$sl[[1]],3)
+	SNmodel <- lm(TotVolAbv_acft ~ sthyyear,testplotdf)
+	SN_slope <- SNmodel$coefficients[[2]]
+	SN_ratio <- var(fitted.values(SNmodel))/var(residuals(SNmodel))
+	trend_zr_mon3_df$gls_slope[[i]] <- vol_gls_slope
+	trend_zr_mon3_df$gls_p[[i]] <- vol_gls_p
+	trend_zr_mon3_df$MKT_tau[[i]] <- vol_MKTtau
+	trend_zr_mon3_df$MKT_p[[i]] <- vol_MKTp
+	trend_zr_mon3_df$SN_lm_slope[[i]] <- SN_slope
+	trend_zr_mon3_df$SN_ratio[[i]] <- SN_ratio
+	
+	testplotdf <- unimpaired_13_zthr_split_data[[i]]$all$mon6
+	vol_gls <- gls(TotVolAbv_acft ~ sthyyear,testplotdf,correlation = corAR1(form=~1), method="ML", na.action=na.exclude)
+	vol_gls <- as.data.frame(summary(vol_gls)$tTable)
+	vol_gls_p <- vol_gls$p[[2]]
+	vol_gls_slope <- vol_gls$Value[[2]]
+	vol_MKTtau <- round(MannKendall(testplotdf[[statistic_tests[[j]]]])$tau[[1]],3)
+	vol_MKTp <- round(MannKendall(testplotdf[[statistic_tests[[j]]]])$sl[[1]],3)
+	SNmodel <- lm(TotVolAbv_acft ~ sthyyear,testplotdf)
+	SN_slope <- SNmodel$coefficients[[2]]
+	SN_ratio <- var(fitted.values(SNmodel))/var(residuals(SNmodel))
+	trend_zr_mon6_df$gls_slope[[i]] <- vol_gls_slope
+	trend_zr_mon6_df$gls_p[[i]] <- vol_gls_p
+	trend_zr_mon6_df$MKT_tau[[i]] <- vol_MKTtau
+	trend_zr_mon6_df$MKT_p[[i]] <- vol_MKTp
+	trend_zr_mon6_df$SN_lm_slope[[i]] <- SN_slope
+	trend_zr_mon6_df$SN_ratio[[i]] <- SN_ratio
+	
+	
+	testplotdf <- unimpaired_13_split_data[[i]]$all$mon6
+	vol_gls <- gls(TotVolAbv_acft ~ sthyyear,testplotdf,correlation = corAR1(form=~1), method="ML", na.action=na.exclude)
+	vol_gls <- as.data.frame(summary(vol_gls)$tTable)
+	vol_gls_p <- vol_gls$p[[2]]
+	vol_gls_slope <- vol_gls$Value[[2]]
+	vol_MKTtau <- round(MannKendall(testplotdf[[statistic_tests[[j]]]])$tau[[1]],3)
+	vol_MKTp <- round(MannKendall(testplotdf[[statistic_tests[[j]]]])$sl[[1]],3)
+	SNmodel <- lm(TotVolAbv_acft ~ sthyyear,testplotdf)
+	SN_slope <- SNmodel$coefficients[[2]]
+	SN_ratio <- var(fitted.values(SNmodel))/var(residuals(SNmodel))
+	trend_90_mon6_df$gls_slope[[i]] <- vol_gls_slope
+	trend_90_mon6_df$gls_p[[i]] <- vol_gls_p
+	trend_90_mon6_df$MKT_tau[[i]] <- vol_MKTtau
+	trend_90_mon6_df$MKT_p[[i]] <- vol_MKTp
+	trend_90_mon6_df$SN_lm_slope[[i]] <- SN_slope
+	trend_90_mon6_df$SN_ratio[[i]] <- SN_ratio
+	
+	testplotdf <- unimpaired_13_split_data[[i]]$all$mon3
+	vol_gls <- gls(TotVolAbv_acft ~ sthyyear,testplotdf,correlation = corAR1(form=~1), method="ML", na.action=na.exclude)
+	vol_gls <- as.data.frame(summary(vol_gls)$tTable)
+	vol_gls_p <- vol_gls$p[[2]]
+	vol_gls_slope <- vol_gls$Value[[2]]
+	vol_MKTtau <- round(MannKendall(testplotdf[[statistic_tests[[j]]]])$tau[[1]],3)
+	vol_MKTp <- round(MannKendall(testplotdf[[statistic_tests[[j]]]])$sl[[1]],3)
+	SNmodel <- lm(TotVolAbv_acft ~ sthyyear,testplotdf)
+	SN_slope <- SNmodel$coefficients[[2]]
+	SN_ratio <- var(fitted.values(SNmodel))/var(residuals(SNmodel))
+	trend_90_mon3_df$gls_slope[[i]] <- vol_gls_slope
+	trend_90_mon3_df$gls_p[[i]] <- vol_gls_p
+	trend_90_mon3_df$MKT_tau[[i]] <- vol_MKTtau
+	trend_90_mon3_df$MKT_p[[i]] <- vol_MKTp
+	trend_90_mon3_df$SN_lm_slope[[i]] <- SN_slope
+	trend_90_mon3_df$SN_ratio[[i]] <- SN_ratio
+	
+	testplotdf <- unimpaired_13_split_data[[i]]$all$hy
+	vol_gls <- gls(TotVolAbv_acft ~ sthyyear,testplotdf,correlation = corAR1(form=~1), method="ML", na.action=na.exclude)
+	vol_gls <- as.data.frame(summary(vol_gls)$tTable)
+	vol_gls_p <- vol_gls$p[[2]]
+	vol_gls_slope <- vol_gls$Value[[2]]
+	vol_MKTtau <- round(MannKendall(testplotdf[[statistic_tests[[j]]]])$tau[[1]],3)
+	vol_MKTp <- round(MannKendall(testplotdf[[statistic_tests[[j]]]])$sl[[1]],3)
+	SNmodel <- lm(TotVolAbv_acft ~ sthyyear,testplotdf)
+	SN_slope <- SNmodel$coefficients[[2]]
+	SN_ratio <- var(fitted.values(SNmodel))/var(residuals(SNmodel))
+	trend_90_hy_df$gls_slope[[i]] <- vol_gls_slope
+	trend_90_hy_df$gls_p[[i]] <- vol_gls_p
+	trend_90_hy_df$MKT_tau[[i]] <- vol_MKTtau
+	trend_90_hy_df$MKT_p[[i]] <- vol_MKTp
+	trend_90_hy_df$SN_lm_slope[[i]] <- SN_slope
+	trend_90_hy_df$SN_ratio[[i]] <- SN_ratio
+}
+		
+
+
+
+
+
+
 testplotdf <- unimpaired_13_split_data$`11202001`$all$hy
 testplotdf[which(testplotdf$TotVolAbv_acft==0),!names(testplotdf)%in%c("sthyyear")] <- NA
 vol_gls <- gls(TotVolAbv_acft ~ sthyyear,testplotdf, method="ML", na.action=na.exclude)
