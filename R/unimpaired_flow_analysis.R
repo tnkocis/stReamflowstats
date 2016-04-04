@@ -627,6 +627,7 @@ for(i in 1:length(unimpaired_13)){
 
 testplotdf <- unimpaired_13_split_data$`11202001`$all$hy
 testplotdf[which(testplotdf$TotVolAbv_acft==0),!names(testplotdf)%in%c("sthyyear")] <- NA
+testplotdf$rlmean <- rollapply(testplotdf$TotVolAbv_acft, 5, (mean), na.rm=TRUE, fill=NA)
 vol_gls <- gls(TotVolAbv_acft ~ sthyyear,testplotdf, method="ML", na.action=na.exclude)
 testplotdf$gls_fitted <- predict(vol_gls, data.frame(sthyyear=testplotdf$sthyyear))
 vol_loess <- loess(TotVolAbv_acft ~ sthyyear,testplotdf, na.action=na.exclude)
@@ -642,9 +643,23 @@ fitted_vol_plots <- ggplot(testplotdf,aes(sthyyear,TotVolAbv_acft))+geom_point()
 		ylab("Total Volume Above 90% (acft)") + ggtitle(paste("Zero-Deflated Volume Above v Year (USGS",gauge,", ",period,")\nMKT tau= ",vol_MKTtau," p= ",vol_MKTp,sep=""))+
 		theme(axis.text=element_text(size=12, face="bold"),
 				axis.title=element_text(size=14,face="bold"),
-				plot.title=element_text(size=16))
+				plot.title=element_text(size=16))+
+		geom_line(aes(sthyyear,rlmean)) +geom_smooth(method="lm", fill="lightblue", color="blue", alpha=0.6) +
+		geom_smooth(method="loess", color="red", fill="pink", alpha=0.4)+
+		geom_smooth(method="lm", formula=y ~ poly(x,3), color="green", fill="lightgreen", alpha=0.2)
+
+ggplot(testplotdf,aes(sthyyear,TotVolAbv_acft))+geom_point()+ 
+		scale_color_manual("Legend", labels=c("GLS","Loess","3rd Order Polynomial"),
+				values=c("blue","red", "green")) + xlab("Hydrologic Year (start year)")+
+		ylab("Total Volume Above 90% (acft)") + ggtitle(paste("Zero-Deflated Volume Above v Year (USGS",gauge,", ",period,")\nMKT tau= ",vol_MKTtau," p= ",vol_MKTp,sep=""))+
+		theme(axis.text=element_text(size=12, face="bold"),
+				axis.title=element_text(size=14,face="bold"),
+				plot.title=element_text(size=16))+
+		geom_line(aes(sthyyear,rlmean)) +
+		geom_smooth(method="lm", formula=y ~ poly(x,3), color="green", fill="lightgreen", alpha=0.2)
 
 
+testplotdf$rlmean <- rollapply(testplotdf$TotVolAbv_acft, 5, (mean), na.rm=TRUE, fill=NA)
 
 
 
