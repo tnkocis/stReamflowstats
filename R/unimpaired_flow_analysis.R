@@ -663,4 +663,53 @@ testplotdf$rlmean <- rollapply(testplotdf$TotVolAbv_acft, 5, (mean), na.rm=TRUE,
 
 
 
+simp_pkflows_mag_dams <- vector("list",7)
+simp_pkflows_mag_1980 <- vector("list",7)
+simp_pkflows_mag_full <- vector("list",7)
+for(q in 1:7){
+	batchnum <- q
+	load(paste("C:\\Users\\tiffn_000\\Documents\\workspaces\\full_record_spbatch_",batchnum,".RData", sep=""))
+	simp_pkflows_mag_dams[[q]] <- test_peakflowmags_dams_bind
+	simp_pkflows_mag_full[[q]] <- test_peakflowmags_full_bind
+	simp_pkflows_mag_1980[[q]] <- test_peakflowmags_1980_bind
+}
 
+for(i in 1:15){
+	for(j in 1:6){
+		for(k in 2:7){
+			simp_pkflows_mag_dams[[1]][[j]][[i]] <- rbind.data.frame(simp_pkflows_mag_dams[[1]][[j]][[i]],simp_pkflows_mag_dams[[k]][[j]][[i]])
+		}
+	}
+}
+areas <- read.csv("C:\\Users\\tiffn_000\\Documents\\gauges_93\\usgs_area.txt", header=TRUE)
+areas_join <- merge(simp_pkflows_mag_dams[[1]]$all$mon3,areas,by="gauge",all=TRUE)
+areas_join$VA <- areas_join$mean_totvol_TAF/areas_join$area
+areas_join$dayfrac <- areas_join$mean_totdays/90
+areas_join$nonzero_scale <- NA
+areas_join$nonzero_scale[(areas_join$frac_nonzero<=0.2)] <- 1
+areas_join$nonzero_scale[(areas_join$frac_nonzero>0.2&areas_join$frac_nonzero<=0.4)] <- 2
+areas_join$nonzero_scale[(areas_join$frac_nonzero>0.4&areas_join$frac_nonzero<=0.6)] <-3
+areas_join$nonzero_scale[(areas_join$frac_nonzero>0.6&areas_join$frac_nonzero<=0.8)] <- 4
+areas_join$nonzero_scale[(areas_join$frac_nonzero>0.8)] <- 5
+
+areas_join$dayfrac_scale <- NA
+areas_join$dayfrac_scale[(areas_join$dayfrac<=0.06)] <- 1
+areas_join$dayfrac_scale[(areas_join$dayfrac>0.06&areas_join$dayfrac<=0.14)] <- 2
+areas_join$dayfrac_scale[(areas_join$dayfrac>0.14&areas_join$dayfrac<=0.22)] <-3
+areas_join$dayfrac_scale[(areas_join$dayfrac>0.22&areas_join$dayfrac<=0.3)] <- 4
+areas_join$dayfrac_scale[(areas_join$dayfrac>0.3)] <- 5
+
+areas_join$VA_scale <- NA
+areas_join$VA_scale[(areas_join$VA<=0.08)] <- 1
+areas_join$VA_scale[(areas_join$VA>0.08&areas_join$VA<=0.18)] <- 2
+areas_join$VA_scale[(areas_join$VA>0.18&areas_join$VA<=0.28)] <-3
+areas_join$VA_scale[(areas_join$VA>0.28&areas_join$VA<=0.38)] <- 4
+areas_join$VA_scale[(areas_join$VA>0.38)] <- 5
+
+areas_join$sum <- areas_join$VA_scale +areas_join$dayfrac_scale +3*areas_join$nonzero_scale
+areas_join$sum_scale <- NA
+areas_join$sum_scale[(areas_join$sum<=8)] <- 1
+areas_join$sum_scale[(areas_join$sum>8&areas_join$sum<=12)] <- 2
+areas_join$sum_scale[(areas_join$sum>12&areas_join$sum<=16)] <-3
+areas_join$sum_scale[(areas_join$sum>16&areas_join$sum<=20)] <- 4
+areas_join$sum_scale[(areas_join$sum>20)] <- 5
