@@ -151,3 +151,78 @@ monthlybarplot_sj <- ggplot(monthlyfullrecord_sj, aes(x = yeartype, y = volume_m
 
 ggsave("C:\\Users\\tiffn_000\\Google Drive\\figures\\updated_figures\\sj_monthlybarplot_fullrecordthresold.png", monthlybarplot_sj, width=11, height=8.5, units="in")
 
+
+delta_merge$test <- c(NA,delta_merge$code_description[1:(length(delta_merge$code_description)-1)])
+delta_merge$change <- delta_merge$test!=delta_merge$code_description
+delta_merge$change[[1]] <- TRUE
+
+delta_change <- data.frame(date=delta_merge$date[delta_merge$change],code_description=delta_merge$code_description[delta_merge$change])
+delta_change$datemax <- c(delta_change$date[2:length(delta_change$date)],delta_merge$date[[length(delta_merge$date)]])
+delta_change$code_description[which(delta_change$code_description=="excess with Fish and Export/Inflow concerns")] <- "excess with Export to Inflow ratio concerns"
+delta_change$code_description <- factor(delta_change$code_description)
+delta_change$description <- as.character(delta_change$code_description)
+delta_change$description[which(delta_change$code_description=="excess")] <- "true excess"
+delta_change$description[which(delta_change$code_description=="excess with fish concerns"|delta_change$code_description=="excess with Export to Inflow ratio concerns")] <- "excess with restrictions"
+delta_change$description[which(delta_change$code_description=="balance with no storage withdrawals"|delta_change$code_description=="balanced with storage withdrawals")] <- "balanced"
+delta_change$description <- factor(delta_change$description)
+
+delta_ribbon <- data.frame(date=delta_merge$date,sac_dis_TAF=delta_merge$sac_discharge_TAF,sj_dis_TAF=delta_merge$sj_discharge_TAF)
+delta_ribbon$sac_thresh <- delta_ribbon$sac_dis_TAF
+delta_ribbon$sac_thresh[which(delta_ribbon$sac_dis_TAF<delta_merge$sac_90_full)] <- NA
+delta_ribbon$sac_90_full <- delta_merge$sac_90_full
+
+delta_ribbon$sj_thresh <- delta_ribbon$sj_dis_TAF
+delta_ribbon$sj_thresh[which(delta_ribbon$sj_dis_TAF<delta_merge$sj_90_full)] <- NA
+delta_ribbon$sj_90_full <- delta_merge$sj_90_full
+
+write.csv(delta_merge, file="C:\\Users\\tnkocis\\Google Drive\\figures\\updated_figures\\delta_merge.csv")
+write.csv(delta_change, file="C:\\Users\\tnkocis\\Google Drive\\figures\\updated_figures\\delta_change.csv")
+write.csv(delta_ribbon, file="C:\\Users\\tnkocis\\Google Drive\\figures\\updated_figures\\delta_ribbon.csv")
+
+delta_plot_sac <-ggplot() +geom_line(data=delta_merge,aes(x=date,y=sac_discharge_TAF),color="blue")+
+		geom_rect(data=delta_change, aes(xmin=as.Date(date), xmax=as.Date(datemax), ymin=-Inf, ymax=Inf, fill=description), alpha=0.4)+
+		scale_fill_manual("Delta Status", values=c("true excess"="forestgreen","excess with restrictions"="lawngreen","balanced"="firebrick"))+
+		geom_segment(aes(x=as.Date(delta_merge$date[[1]]),y=delta_merge$sac_90_full,xend=as.Date(delta_merge$date[[length(delta_merge$date)]]),
+						yend=delta_merge$sac_90_full,color="90th Percentile"), size=1)+
+		scale_color_manual("",values=c("90th Percentile"="black"))+
+		geom_ribbon(data=delta_ribbon, aes(x=date,ymin=sac_90_full,ymax=sac_thresh),color="black", linetype="solid")+
+		scale_y_continuous(limits=c(0,240))+
+		labs(title="Delta Conditions Compared to Discharge at Sacramento USGS 11447650 ", 
+				x="Date", y="Discharge (TAF)")+
+		theme(axis.text.x=element_text(color="black", size=14),
+				axis.text.y=element_text(color="black", size=14),
+				axis.title.x = element_text(color="black", size=16),
+				axis.title.y = element_text(color="black", size=16),
+				title = element_text(color="black", size=16),
+				legend.position = "top",
+				legend.text= element_text(color="black", size=14))+
+		geom_hline(aes(yintercept=0))+
+		scale_x_date(date_breaks="3 years", date_labels="%Y")
+		
+
+ggsave("C:\\Users\\tnkocis\\Google Drive\\figures\\updated_figures\\deltaplot_sac.png",delta_plot_sac, width=11,height=8)
+
+delta_plot_sj <-ggplot() +geom_line(data=delta_merge,aes(x=date,y=sj_discharge_TAF),color="blue")+
+		geom_rect(data=delta_change, aes(xmin=as.Date(date), xmax=as.Date(datemax), ymin=-Inf, ymax=Inf, fill=description), alpha=0.4)+
+		scale_fill_manual("Delta Status", values=c("true excess"="forestgreen","excess with restrictions"="lawngreen","balanced"="firebrick"))+
+		geom_segment(aes(x=as.Date(delta_merge$date[[1]]),y=delta_merge$sj_90_full,xend=as.Date(delta_merge$date[[length(delta_merge$date)]]),
+						yend=delta_merge$sj_90_full,color="90th Percentile"), size=1)+
+		scale_color_manual("",values=c("90th Percentile"="black"))+
+		geom_ribbon(data=delta_ribbon, aes(x=date,ymin=sj_90_full,ymax=sj_thresh),color="black", linetype="solid")+
+		scale_y_continuous(limits=c(0,100))+
+		labs(title="Delta Conditions Compared to Discharge at San Joaquin USGS 11303500", 
+				x="Date", y="Discharge (TAF)")+
+		theme(axis.text.x=element_text(color="black", size=14),
+				axis.text.y=element_text(color="black", size=14),
+				axis.title.x = element_text(color="black", size=16),
+				axis.title.y = element_text(color="black", size=16),
+				title = element_text(color="black", size=16),
+				legend.position = "top",
+				legend.text= element_text(color="black", size=14))+
+		geom_hline(aes(yintercept=0))+
+		scale_x_date(date_breaks="3 years", date_labels="%Y")
+
+
+ggsave("C:\\Users\\tnkocis\\Google Drive\\figures\\updated_figures\\deltaplot_sj.png",delta_plot_sj, width=11,height=8)
+
+#delta_change$datemax <- delta_change$datemax-1
