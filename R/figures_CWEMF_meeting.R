@@ -178,13 +178,22 @@ delta_ribbon$sj_90_full <- delta_merge$sj_90_full
 write.csv(delta_merge, file="C:\\Users\\tnkocis\\Google Drive\\figures\\updated_figures\\delta_merge.csv")
 write.csv(delta_change, file="C:\\Users\\tnkocis\\Google Drive\\figures\\updated_figures\\delta_change.csv")
 write.csv(delta_ribbon, file="C:\\Users\\tnkocis\\Google Drive\\figures\\updated_figures\\delta_ribbon.csv")
+delta_merge <- read.csv("C:\\Users\\tiffn_000\\Google Drive\\figures\\updated_figures\\delta_merge.csv", header=TRUE)
+delta_change<- read.csv("C:\\Users\\tiffn_000\\Google Drive\\figures\\updated_figures\\delta_change.csv", header=TRUE)
+delta_ribbon <- read.csv("C:\\Users\\tiffn_000\\Google Drive\\figures\\updated_figures\\delta_ribbon.csv", header=TRUE)
+delta_change$date <- as.Date(delta_change$date)
+delta_merge$date <- as.Date(delta_merge$date)
+delta_ribbon$date <- as.Date(delta_ribbon$date)
+delta_change$datemax <- as.Date(delta_change$datemax)
 
-delta_plot_sac <-ggplot() +geom_line(data=delta_merge,aes(x=date,y=sac_discharge_TAF),color="blue")+
+
+delta_plot_sac <-ggplot() +
 		geom_rect(data=delta_change, aes(xmin=as.Date(date), xmax=as.Date(datemax), ymin=-Inf, ymax=Inf, fill=description), alpha=0.4)+
 		scale_fill_manual("Delta Status", values=c("true excess"="forestgreen","excess with restrictions"="lawngreen","balanced"="firebrick"))+
 		geom_segment(aes(x=as.Date(delta_merge$date[[1]]),y=delta_merge$sac_90_full,xend=as.Date(delta_merge$date[[length(delta_merge$date)]]),
 						yend=delta_merge$sac_90_full,color="90th Percentile"), size=1)+
 		scale_color_manual("",values=c("90th Percentile"="black"))+
+		geom_line(data=delta_merge,aes(x=date,y=sac_discharge_TAF),color="blue")+
 		geom_ribbon(data=delta_ribbon, aes(x=date,ymin=sac_90_full,ymax=sac_thresh),color="black", linetype="solid")+
 		scale_y_continuous(limits=c(0,240))+
 		labs(title="Delta Conditions Compared to Discharge at Sacramento USGS 11447650 ", 
@@ -200,14 +209,15 @@ delta_plot_sac <-ggplot() +geom_line(data=delta_merge,aes(x=date,y=sac_discharge
 		scale_x_date(date_breaks="3 years", date_labels="%Y")
 		
 
-ggsave("C:\\Users\\tnkocis\\Google Drive\\figures\\updated_figures\\deltaplot_sac.png",delta_plot_sac, width=11,height=8)
+ggsave("C:\\Users\\tiffn_000\\Google Drive\\figures\\updated_figures\\deltaplot_sac.png",delta_plot_sac, width=11,height=8)
 
-delta_plot_sj <-ggplot() +geom_line(data=delta_merge,aes(x=date,y=sj_discharge_TAF),color="blue")+
+delta_plot_sj <-ggplot() +
 		geom_rect(data=delta_change, aes(xmin=as.Date(date), xmax=as.Date(datemax), ymin=-Inf, ymax=Inf, fill=description), alpha=0.4)+
 		scale_fill_manual("Delta Status", values=c("true excess"="forestgreen","excess with restrictions"="lawngreen","balanced"="firebrick"))+
 		geom_segment(aes(x=as.Date(delta_merge$date[[1]]),y=delta_merge$sj_90_full,xend=as.Date(delta_merge$date[[length(delta_merge$date)]]),
 						yend=delta_merge$sj_90_full,color="90th Percentile"), size=1)+
 		scale_color_manual("",values=c("90th Percentile"="black"))+
+		geom_line(data=delta_merge,aes(x=date,y=sj_discharge_TAF),color="blue")+
 		geom_ribbon(data=delta_ribbon, aes(x=date,ymin=sj_90_full,ymax=sj_thresh),color="black", linetype="solid")+
 		scale_y_continuous(limits=c(0,100))+
 		labs(title="Delta Conditions Compared to Discharge at San Joaquin USGS 11303500", 
@@ -223,6 +233,6 @@ delta_plot_sj <-ggplot() +geom_line(data=delta_merge,aes(x=date,y=sj_discharge_T
 		scale_x_date(date_breaks="3 years", date_labels="%Y")
 
 
-ggsave("C:\\Users\\tnkocis\\Google Drive\\figures\\updated_figures\\deltaplot_sj.png",delta_plot_sj, width=11,height=8)
+ggsave("C:\\Users\\tiffn_000\\Google Drive\\figures\\updated_figures\\deltaplot_sj.png",delta_plot_sj, width=11,height=8)
 
 #delta_change$datemax <- delta_change$datemax-1
