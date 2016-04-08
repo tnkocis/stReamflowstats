@@ -682,6 +682,7 @@ for(i in 1:15){
 	}
 }
 areas <- read.csv("C:\\Users\\tiffn_000\\Documents\\gauges_93\\usgs_area.txt", header=TRUE)
+areas$area[[which(areas$gauge==11447650)]] <- 24612.81
 areas_join <- merge(simp_pkflows_mag_dams[[1]]$all$mon3,areas,by="gauge",all=TRUE)
 areas_join$VA <- areas_join$mean_totvol_TAF/areas_join$area
 areas_join$dayfrac <- areas_join$mean_totdays/90
@@ -713,3 +714,120 @@ areas_join$sum_scale[(areas_join$sum>8&areas_join$sum<=12)] <- 2
 areas_join$sum_scale[(areas_join$sum>12&areas_join$sum<=16)] <-3
 areas_join$sum_scale[(areas_join$sum>16&areas_join$sum<=20)] <- 4
 areas_join$sum_scale[(areas_join$sum>20)] <- 5
+
+areas_join$sum2 <- areas_join$sum
+areas_join$sum <- NULL
+
+write.csv(areas_join,file="c:\\users\\tiffn_000\\Google Drive\\figures\\updated_figures\\examplemapdata2.csv")
+
+rank_index <- function(input){
+	meanval <- median(input, na.rm=TRUE)
+	maxval <- max(input, na.rm=TRUE)
+	intabvmean <- (maxval-meanval)/3
+	intblwmean <- (meanval)/3
+	breakvals <- c(meanval-(2*intblwmean),meanval-(1*intblwmean),meanval,meanval+(1*intabvmean),meanval+(2*intabvmean))
+	output <- NA
+	output[input<=breakvals[[1]]] <-1
+	output[((input>breakvals[[1]])&(input<=breakvals[[2]]))] <- 2
+	output[((input>breakvals[[2]])&(input<=breakvals[[3]]))] <- 3
+	output[((input>breakvals[[3]])&(input<=breakvals[[4]]))] <- 4
+	output[((input>breakvals[[4]])&(input<=breakvals[[5]]))] <- 5
+	output[((input>breakvals[[5]]))] <- 6
+	return(output)
+}
+
+rank_index_equal <- function(input){
+	medval <- median(input, na.rm=TRUE)
+	len <- length(input)
+	intlen <- len/6
+	brklen <- round(c(intlen, intlen*2, intlen*3, intlen*4,intlen*5))
+	inputsort <- input[order(input)]
+	brkval <- c(inputsort[[brklen[[1]]]],inputsort[[brklen[[2]]]],inputsort[[brklen[[3]]]],inputsort[[brklen[[4]]]],inputsort[[brklen[[5]]]])
+	output <- NA
+	output[input<=brkval[[1]]] <-1
+	output[((input>brkval[[1]])&(input<=brkval[[2]]))] <- 2
+	output[((input>brkval[[2]])&(input<=brkval[[3]]))] <- 3
+	output[((input>brkval[[3]])&(input<=brkval[[4]]))] <- 4
+	output[((input>brkval[[4]])&(input<=brkval[[5]]))] <- 5
+	output[((input>brkval[[5]]))] <- 6
+	output[is.na(output)] <- 0
+	output[which(input==0)] <- 0
+	return(output)
+}
+
+
+test_rank <- rank_index(areas_join$VA)
+test_rank_equal <- rank_index_equal(areas_join$VA)
+
+areas <- read.csv("C:\\Users\\tiffn_000\\Documents\\gauges_93\\usgs_area.txt", header=TRUE)
+areas$area[[which(areas$gauge==11447650)]] <- 24612.81
+periods <- c("hy","mon6","mon3","nov","dec","jan","feb","mar","apr")
+ranking <- vector("list",length(periods))
+names(ranking) <- periods
+for(i in 1:length(periods)){
+	if(periods[[i]]=="hy"){d <- 365
+	}else if(periods[[i]]=="mon6"){
+		d <- 171
+	}else if(periods[[i]]=="mon3"){
+		d <- 90
+	}else if(periods[[i]]=="nov"){
+		d <- 30
+	}else if(periods[[i]]=="dec"){
+		d <- 31
+	}else if(periods[[i]]=="jan"){
+		d <- 31
+	}else if(periods[[i]]=="feb"){
+		d <- 28
+	}else if(periods[[i]]=="mar"){
+		d <- 31
+	}else if(periods[[i]]=="apr"){
+		d <- 30
+	}	
+	areas_join <- merge(simp_pkflows_mag_dams[[1]]$all[[periods[[i]]]],areas,by="gauge",all=TRUE)
+	areas_join$VA <- areas_join$mean_totvol_TAF/areas_join$area
+	areas_join$dayfrac <- areas_join$mean_totdays/d
+	areas_join$VA_scale <- rank_index_equal(areas_join$VA)
+	areas_join$dayfrac_scale <- rank_index_equal(areas_join$dayfrac)
+	areas_join$nonzero_scale <- rank_index_equal(areas_join$frac_nonzero)
+	areas_join$sum2 <- 0.75*areas_join$VA_scale + 0.45*areas_join$dayfrac_scale + 1.7*areas_join$nonzero_scale
+	areas_join$sum_scale <- rank_index_equal(areas_join$sum2)
+	areas_join$period <- periods[[i]]
+#	names(areas_join)[2:length(names(areas_join))]<-paste(names(areas_join)[2:length(names(areas_join))],"_",periods[[i]],sep="")
+	ranking[[i]] <- areas_join
+#	write.csv(areas_join, file=paste("C:\\Users\\tiffn_000\\Google Drive\\figures\\updated_figures\\ranking_",periods[[i]],".csv",sep=""))
+}
+
+#rankingdf2 <- ranking[[1]]
+for(i in 2:length(ranking)){
+	rankingdf2 <- do.call(rbind.data.frame,rankingrankingdf, ranking[[i]], by="gauge")
+}
+rankingdf2 <- do.call(rbind.data.frame,ranking)
+write.csv(rankingdf,"C:\\Users\\tiffn_000\\Google Drive\\figures\\updated_figures\\ranking_all.csv")
+rankingdf2$period <- factor(rankingdf2$period,levels=c("hy","mon6","mon3","nov","dec","feb","jan","mar","apr"))
+ggplot(rankingdf2, aes(x=period,y=sum_scale, group=gauge))+geom_line()+facet_wrap(~gauge)
+
+rankingdf3 <- rankingdf2[which(rankingdf2$gauge==rankingdf2$gauge[[3]]),]
+ggplot(rankingdf3, aes(x=period, y=VA, group=gauge))+geom_line()+geom_line(aes(x=period,y=dayfrac))+
+		geom_line(aes(x=period,y=frac_nonzero))
+
+areas_join$VA <- areas_join$mean_totvol_TAF/areas_join$area
+areas_join$dayfrac <- areas_join$mean_totdays/90
+areas_join$VA_scale <- rank_index_equal(areas_join$VA)
+areas_join$dayfrac_scale <- rank_index_equal(areas_join$dayfrac)
+areas_join$nonzero_scale <- rank_index_equal(areas_join$frac_nonzero)
+areas_join$sum2 <- areas_join$VA_scale + areas_join$dayfrac_scale + 3*areas_join$nonzero_scale
+areas_join$sum_scale <- rank_index_equal(areas_join$sum2)
+
+rank_index_equal(rankingdf3$VA)
+[1] 6 5 4 1 3 2 1 4 5
+> rank_index_equal(rankingdf3$VA[4:9])
+[1] 1 4 3 2 5 6
+> rank_index_equal(rankingdf3$dayfrac[4:9])
+[1] 1 2 3 4 5 6
+> rank_index_equal(rankingdf3$frac_nonzero[4:9])
+[1] 1 2 3 4 5 6
+> rank_index_equal(rankingdf3$VA[4:9])+rank_index_equal(rankingdf3$dayfrac[4:9])+rank_index_equal(rankingdf3$frac_nonzero[4:9])
+[1]  3  8  9 10 15 18
+
+
+ranking$hy$test3 <- rank_index_equal(0.75*ranking$hy$VA_scale_hy+ 0.45*ranking$hy$dayfrac_scale_hy + 1.7*ranking$hy$nonzero_scale_hy)
