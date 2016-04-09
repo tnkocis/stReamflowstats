@@ -269,7 +269,7 @@ barplotdf <- data.frame(vol=c(4159.270177,0,6144,3125,1178.181816,951.3388414,0,
 				rep("SAN JOAQUIN RIVER \n USGS 11303500\n NOV - APR\n 1989-2014",7)))
 barplotdf$vol_MAF <- barplotdf$vol/1000
 barplotdf$yeartype <- factor(barplotdf$yeartype, levels=c("Critical","Dry","Below Normal","Above Normal","Wet"," ","All"))
-volplot <- ggplot() + geom_bar(data=barplotdf, aes(x=yeartype,y=vol_MAF,fill=yeartype), stat="identity") + 
+volplot <- ggplot() + geom_bar(data=barplotdf, aes(x=yeartype,y=vol_MAF,fill=yeartype), stat="identity",color="black") + 
 		facet_wrap(~gauge_period, nrow=1)+scale_fill_manual(values=c("lightcoral","lemonchiffon","mediumaquamarine",
 						"dodgerblue3","darkblue","white","chartreuse4"))+
 		scale_y_continuous(limits=c(0,12),breaks=seq(0,12,1))+
@@ -279,10 +279,10 @@ volplot <- ggplot() + geom_bar(data=barplotdf, aes(x=yeartype,y=vol_MAF,fill=yea
 				axis.text.y=element_text(color="black", size=14),
 				axis.title.x = element_text(color="black", size=16),
 				axis.title.y = element_text(color="black", size=16),
-				title = element_text(color="black", size=18),
+				title = element_text(color="black", size=16),
 				legend.position = "right",
 				legend.text= element_text(color="black", size=14),
-				strip.text = element_text(color="black", size=14))+
+				strip.text = element_text(color="black", size=13.5))+
 		guides(fill=guide_legend(title="Year Type", reverse=TRUE))+
 		scale_x_discrete(labels=c("C", "D", "BN", "AN","W"," ","All"))
 
@@ -324,7 +324,7 @@ barplotdf_yrs <- data.frame(yeartype=c(rep("All",17),rep("All",26),rep("Wet",0),
 				rep("SAN JOAQUIN RIVER \n USGS 11303500\n NOV - APR\n 1989-2014",4),rep("SAN JOAQUIN RIVER \n USGS 11303500\n NOV - APR\n 1989-2014",0),rep("SAN JOAQUIN RIVER \n USGS 11303500\n NOV - APR\n 1989-2014",7),rep("SAN JOAQUIN RIVER \n USGS 11303500\n NOV - APR\n 1989-2014",0))#sj6
 		) 
 barplotdf_yrs$yeartype <- factor(barplotdf_yrs$yeartype, levels=c("Critical","Dry","Below Normal","Above Normal","Wet"," ","All"))
-yrsplot <- ggplot(barplotdf_yrs,aes(yeartype,y=(..count..),fill=wwo)) +geom_bar(color="black") + facet_wrap(~gauge_period, nrow=1)+
+yrsplot <- ggplot(barplotdf_yrs,aes(yeartype,y=(..count..),fill=wwo)) +geom_bar() + facet_wrap(~gauge_period, nrow=1)+
 		scale_fill_manual(values=c("darkblue","gray22","purple"))+
 		scale_y_continuous(limits=c(0,43),breaks=seq(0,44,2))+
 		labs(title="Number of Years With and Without Flow Above the 90th Percentile", 
