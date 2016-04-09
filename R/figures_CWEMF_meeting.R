@@ -237,4 +237,117 @@ delta_plot_sj <- ggplot() +
 
 ggsave("C:\\Users\\tnkocis\\Google Drive\\figures\\updated_figures\\deltaplot_sj.png",delta_plot_sj, width=11,height=8)
 
+
+barplotdf <- data.frame(vol=c(4159.270177,0,6144,3125,1178.181816,951.3388414,0,7027.173542,0,11179,5002,1772.495865,1018.561982,0,
+				1048.462808,0,1267,393,0,0,0,2172.826443,0,2601,674,0,0,0), yeartype=c(rep(c("All"," ","Wet","Above Normal","Below Normal","Dry","Critical"),4)), 
+		gauge_period=c(rep("SACRAMENTO RIVER \n USGS 11447650\n DEC - FEB",7),
+				rep("SACRAMENTO RIVER \n USGS 11447650\n NOV - APR",7),rep("SAN JOAQUIN RIVER \n USGS 11303500\n DEC - FEB",7),
+				rep("SAN JOAQUIN RIVER \n USGS 11303500\n NOV - APR",7)))
+barplotdf$vol_MAF <- barplotdf$vol/1000
+barplotdf$yeartype <- factor(barplotdf$yeartype, levels=c("Critical","Dry","Below Normal","Above Normal","Wet"," ","All"))
+ggplot() + geom_bar(data=barplotdf, aes(x=yeartype,y=vol_MAF,fill=yeartype), stat="identity") + 
+		facet_wrap(~gauge_period, nrow=1)+scale_fill_manual(values=c("lightcoral","lemonchiffon","mediumaquamarine",
+						"dodgerblue3","darkblue","white","chartreuse4"))+
+		scale_y_continuous(limits=c(0,12),breaks=seq(0,12,1))+
+		labs(title="Total Flow Above 90th Percentile For Average Year Type With Non-Zero Flows", 
+				x="\n Year Type", y="Discharge (MAF)\n")+
+		theme(axis.text.x=element_text(color="black", size=14),
+				axis.text.y=element_text(color="black", size=14),
+				axis.title.x = element_text(color="black", size=16),
+				axis.title.y = element_text(color="black", size=16),
+				title = element_text(color="black", size=18),
+				legend.position = "right",
+				legend.text= element_text(color="black", size=14),
+				strip.text = element_text(color="black", size=14))+
+		guides(fill=guide_legend(title="Year Type", reverse=TRUE))+
+		scale_x_discrete(labels=c("C", "D", "BN", "AN","W"," ","All"))
+
+barplotdf <- data.frame(vol=c(4159.270177,0,6144,3125,1178.181816,951.3388414,0,7027.173542,0,11179,5002,1772.495865,1018.561982,0,
+				1048.462808,0,1267,393,0,0,0,2172.826443,0,2601,674,0,0,0), yeartype=c(rep(c("All"," ","Wet","Above Normal","Below Normal","Dry","Critical"),4)), 
+		gauge_period=c(rep("SACRAMENTO RIVER \n USGS 11447650\n DEC - FEB\n 1970-2014",7),
+				rep("SACRAMENTO RIVER \n USGS 11447650\n NOV - APR\n 1970-2014",7),rep("SAN JOAQUIN RIVER \n USGS 11303500\n DEC - FEB\n 1989-2014",7),
+				rep("SAN JOAQUIN RIVER \n USGS 11303500\n NOV - APR\n 1989-2014",7)))
+barplotdf$vol_MAF <- barplotdf$vol/1000
+barplotdf$yeartype <- factor(barplotdf$yeartype, levels=c("Critical","Dry","Below Normal","Above Normal","Wet"," ","All"))
+volplot <- ggplot() + geom_bar(data=barplotdf, aes(x=yeartype,y=vol_MAF,fill=yeartype), stat="identity") + 
+		facet_wrap(~gauge_period, nrow=1)+scale_fill_manual(values=c("lightcoral","lemonchiffon","mediumaquamarine",
+						"dodgerblue3","darkblue","white","chartreuse4"))+
+		scale_y_continuous(limits=c(0,12),breaks=seq(0,12,1))+
+		labs(title="Total Flow Above 90th Percentile For Average Year Type With Non-Zero Flows", 
+				x="\n Year Type", y="Discharge (MAF)\n")+
+		theme(axis.text.x=element_text(color="black", size=14),
+				axis.text.y=element_text(color="black", size=14),
+				axis.title.x = element_text(color="black", size=16),
+				axis.title.y = element_text(color="black", size=16),
+				title = element_text(color="black", size=18),
+				legend.position = "right",
+				legend.text= element_text(color="black", size=14),
+				strip.text = element_text(color="black", size=14))+
+		guides(fill=guide_legend(title="Year Type", reverse=TRUE))+
+		scale_x_discrete(labels=c("C", "D", "BN", "AN","W"," ","All"))
+
+barplotdf_yrs <- data.frame(yeartype=c(rep("All",17),rep("All",26),rep("Wet",0),rep("Wet",13),
+				rep("Above Normal",0),rep("Above Normal",7), rep("Below Normal",2),rep("Below Normal",3),
+				rep("Dry",6),rep("Dry",3),rep("Critical",9),rep("Critical",0),
+				rep("All",16),rep("All",27),rep("Wet",0),rep("Wet",13),
+				rep("Above Normal",0),rep("Above Normal",7), rep("Below Normal",2),rep("Below Normal",3),
+				rep("Dry",5),rep("Dry",4),rep("Critical",9),rep("Critical",0),
+				rep("All",16),rep("All",8),rep("Wet",2),rep("Wet",6),
+				rep("Above Normal",1),rep("Above Normal",2), rep("Below Normal",2),rep("Below Normal",0),
+				rep("Dry",4),rep("Dry",0),rep("Critical",7),rep("Critical",0),
+				rep("All",9),rep("All",15),rep("Wet",1),rep("Wet",7),
+				rep("Above Normal",1),rep("Above Normal",2), rep("Below Normal",2),rep("Below Normal",0),
+				rep("Dry",4),rep("Dry",0),rep("Critical",7),rep("Critical",0)),
+		wwo=c(rep("Years Without Flow",17),rep("Years With Flow",26),rep("Years Without Flow",0),rep("Years With Flow",13), #sac3
+				rep("Years Without Flow",0),rep("Years With Flow",7), rep("Years Without Flow",2),rep("Years With Flow",3), #sac3
+				rep("Years Without Flow",6),rep("Years With Flow",3),rep("Years Without Flow",9),rep("Years With Flow",0), #sac3
+				rep("Years Without Flow",16),rep("Years With Flow",27),rep("Years Without Flow",0),rep("Years With Flow",13), #sac6
+				rep("Years Without Flow",0),rep("Years With Flow",7), rep("Years Without Flow",2),rep("Years With Flow",3), #sac6
+				rep("Years Without Flow",5),rep("Years With Flow",4),rep("Years Without Flow",9),rep("Years With Flow",0), #sac6
+				rep("Years Without Flow",16),rep("Years With Flow",8),rep("Years Without Flow",2),rep("Years With Flow",6), #sj3
+				rep("Years Without Flow",1),rep("Years With Flow",2), rep("Years Without Flow",2),rep("Years With Flow",0), #sj3
+				rep("Years Without Flow",4),rep("Years With Flow",0),rep("Years Without Flow",7),rep("Years With Flow",0),  #sj3
+				rep("Years Without Flow",9),rep("Years With Flow",15),rep("Years Without Flow",1),rep("Years With Flow",7),  #sj6
+				rep("Years Without Flow",1),rep("Years With Flow",2), rep("Years Without Flow",2),rep("Years With Flow",0), #sj6
+				rep("Years Without Flow",4),rep("Years With Flow",0),rep("Years Without Flow",7),rep("Years With Flow",0)),#sj6
+		gauge_period=c(rep("SACRAMENTO RIVER \n USGS 11447650\n DEC - FEB\n 1970-2014",17),rep("SACRAMENTO RIVER \n USGS 11447650\n DEC - FEB\n 1970-2014",26),rep("SACRAMENTO RIVER \n USGS 11447650\n DEC - FEB\n 1970-2014",0),rep("SACRAMENTO RIVER \n USGS 11447650\n DEC - FEB\n 1970-2014",13), #sac3
+				rep("SACRAMENTO RIVER \n USGS 11447650\n DEC - FEB\n 1970-2014",0),rep("SACRAMENTO RIVER \n USGS 11447650\n DEC - FEB\n 1970-2014",7), rep("SACRAMENTO RIVER \n USGS 11447650\n DEC - FEB\n 1970-2014",2),rep("SACRAMENTO RIVER \n USGS 11447650\n DEC - FEB\n 1970-2014",3), #sac3
+				rep("SACRAMENTO RIVER \n USGS 11447650\n DEC - FEB\n 1970-2014",6),rep("SACRAMENTO RIVER \n USGS 11447650\n DEC - FEB\n 1970-2014",3),rep("SACRAMENTO RIVER \n USGS 11447650\n DEC - FEB\n 1970-2014",9),rep("SACRAMENTO RIVER \n USGS 11447650\n DEC - FEB\n 1970-2014",0), #sac3
+				rep("SACRAMENTO RIVER \n USGS 11447650\n NOV - APR\n 1970-2014",16),rep("SACRAMENTO RIVER \n USGS 11447650\n NOV - APR\n 1970-2014",27),rep("SACRAMENTO RIVER \n USGS 11447650\n NOV - APR\n 1970-2014",0),rep("SACRAMENTO RIVER \n USGS 11447650\n NOV - APR\n 1970-2014",13), #sac6
+				rep("SACRAMENTO RIVER \n USGS 11447650\n NOV - APR\n 1970-2014",0),rep("SACRAMENTO RIVER \n USGS 11447650\n NOV - APR\n 1970-2014",7), rep("SACRAMENTO RIVER \n USGS 11447650\n NOV - APR\n 1970-2014",2),rep("SACRAMENTO RIVER \n USGS 11447650\n NOV - APR\n 1970-2014",3), #sac6
+				rep("SACRAMENTO RIVER \n USGS 11447650\n NOV - APR\n 1970-2014",5),rep("SACRAMENTO RIVER \n USGS 11447650\n NOV - APR\n 1970-2014",4),rep("SACRAMENTO RIVER \n USGS 11447650\n NOV - APR\n 1970-2014",9),rep("SACRAMENTO RIVER \n USGS 11447650\n NOV - APR\n 1970-2014",0), #sac6
+				rep("SAN JOAQUIN RIVER \n USGS 11303500\n DEC - FEB\n 1989-2014",16),rep("SAN JOAQUIN RIVER \n USGS 11303500\n DEC - FEB\n 1989-2014",8),rep("SAN JOAQUIN RIVER \n USGS 11303500\n DEC - FEB\n 1989-2014",2),rep("SAN JOAQUIN RIVER \n USGS 11303500\n DEC - FEB\n 1989-2014",6), #sj3
+				rep("SAN JOAQUIN RIVER \n USGS 11303500\n DEC - FEB\n 1989-2014",1),rep("SAN JOAQUIN RIVER \n USGS 11303500\n DEC - FEB\n 1989-2014",2), rep("SAN JOAQUIN RIVER \n USGS 11303500\n DEC - FEB\n 1989-2014",2),rep("SAN JOAQUIN RIVER \n USGS 11303500\n DEC - FEB\n 1989-2014",0), #sj3
+				rep("SAN JOAQUIN RIVER \n USGS 11303500\n DEC - FEB\n 1989-2014",4),rep("SAN JOAQUIN RIVER \n USGS 11303500\n DEC - FEB\n 1989-2014",0),rep("SAN JOAQUIN RIVER \n USGS 11303500\n DEC - FEB\n 1989-2014",7),rep("SAN JOAQUIN RIVER \n USGS 11303500\n DEC - FEB\n 1989-2014",0),  #sj3
+				rep("SAN JOAQUIN RIVER \n USGS 11303500\n NOV - APR\n 1989-2014",9),rep("SAN JOAQUIN RIVER \n USGS 11303500\n NOV - APR\n 1989-2014",15),rep("SAN JOAQUIN RIVER \n USGS 11303500\n NOV - APR\n 1989-2014",1),rep("SAN JOAQUIN RIVER \n USGS 11303500\n NOV - APR\n 1989-2014",7),  #sj6
+				rep("SAN JOAQUIN RIVER \n USGS 11303500\n NOV - APR\n 1989-2014",1),rep("SAN JOAQUIN RIVER \n USGS 11303500\n NOV - APR\n 1989-2014",2), rep("SAN JOAQUIN RIVER \n USGS 11303500\n NOV - APR\n 1989-2014",2),rep("SAN JOAQUIN RIVER \n USGS 11303500\n NOV - APR\n 1989-2014",0), #sj6
+				rep("SAN JOAQUIN RIVER \n USGS 11303500\n NOV - APR\n 1989-2014",4),rep("SAN JOAQUIN RIVER \n USGS 11303500\n NOV - APR\n 1989-2014",0),rep("SAN JOAQUIN RIVER \n USGS 11303500\n NOV - APR\n 1989-2014",7),rep("SAN JOAQUIN RIVER \n USGS 11303500\n NOV - APR\n 1989-2014",0))#sj6
+		) 
+barplotdf_yrs$yeartype <- factor(barplotdf_yrs$yeartype, levels=c("Critical","Dry","Below Normal","Above Normal","Wet"," ","All"))
+yrsplot <- ggplot(barplotdf_yrs,aes(yeartype,y=(..count..),fill=wwo)) +geom_bar(color="black") + facet_wrap(~gauge_period, nrow=1)+
+		scale_fill_manual(values=c("darkblue","gray22","purple"))+
+		scale_y_continuous(limits=c(0,43),breaks=seq(0,44,2))+
+		labs(title="Number of Years With and Without Flow Above the 90th Percentile", 
+				x="\n Year Type", y="Number of Years \n")+
+		theme(axis.text.x=element_text(color="black", size=14),
+				axis.text.y=element_text(color="black", size=14),
+				axis.title.x = element_text(color="black", size=16),
+				axis.title.y = element_text(color="black", size=16),
+				title = element_text(color="black", size=18),
+				legend.position = "top",
+				legend.text= element_text(color="black", size=16),
+				strip.text = element_text(color="black", size=14))+
+		guides(fill=guide_legend(title=" ", reverse=TRUE))+
+		scale_x_discrete(labels=c("C", "D", "BN", "AN","W"," ","All"), drop=FALSE)+
+		stat_count(geom = "text",
+				aes(label = (..count..)),
+				vjust = 1.2, color="white") 
+
+ggsave(yrsplot, file="C:\\users\\tiffn_000\\Google Drive\\figures\\updated_figures\\years_plot.png", width=11, height=8, units="in")
+ggsave(volplot, file="C:\\users\\tiffn_000\\Google Drive\\figures\\updated_figures\\volume_plot.png", width=11, height=8, units="in")
+
+library(dplyr)
+barplotdf_yrs_test <- ddply(barplotdf_yrs, .(yeartype), 
+		transform, pos = cumsum(Frequency) - (0.5 * Frequency)
+)
 #delta_change$datemax <- delta_change$datemax-1

@@ -755,6 +755,21 @@ rank_index_equal <- function(input){
 	return(output)
 }
 
+rank_index_equal3 <- function(input){
+	medval <- median(input, na.rm=TRUE)
+	len <- length(input)
+	intlen <- len/3
+	brklen <- round(c(intlen, intlen*2))
+	inputsort <- input[order(input)]
+	brkval <- c(inputsort[[brklen[[1]]]],inputsort[[brklen[[2]]]])
+	output <- NA
+	output[input<=brkval[[1]]] <-1
+	output[((input>brkval[[1]])&(input<=brkval[[2]]))] <- 2
+	output[((input>brkval[[2]]))] <- 3
+	output[is.na(output)] <- 0
+	output[which(input==0)] <- 0
+	return(output)
+}
 
 test_rank <- rank_index(areas_join$VA)
 test_rank_equal <- rank_index_equal(areas_join$VA)
@@ -818,16 +833,79 @@ areas_join$nonzero_scale <- rank_index_equal(areas_join$frac_nonzero)
 areas_join$sum2 <- areas_join$VA_scale + areas_join$dayfrac_scale + 3*areas_join$nonzero_scale
 areas_join$sum_scale <- rank_index_equal(areas_join$sum2)
 
-rank_index_equal(rankingdf3$VA)
-[1] 6 5 4 1 3 2 1 4 5
-> rank_index_equal(rankingdf3$VA[4:9])
-[1] 1 4 3 2 5 6
-> rank_index_equal(rankingdf3$dayfrac[4:9])
-[1] 1 2 3 4 5 6
-> rank_index_equal(rankingdf3$frac_nonzero[4:9])
-[1] 1 2 3 4 5 6
-> rank_index_equal(rankingdf3$VA[4:9])+rank_index_equal(rankingdf3$dayfrac[4:9])+rank_index_equal(rankingdf3$frac_nonzero[4:9])
-[1]  3  8  9 10 15 18
+best_month6 <- data.frame(gauge=unique(rankingdf2$gauge),month6=NA)
+for(i in 1:length(best_month6$gauge)){
+	rankingdf3 <- rankingdf2[which(rankingdf2$gauge==best_month6$gauge[[i]]),]
+	r1 <- rank_index_equal(rankingdf3$VA[4:9])
+	r2 <- rank_index_equal(rankingdf3$dayfrac[4:9])
+	r3 <- rank_index_equal(rankingdf3$frac_nonzero[4:9])
+	r4 <- rank_index_equal(0.75*r1+0.45*r2+1.7*r3)
+	chr <- as.character(rankingdf3$period[4:9])
+	mon <- chr[which.max(r4)]
+	best_month6$month6[[i]] <- mon
+}
+
+best_month3 <- data.frame(gauge=unique(rankingdf2$gauge),month3=NA)
+for(i in 1:length(best_month3$gauge)){
+	rankingdf3 <- rankingdf2[which(rankingdf2$gauge==best_month3$gauge[[i]]),]
+	r1 <- rank_index_equal3(rankingdf3$VA[5:7])
+	r2 <- rank_index_equal3(rankingdf3$dayfrac[5:7])
+	r3 <- rank_index_equal3(rankingdf3$frac_nonzero[5:7])
+	r4 <- rank_index_equal3(0.75*r1+0.45*r2+1.7*r3)
+	chr <- as.character(rankingdf3$period[5:7])
+	mon <- chr[which.max(r4)]
+	best_month3$month3[[i]] <- mon
+}
+best_month32$original <- best_month3$month3
+best_month32$compare <- best_month32$original==best_month32$month3
+
+write.csv(best_month6, "C:\\Users\\tiffn_000\\Google Drive\\figures\\updated_figures\\best_month6_2.csv")
+write.csv(best_month3, "C:\\Users\\tiffn_000\\Google Drive\\figures\\updated_figures\\best_month3_2.csv")
+write.csv(simp_pkflows_mag_dams[[1]]$all$mon6,"C:\\Users\\tiffn_000\\Google Drive\\figures\\updated_figures\\mag_dams_mon6.csv" )
+
+for(i in 1:length(unimpaired_13_data)){
+	write.csv(unimpaired_13_data[[i]]$raw, paste("C:\\users\\tiffn_000\\Google Drive\\timeseries\\USGS", names(unimpaired_13_data)[[i]],".csv",sep=""))
+}
 
 
+simp_pkflows_trend <- vector("list",7)
+
+for(q in 1:7){
+	batchnum <- q
+	load(paste("C:\\Users\\tiffn_000\\Documents\\workspaces\\full_record_spbatch_",batchnum,".RData", sep=""))
+	simp_pkflows_trend[[q]] <- test_peakflowtrends_bind
+
+}
+load("C:\\Users\\tiffn_000\\Documents\\workspaces\\apr_8_activesites.RData")
+
+for(i in 1:3){
+	for(j in 1:15){
+		for(k in 2:7){
+			simp_pkflows_trend[[1]][[1]][[j]][[i]] <- rbind.data.frame(simp_pkflows_trend[[1]][[1]][[j]][[i]],simp_pkflows_trend[[k]][[1]][[j]][[i]])
+		}
+	}
+}
+
+
+trends_all_dams <- simp_pkflows_trend[[1]]$all$mon3$trend_dams[which(simp_pkflows_trend[[1]]$all$mon3$trend_dams$window==1&simp_pkflows_trend[[1]]$all$mon3$trend_dams$measure=="totvolabv"),]
+trends_all_dams$sig <- "y"
+trends_all_dams$sig[which(trends_all_dams$p2>0.05)] <- "n"
+trends_all_dams$pn <- "pos"
+trends_all_dams$pn[which(trends_all_dams$tau<0)] <- "neg"
+write.csv(trends_all_dams,"C:\\Users\\tiffn_000\\Google Drive\\figures\\updated_figures\\trends_all_dams_1_vol.csv")
+
+trends_all_full <- simp_pkflows_trend[[1]]$all$mon3$trend_full[which(simp_pkflows_trend[[1]]$all$mon3$trend_full$window==1&simp_pkflows_trend[[1]]$all$mon3$trend_full$measure=="totvolabv"),]
+trends_all_full$sig <- "y"
+trends_all_full$sig[which(trends_all_full$p2>0.05)] <- "n"
+trends_all_full$pn <- "pos"
+trends_all_full$pn[which(trends_all_full$tau<0)] <- "neg"
+write.csv(trends_all_full,"C:\\Users\\tiffn_000\\Google Drive\\figures\\updated_figures\\trends_all_full_1_vol.csv")
+
+trends_unimp_dams <- trend_90_mon3_df
+trends_unimp_dams$sig <- "y"
+trends_unimp_dams$sig[which(trends_unimp_dams$MKT_p>0.05)] <- "n"
+trends_unimp_dams$pn <- "pos"
+trends_unimp_dams$pn[which(trends_unimp_dams$MKT_tau<0)] <- "neg"
+write.csv(trends_unimp_dams,"C:\\Users\\tiffn_000\\Google Drive\\figures\\updated_figures\\unimp_trends_mon3_annotated.csv")
 ranking$hy$test3 <- rank_index_equal(0.75*ranking$hy$VA_scale_hy+ 0.45*ranking$hy$dayfrac_scale_hy + 1.7*ranking$hy$nonzero_scale_hy)
+
