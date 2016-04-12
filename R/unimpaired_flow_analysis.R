@@ -909,3 +909,14 @@ trends_unimp_dams$pn[which(trends_unimp_dams$MKT_tau<0)] <- "neg"
 write.csv(trends_unimp_dams,"C:\\Users\\tiffn_000\\Google Drive\\figures\\updated_figures\\unimp_trends_mon3_annotated.csv")
 ranking$hy$test3 <- rank_index_equal(0.75*ranking$hy$VA_scale_hy+ 0.45*ranking$hy$dayfrac_scale_hy + 1.7*ranking$hy$nonzero_scale_hy)
 
+
+
+simp_mags_data <- vector("list",7)
+for(q in 1:7){
+	batchnum <- q
+	load(paste("C:\\Users\\tiffn_000\\Documents\\workspaces\\full_record_spbatch_",batchnum,".RData", sep=""))
+	simp_mags_data[[q]] <- test_split
+	
+}
+load("C:\\Users\\tiffn_000\\Documents\\workspaces\\apr_8.5_activesites.RData")
+
