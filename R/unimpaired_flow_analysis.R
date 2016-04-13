@@ -920,3 +920,36 @@ for(q in 1:7){
 }
 load("C:\\Users\\tiffn_000\\Documents\\workspaces\\apr_8.5_activesites.RData")
 
+all_availability <- vector("list",7)
+for(q in 1:7){
+	batchnum <- q
+	load(paste("C:\\Users\\tiffn_000\\Documents\\workspaces\\full_record_spbatch_",batchnum,".RData", sep=""))
+	availabilitytest <- vector("list",length(spbatch))
+	for(i in 1:length(spbatch)){
+		availabilitytest[[i]] <- spbatch[[i]]$Availability$yearly
+	}
+	names(availabilitytest) <- names(spbatch)
+	all_availability[[q]] <- availabilitytest
+	
+}
+load("C:\\Users\\tiffn_000\\Documents\\workspaces\\apr_12_activesites.RData")
+
+simp_mags_trends <- vector("list",7)
+for(i in 1:length(simp_mags_data)){
+	simp_mags_trends[[i]] <- vector("list",length(simp_mags_data[[i]]))
+	names(simp_mags_trends[[i]]) <- names(simp_mags_data[[i]])
+	for(k in 1:length(simp_mags_data[[i]])){
+		simp_mags_trends[[i]][[k]] <- vector("list",length(c(1,2,3,5,6,7,8,9,10)))
+		for(j in 1:9){
+			vec<- c(1,2,3,5,6,7,8,9,10)
+			simp_mags_trends[[i]][[k]][[j]] <- trendsfinal(simp_mags_data[[i]][[k]][[1]][[vec[[j]]]],1800,
+					names(simp_mags_data[[i]])[[k]],names(simp_mags_data[[i]][[k]][[1]])[[vec[[j]]]],
+					all_availability[[i]][[k]])
+		}
+	}
+}
+simp_mags_trends_unlist <- unlist(simp_mags_trends, recursive=FALSE)
+simp_mags_trends_unlist2 <- unlist(simp_mags_trends_unlist, recursive=FALSE)
+simp_mags_trends_df <- do.call("rbind.data.frame",simp_mags_trends_unlist2)
+
+write.csv(simp_mags_trends_df, file="C:\\Users\\tiffn_000\\Google Drive\\trends_4_12_2016.csv")
