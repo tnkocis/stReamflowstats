@@ -911,14 +911,14 @@ ranking$hy$test3 <- rank_index_equal(0.75*ranking$hy$VA_scale_hy+ 0.45*ranking$h
 
 
 
-simp_mags_data <- vector("list",7)
+simp_mags_data_0 <- vector("list",7)
 for(q in 1:7){
 	batchnum <- q
-	load(paste("C:\\Users\\tiffn_000\\Documents\\workspaces\\full_record_spbatch_",batchnum,".RData", sep=""))
-	simp_mags_data[[q]] <- test_split
+	load(paste("C:\\Users\\tiffn_000\\Documents\\workspaces\\zero_threshold_spbatch_",batchnum,".RData", sep=""))
+	simp_mags_data_0[[q]] <- test_split
 	
 }
-load("C:\\Users\\tiffn_000\\Documents\\workspaces\\apr_8.5_activesites.RData")
+load("C:\\Users\\tiffn_000\\Documents\\workspaces\\apr_12_activesites.RData")
 
 all_availability <- vector("list",7)
 for(q in 1:7){
@@ -932,7 +932,7 @@ for(q in 1:7){
 	all_availability[[q]] <- availabilitytest
 	
 }
-load("C:\\Users\\tiffn_000\\Documents\\workspaces\\apr_12_activesites.RData")
+load("C:\\Users\\tiffn_000\\Documents\\workspaces\\apr_8.5_activesites.RData")
 
 simp_mags_trends <- vector("list",7)
 for(i in 1:length(simp_mags_data)){
@@ -953,3 +953,91 @@ simp_mags_trends_unlist2 <- unlist(simp_mags_trends_unlist, recursive=FALSE)
 simp_mags_trends_df <- do.call("rbind.data.frame",simp_mags_trends_unlist2)
 
 write.csv(simp_mags_trends_df, file="C:\\Users\\tiffn_000\\Google Drive\\trends_4_12_2016.csv")
+
+simp_mags_data_0 <- unlist(simp_mags_data_0, recursive=FALSE)
+simp_mags_data_0_all <- data.frame(gauge=names(simp_mags_data_0),vol_nov_AF=NA, vol_dec_AF=NA, vol_feb_AF=NA,vol_mar_AF=NA, vol_apr_AF=NA,
+		vol_mon3_AF=NA, vol_mon6_AF=NA, vol_hy_AF=NA, yeartype="all")
+simp_mags_data_0_W <- data.frame(gauge=names(simp_mags_data_0),vol_nov_AF=NA, vol_dec_AF=NA, vol_feb_AF=NA,vol_mar_AF=NA, vol_apr_AF=NA,
+		vol_mon3_AF=NA, vol_mon6_AF=NA, vol_hy_AF=NA, yeartype="W")
+simp_mags_data_0_AN <- data.frame(gauge=names(simp_mags_data_0),vol_nov_AF=NA, vol_dec_AF=NA, vol_feb_AF=NA,vol_mar_AF=NA, vol_apr_AF=NA,
+		vol_mon3_AF=NA, vol_mon6_AF=NA, vol_hy_AF=NA, yeartype="AN")
+simp_mags_data_0_BN <- data.frame(gauge=names(simp_mags_data_0),vol_nov_AF=NA, vol_dec_AF=NA, vol_feb_AF=NA,vol_mar_AF=NA, vol_apr_AF=NA,
+		vol_mon3_AF=NA, vol_mon6_AF=NA, vol_hy_AF=NA, yeartype="BN")
+simp_mags_data_0_D <- data.frame(gauge=names(simp_mags_data_0),vol_nov_AF=NA, vol_dec_AF=NA, vol_feb_AF=NA,vol_mar_AF=NA, vol_apr_AF=NA,
+		vol_mon3_AF=NA, vol_mon6_AF=NA, vol_hy_AF=NA, yeartype="D")
+simp_mags_data_0_C <- data.frame(gauge=names(simp_mags_data_0),vol_nov_AF=NA, vol_dec_AF=NA, vol_feb_AF=NA,vol_mar_AF=NA, vol_apr_AF=NA,
+		vol_mon3_AF=NA, vol_mon6_AF=NA, vol_hy_AF=NA, yeartype="C")
+for(i in 1:length(simp_mags_data_0)){
+	simp_mags_data_0_all$vol_nov_AF[[i]]  <- mean(simp_mags_data_0[[i]]$all$nov$TotVolAbv_acft[which( simp_mags_data_0[[i]]$all$nov$TotVolAbv_acft!=0)],na.rm=TRUE)
+	simp_mags_data_0_all$vol_dec_AF[[i]]  <-   mean(simp_mags_data_0[[i]]$all$dec$TotVolAbv_acft[which( simp_mags_data_0[[i]]$all$dec$TotVolAbv_acft!=0)],na.rm=TRUE)
+	simp_mags_data_0_all$vol_jan_AF[[i]]  <-   mean(simp_mags_data_0[[i]]$all$jan$TotVolAbv_acft[which( simp_mags_data_0[[i]]$all$jan$TotVolAbv_acft!=0)],na.rm=TRUE)
+	simp_mags_data_0_all$vol_feb_AF[[i]]  <-   mean(simp_mags_data_0[[i]]$all$feb$TotVolAbv_acft[which( simp_mags_data_0[[i]]$all$feb$TotVolAbv_acft!=0)],na.rm=TRUE)
+	simp_mags_data_0_all$vol_mar_AF[[i]]  <-   mean(simp_mags_data_0[[i]]$all$mar$TotVolAbv_acft[which( simp_mags_data_0[[i]]$all$mar$TotVolAbv_acft!=0)],na.rm=TRUE)
+	simp_mags_data_0_all$vol_apr_AF[[i]]  <-   mean(simp_mags_data_0[[i]]$all$apr$TotVolAbv_acft[which( simp_mags_data_0[[i]]$all$apr$TotVolAbv_acft!=0)],na.rm=TRUE)
+	simp_mags_data_0_all$vol_mon3_AF[[i]]  <-  mean(simp_mags_data_0[[i]]$all$mon3$TotVolAbv_acft[which( simp_mags_data_0[[i]]$all$mon3$TotVolAbv_acft!=0)],na.rm=TRUE)
+	simp_mags_data_0_all$vol_mon6_AF[[i]]  <-  mean(simp_mags_data_0[[i]]$all$mon6$TotVolAbv_acft[which( simp_mags_data_0[[i]]$all$mon6$TotVolAbv_acft!=0)],na.rm=TRUE)
+	simp_mags_data_0_all$vol_hy_AF[[i]]  <- mean(simp_mags_data_0[[i]]$all$hy$TotVolAbv_acft[which( simp_mags_data_0[[i]]$all$hy$TotVolAbv_acft!=0)],na.rm=TRUE)
+                                           
+	simp_mags_data_0_W$vol_nov_AF[[i]]  <- mean(simp_mags_data_0[[i]]$W$nov$TotVolAbv_acft[which( simp_mags_data_0[[i]]$W$nov$TotVolAbv_acft!=0)],na.rm=TRUE)
+	simp_mags_data_0_W$vol_dec_AF[[i]]  <-   mean(simp_mags_data_0[[i]]$W$dec$TotVolAbv_acft[which( simp_mags_data_0[[i]]$W$dec$TotVolAbv_acft!=0)],na.rm=TRUE)
+	simp_mags_data_0_W$vol_jan_AF[[i]]  <-   mean(simp_mags_data_0[[i]]$W$jan$TotVolAbv_acft[which( simp_mags_data_0[[i]]$W$jan$TotVolAbv_acft!=0)],na.rm=TRUE)
+	simp_mags_data_0_W$vol_feb_AF[[i]]  <-   mean(simp_mags_data_0[[i]]$W$feb$TotVolAbv_acft[which( simp_mags_data_0[[i]]$W$feb$TotVolAbv_acft!=0)],na.rm=TRUE)
+	simp_mags_data_0_W$vol_mar_AF[[i]]  <-   mean(simp_mags_data_0[[i]]$W$mar$TotVolAbv_acft[which( simp_mags_data_0[[i]]$W$mar$TotVolAbv_acft!=0)],na.rm=TRUE)
+	simp_mags_data_0_W$vol_apr_AF[[i]]  <-   mean(simp_mags_data_0[[i]]$W$apr$TotVolAbv_acft[which( simp_mags_data_0[[i]]$W$apr$TotVolAbv_acft!=0)],na.rm=TRUE)
+	simp_mags_data_0_W$vol_mon3_AF[[i]]  <-  mean(simp_mags_data_0[[i]]$W$mon3$TotVolAbv_acft[which( simp_mags_data_0[[i]]$W$mon3$TotVolAbv_acft!=0)],na.rm=TRUE)
+	simp_mags_data_0_W$vol_mon6_AF[[i]]  <-  mean(simp_mags_data_0[[i]]$W$mon6$TotVolAbv_acft[which( simp_mags_data_0[[i]]$W$mon6$TotVolAbv_acft!=0)],na.rm=TRUE)
+	simp_mags_data_0_W$vol_hy_AF[[i]]  <- mean(simp_mags_data_0[[i]]$W$hy$TotVolAbv_acft[which( simp_mags_data_0[[i]]$W$hy$TotVolAbv_acft!=0)],na.rm=TRUE)
+	
+	simp_mags_data_0_AN$vol_nov_AF[[i]]  <- mean(simp_mags_data_0[[i]]$AN$nov$TotVolAbv_acft[which( simp_mags_data_0[[i]]$AN$nov$TotVolAbv_acft!=0)],na.rm=TRUE)
+	simp_mags_data_0_AN$vol_dec_AF[[i]]  <-   mean(simp_mags_data_0[[i]]$AN$dec$TotVolAbv_acft[which( simp_mags_data_0[[i]]$AN$dec$TotVolAbv_acft!=0)],na.rm=TRUE)
+	simp_mags_data_0_AN$vol_jan_AF[[i]]  <-   mean(simp_mags_data_0[[i]]$AN$jan$TotVolAbv_acft[which( simp_mags_data_0[[i]]$AN$jan$TotVolAbv_acft!=0)],na.rm=TRUE)
+	simp_mags_data_0_AN$vol_feb_AF[[i]]  <-   mean(simp_mags_data_0[[i]]$AN$feb$TotVolAbv_acft[which( simp_mags_data_0[[i]]$AN$feb$TotVolAbv_acft!=0)],na.rm=TRUE)
+	simp_mags_data_0_AN$vol_mar_AF[[i]]  <-   mean(simp_mags_data_0[[i]]$AN$mar$TotVolAbv_acft[which( simp_mags_data_0[[i]]$AN$mar$TotVolAbv_acft!=0)],na.rm=TRUE)
+	simp_mags_data_0_AN$vol_apr_AF[[i]]  <-   mean(simp_mags_data_0[[i]]$AN$apr$TotVolAbv_acft[which( simp_mags_data_0[[i]]$AN$apr$TotVolAbv_acft!=0)],na.rm=TRUE)
+	simp_mags_data_0_AN$vol_mon3_AF[[i]]  <-  mean(simp_mags_data_0[[i]]$AN$mon3$TotVolAbv_acft[which( simp_mags_data_0[[i]]$AN$mon3$TotVolAbv_acft!=0)],na.rm=TRUE)
+	simp_mags_data_0_AN$vol_mon6_AF[[i]]  <-  mean(simp_mags_data_0[[i]]$AN$mon6$TotVolAbv_acft[which( simp_mags_data_0[[i]]$AN$mon6$TotVolAbv_acft!=0)],na.rm=TRUE)
+	simp_mags_data_0_AN$vol_hy_AF[[i]]  <- mean(simp_mags_data_0[[i]]$AN$hy$TotVolAbv_acft[which( simp_mags_data_0[[i]]$AN$hy$TotVolAbv_acft!=0)],na.rm=TRUE)
+	
+	
+	
+	simp_mags_data_0_BN$vol_nov_AF[[i]]  <- mean(simp_mags_data_0[[i]]$BN$nov$TotVolAbv_acft[which( simp_mags_data_0[[i]]$BN$nov$TotVolAbv_acft!=0)],na.rm=TRUE)
+	simp_mags_data_0_BN$vol_dec_AF[[i]]  <-   mean(simp_mags_data_0[[i]]$BN$dec$TotVolAbv_acft[which( simp_mags_data_0[[i]]$BN$dec$TotVolAbv_acft!=0)],na.rm=TRUE)
+	simp_mags_data_0_BN$vol_jan_AF[[i]]  <-   mean(simp_mags_data_0[[i]]$BN$jan$TotVolAbv_acft[which( simp_mags_data_0[[i]]$BN$jan$TotVolAbv_acft!=0)],na.rm=TRUE)
+	simp_mags_data_0_BN$vol_feb_AF[[i]]  <-   mean(simp_mags_data_0[[i]]$BN$feb$TotVolAbv_acft[which( simp_mags_data_0[[i]]$BN$feb$TotVolAbv_acft!=0)],na.rm=TRUE)
+	simp_mags_data_0_BN$vol_mar_AF[[i]]  <-   mean(simp_mags_data_0[[i]]$BN$mar$TotVolAbv_acft[which( simp_mags_data_0[[i]]$BN$mar$TotVolAbv_acft!=0)],na.rm=TRUE)
+	simp_mags_data_0_BN$vol_apr_AF[[i]]  <-   mean(simp_mags_data_0[[i]]$BN$apr$TotVolAbv_acft[which( simp_mags_data_0[[i]]$BN$apr$TotVolAbv_acft!=0)],na.rm=TRUE)
+	simp_mags_data_0_BN$vol_mon3_AF[[i]]  <-  mean(simp_mags_data_0[[i]]$BN$mon3$TotVolAbv_acft[which( simp_mags_data_0[[i]]$BN$mon3$TotVolAbv_acft!=0)],na.rm=TRUE)
+	simp_mags_data_0_BN$vol_mon6_AF[[i]]  <-  mean(simp_mags_data_0[[i]]$BN$mon6$TotVolAbv_acft[which( simp_mags_data_0[[i]]$BN$mon6$TotVolAbv_acft!=0)],na.rm=TRUE)
+	simp_mags_data_0_BN$vol_hy_AF[[i]]  <- mean(simp_mags_data_0[[i]]$BN$hy$TotVolAbv_acft[which( simp_mags_data_0[[i]]$BN$hy$TotVolAbv_acft!=0)],na.rm=TRUE)
+	
+	
+	
+	simp_mags_data_0_D$vol_nov_AF[[i]]  <- mean(simp_mags_data_0[[i]]$D$nov$TotVolAbv_acft[which( simp_mags_data_0[[i]]$D$nov$TotVolAbv_acft!=0)],na.rm=TRUE)
+	simp_mags_data_0_D$vol_dec_AF[[i]]  <-   mean(simp_mags_data_0[[i]]$D$dec$TotVolAbv_acft[which( simp_mags_data_0[[i]]$D$dec$TotVolAbv_acft!=0)],na.rm=TRUE)
+	simp_mags_data_0_D$vol_jan_AF[[i]]  <-   mean(simp_mags_data_0[[i]]$D$jan$TotVolAbv_acft[which( simp_mags_data_0[[i]]$D$jan$TotVolAbv_acft!=0)],na.rm=TRUE)
+	simp_mags_data_0_D$vol_feb_AF[[i]]  <-   mean(simp_mags_data_0[[i]]$D$feb$TotVolAbv_acft[which( simp_mags_data_0[[i]]$D$feb$TotVolAbv_acft!=0)],na.rm=TRUE)
+	simp_mags_data_0_D$vol_mar_AF[[i]]  <-   mean(simp_mags_data_0[[i]]$D$mar$TotVolAbv_acft[which( simp_mags_data_0[[i]]$D$mar$TotVolAbv_acft!=0)],na.rm=TRUE)
+	simp_mags_data_0_D$vol_apr_AF[[i]]  <-   mean(simp_mags_data_0[[i]]$D$apr$TotVolAbv_acft[which( simp_mags_data_0[[i]]$D$apr$TotVolAbv_acft!=0)],na.rm=TRUE)
+	simp_mags_data_0_D$vol_mon3_AF[[i]]  <-  mean(simp_mags_data_0[[i]]$D$mon3$TotVolAbv_acft[which( simp_mags_data_0[[i]]$D$mon3$TotVolAbv_acft!=0)],na.rm=TRUE)
+	simp_mags_data_0_D$vol_mon6_AF[[i]]  <-  mean(simp_mags_data_0[[i]]$D$mon6$TotVolAbv_acft[which( simp_mags_data_0[[i]]$D$mon6$TotVolAbv_acft!=0)],na.rm=TRUE)
+	simp_mags_data_0_D$vol_hy_AF[[i]]  <- mean(simp_mags_data_0[[i]]$D$hy$TotVolAbv_acft[which( simp_mags_data_0[[i]]$D$hy$TotVolAbv_acft!=0)],na.rm=TRUE)
+	
+	
+	simp_mags_data_0_C$vol_nov_AF[[i]]  <- mean(simp_mags_data_0[[i]]$C$nov$TotVolAbv_acft[which( simp_mags_data_0[[i]]$C$nov$TotVolAbv_acft!=0)],na.rm=TRUE)
+	simp_mags_data_0_C$vol_dec_AF[[i]]  <-   mean(simp_mags_data_0[[i]]$C$dec$TotVolAbv_acft[which( simp_mags_data_0[[i]]$C$dec$TotVolAbv_acft!=0)],na.rm=TRUE)
+	simp_mags_data_0_C$vol_jan_AF[[i]]  <-   mean(simp_mags_data_0[[i]]$C$jan$TotVolAbv_acft[which( simp_mags_data_0[[i]]$C$jan$TotVolAbv_acft!=0)],na.rm=TRUE)
+	simp_mags_data_0_C$vol_feb_AF[[i]]  <-   mean(simp_mags_data_0[[i]]$C$feb$TotVolAbv_acft[which( simp_mags_data_0[[i]]$C$feb$TotVolAbv_acft!=0)],na.rm=TRUE)
+	simp_mags_data_0_C$vol_mar_AF[[i]]  <-   mean(simp_mags_data_0[[i]]$C$mar$TotVolAbv_acft[which( simp_mags_data_0[[i]]$C$mar$TotVolAbv_acft!=0)],na.rm=TRUE)
+	simp_mags_data_0_C$vol_apr_AF[[i]]  <-   mean(simp_mags_data_0[[i]]$C$apr$TotVolAbv_acft[which( simp_mags_data_0[[i]]$C$apr$TotVolAbv_acft!=0)],na.rm=TRUE)
+	simp_mags_data_0_C$vol_mon3_AF[[i]]  <-  mean(simp_mags_data_0[[i]]$C$mon3$TotVolAbv_acft[which( simp_mags_data_0[[i]]$C$mon3$TotVolAbv_acft!=0)],na.rm=TRUE)
+	simp_mags_data_0_C$vol_mon6_AF[[i]]  <-  mean(simp_mags_data_0[[i]]$C$mon6$TotVolAbv_acft[which( simp_mags_data_0[[i]]$C$mon6$TotVolAbv_acft!=0)],na.rm=TRUE)
+	simp_mags_data_0_C$vol_hy_AF[[i]]  <- mean(simp_mags_data_0[[i]]$C$hy$TotVolAbv_acft[which( simp_mags_data_0[[i]]$C$hy$TotVolAbv_acft!=0)],na.rm=TRUE)
+	
+}
+
+write.csv(simp_mags_data_0_all, file="C:\\Users\\tiffn_000\\Google Drive\\SRA_Kathleen\\mags\\simp_mags_data_0_all.csv")
+write.csv(simp_mags_data_0_W, file="C:\\Users\\tiffn_000\\Google Drive\\SRA_Kathleen\\mags\\simp_mags_data_0_W.csv")
+write.csv(simp_mags_data_0_AN, file="C:\\Users\\tiffn_000\\Google Drive\\SRA_Kathleen\\mags\\simp_mags_data_0_AN.csv")
+write.csv(simp_mags_data_0_BN, file="C:\\Users\\tiffn_000\\Google Drive\\SRA_Kathleen\\mags\\simp_mags_data_0_BN.csv")
+write.csv(simp_mags_data_0_D, file="C:\\Users\\tiffn_000\\Google Drive\\SRA_Kathleen\\mags\\simp_mags_data_0_D.csv")
+write.csv(simp_mags_data_0_C, file="C:\\Users\\tiffn_000\\Google Drive\\SRA_Kathleen\\mags\\simp_mags_data_0_C.csv")
