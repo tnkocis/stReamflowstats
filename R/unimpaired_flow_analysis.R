@@ -932,6 +932,9 @@ for(q in 1:7){
 	all_availability[[q]] <- availabilitytest
 	
 }
+
+allavailability <- unlist(all_availability, recursive=FALSE)
+
 load("C:\\Users\\tiffn_000\\Documents\\workspaces\\apr_8.5_activesites.RData")
 
 simp_mags_trends <- vector("list",7)
@@ -1041,3 +1044,44 @@ write.csv(simp_mags_data_0_AN, file="C:\\Users\\tiffn_000\\Google Drive\\SRA_Kat
 write.csv(simp_mags_data_0_BN, file="C:\\Users\\tiffn_000\\Google Drive\\SRA_Kathleen\\mags\\simp_mags_data_0_BN.csv")
 write.csv(simp_mags_data_0_D, file="C:\\Users\\tiffn_000\\Google Drive\\SRA_Kathleen\\mags\\simp_mags_data_0_D.csv")
 write.csv(simp_mags_data_0_C, file="C:\\Users\\tiffn_000\\Google Drive\\SRA_Kathleen\\mags\\simp_mags_data_0_C.csv")
+
+
+
+COM90_full <- vector("list",7)
+for(q in 1:7){
+	batchnum <- q
+	load(paste("C:\\Users\\tiffn_000\\Documents\\workspaces\\full_record_spbatch_",batchnum,".RData", sep=""))
+	COM_90 <- vector("list",length(spbatch))
+	for(k in 1:length(spbatch)){
+		blahday <- rep(NA,length(spbatch[[k]]$HydroYear$Data))
+		blahyear <- rep(NA,length(spbatch[[k]]$HydroYear$Data))
+		for(i in 1:length(spbatch[[k]]$HydroYear$Data)){
+			blah <- spbatch[[k]]$HydroYear$Data[[i]]$Discharge_acft_day
+			blah[blah<(spbatch[[k]]$thresholds_maf$P90maf*1e6)] <- 0
+			blahday[[i]] <- which(cumsum(blah)>=(sum(blah,na.rm=TRUE)/2))[[1]]
+			blahyear[[i]] <- as.numeric(format(spbatch[[k]]$HydroYear$Data[[i]]$Date[[1]],"%Y"))
+		}
+		COM_90[[k]] <- data.frame(COMday=blahday,sthyyear=blahyear)
+	}
+	
+	COM_90_df <- data.frame(sthyyear=seq(1900,2015,1))
+	for(i in 1:length(COM_90)){
+		COM_90_df <- merge(COM_90_df,COM_90[[i]], by.x="sthyyear",by.y="sthyyear", all.x=TRUE)
+	}
+	names(COM_90_df) <- c("sthyyear",paste(as.numeric(names(spbatch)),sep=""))
+	COM_90_df[COM_90_df==1] <- NA
+ COM90_full[[q]] <- COM_90_df
+}
+load("C:\\Users\\tiffn_000\\Documents\\workspaces\\apr_14_activesites.RData")
+COM90_full_df <- COM90_full[[1]]
+for(i in 2:7){
+	COM90_full_df <- merge(COM90_full_df,COM90_full[[i]],by="sthyyear")
+}
+
+for(i in 2:length(COM90_full_df)){
+	COM90_full_df[[i]][which(COM90_full_df[[i]]==365)] <- NA	
+}
+names(COM90_full_df) <- c("sthyyear", paste("COM_90_",names(COM90_full_df)[2:length(COM90_full_df)], sep=""))
+com90roll <- rollapply(COM90_full_df[[10]],5,function(x) mean(x, na.rm=TRUE), fill=NA)
+com90rolldf <- data.frame(sthyyear=COM90_full_df$sthyyear, roll=com90roll)
+ggplot(COM90_full_df, aes(x=sthyyear, y=COM_90_11224500)) +geom_point() + geom_line(data=com90rolldf,aes(x=sthyyear, y=roll))
