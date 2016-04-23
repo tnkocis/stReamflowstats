@@ -647,47 +647,47 @@ ggplot(data=vol_all, aes(x=vol_mar_AF))+geom_bar(stat="bin",size=0.5, color="bla
 
 fiveselect <- c(11447650,11303500,11383500,11266500,11202001)
 vol_list <- vector("list",6)
-vol_list[[1]] <- read.csv("C:\\Users\\tnkocis\\Google Drive\\Manuscripts\\unshared\\Thesis_tables\\simp_mags_data_vol_90_all.csv")
+vol_list[[1]] <- read.csv("C:\\Users\\tiffn_000\\Google Drive\\Manuscripts\\unshared\\Thesis_tables\\simp_mags_data_vol_90_all.csv")
 vol_list[[1]]$yeartype <- "All"
-vol_list[[2]] <- read.csv("C:\\Users\\tnkocis\\Google Drive\\Manuscripts\\unshared\\Thesis_tables\\simp_mags_data_vol_90_W.csv")
+vol_list[[2]] <- read.csv("C:\\Users\\tiffn_000\\Google Drive\\Manuscripts\\unshared\\Thesis_tables\\simp_mags_data_vol_90_W.csv")
 vol_list[[2]]$yeartype <- "Wet"
-vol_list[[3]] <- read.csv("C:\\Users\\tnkocis\\Google Drive\\Manuscripts\\unshared\\Thesis_tables\\simp_mags_data_vol_90_AN.csv")
+vol_list[[3]] <- read.csv("C:\\Users\\tiffn_000\\Google Drive\\Manuscripts\\unshared\\Thesis_tables\\simp_mags_data_vol_90_AN.csv")
 vol_list[[3]]$yeartype <- "Above Normal"
-vol_list[[4]] <- read.csv("C:\\Users\\tnkocis\\Google Drive\\Manuscripts\\unshared\\Thesis_tables\\simp_mags_data_vol_90_BN.csv")
+vol_list[[4]] <- read.csv("C:\\Users\\tiffn_000\\Google Drive\\Manuscripts\\unshared\\Thesis_tables\\simp_mags_data_vol_90_BN.csv")
 vol_list[[4]]$yeartype <- "Below Normal"
-vol_list[[5]] <- read.csv("C:\\Users\\tnkocis\\Google Drive\\Manuscripts\\unshared\\Thesis_tables\\simp_mags_data_vol_90_D.csv")
+vol_list[[5]] <- read.csv("C:\\Users\\tiffn_000\\Google Drive\\Manuscripts\\unshared\\Thesis_tables\\simp_mags_data_vol_90_D.csv")
 vol_list[[5]]$yeartype <- "Dry"
-vol_list[[6]] <- read.csv("C:\\Users\\tnkocis\\Google Drive\\Manuscripts\\unshared\\Thesis_tables\\simp_mags_data_vol_90_C.csv")
+vol_list[[6]] <- read.csv("C:\\Users\\tiffn_000\\Google Drive\\Manuscripts\\unshared\\Thesis_tables\\simp_mags_data_vol_90_C.csv")
 vol_list[[6]]$yeartype <- "Critical"
 vol_list_df <- do.call(rbind.data.frame,vol_list)
 vol_list_df5 <- vol_list_df[which(vol_list_df$gauge%in%fiveselect),]
 
-write.csv(vol_list_df5,"C:\\Users\\tnkocis\\Google Drive\\Manuscripts\\unshared\\Thesis_tables\\five_select_vol_full_record_avg.csv")
+write.csv(vol_list_df5,"C:\\Users\\tiffn_000\\Google Drive\\Manuscripts\\unshared\\Thesis_tables\\five_select_vol_full_record_avg.csv")
 
 vol_list_SD <- vector("list",6)
-vol_list_SD[[1]] <- read.csv("C:\\Users\\tnkocis\\Google Drive\\Manuscripts\\unshared\\Thesis_tables\\simp_SD_data_vol_90_all.csv")
+vol_list_SD[[1]] <- read.csv("C:\\Users\\tiffn_000\\Google Drive\\Manuscripts\\unshared\\Thesis_tables\\simp_SD_data_vol_90_all.csv")
 vol_list_SD[[1]]$yeartype <- "All"                                                                         
-vol_list_SD[[2]] <- read.csv("C:\\Users\\tnkocis\\Google Drive\\Manuscripts\\unshared\\Thesis_tables\\simp_SD_data_vol_90_W.csv")
+vol_list_SD[[2]] <- read.csv("C:\\Users\\tiffn_000\\Google Drive\\Manuscripts\\unshared\\Thesis_tables\\simp_SD_data_vol_90_W.csv")
 vol_list_SD[[2]]$yeartype <- "Wet"                                                                         
-vol_list_SD[[3]] <- read.csv("C:\\Users\\tnkocis\\Google Drive\\Manuscripts\\unshared\\Thesis_tables\\simp_SD_data_vol_90_AN.csv")
+vol_list_SD[[3]] <- read.csv("C:\\Users\\tiffn_000\\Google Drive\\Manuscripts\\unshared\\Thesis_tables\\simp_SD_data_vol_90_AN.csv")
 vol_list_SD[[3]]$yeartype <- "Above Normal"                                                                
-vol_list_SD[[4]] <- read.csv("C:\\Users\\tnkocis\\Google Drive\\Manuscripts\\unshared\\Thesis_tables\\simp_SD_data_vol_90_BN.csv")
+vol_list_SD[[4]] <- read.csv("C:\\Users\\tiffn_000\\Google Drive\\Manuscripts\\unshared\\Thesis_tables\\simp_SD_data_vol_90_BN.csv")
 vol_list_SD[[4]]$yeartype <- "Below Normal"                                                                
-vol_list_SD[[5]] <- read.csv("C:\\Users\\tnkocis\\Google Drive\\Manuscripts\\unshared\\Thesis_tables\\simp_SD_data_vol_90_D.csv")
+vol_list_SD[[5]] <- read.csv("C:\\Users\\tiffn_000\\Google Drive\\Manuscripts\\unshared\\Thesis_tables\\simp_SD_data_vol_90_D.csv")
 vol_list_SD[[5]]$yeartype <- "Dry"                                                                         
-vol_list_SD[[6]] <- read.csv("C:\\Users\\tnkocis\\Google Drive\\Manuscripts\\unshared\\Thesis_tables\\simp_SD_data_vol_90_C.csv")
+vol_list_SD[[6]] <- read.csv("C:\\Users\\tiffn_000\\Google Drive\\Manuscripts\\unshared\\Thesis_tables\\simp_SD_data_vol_90_C.csv")
 vol_list_SD[[6]]$yeartype <- "Critical"
 vol_list_SD_df <- do.call(rbind.data.frame,vol_list_SD)
 vol_list_SD_df5 <- vol_list_SD_df[which(vol_list_SD_df$gauge%in%fiveselect),]
 
-write.csv(vol_list_SD_df5,"C:\\Users\\tnkocis\\Google Drive\\Manuscripts\\unshared\\Thesis_tables\\five_select_vol_full_record_SD.csv")
+write.csv(vol_list_SD_df5,"C:\\Users\\tiffn_000\\Google Drive\\Manuscripts\\unshared\\Thesis_tables\\five_select_vol_full_record_SD.csv")
 
 fiveselect_vol <- vector("list",5)
-fiveselect_vol[[1]] <-read.csv("C:\\Users\\tnkocis\\Google Drive\\Manuscripts\\unshared\\Thesis_tables\\five_select\\11447650.csv")
-fiveselect_vol[[2]] <-read.csv("C:\\Users\\tnkocis\\Google Drive\\Manuscripts\\unshared\\Thesis_tables\\five_select\\11303500.csv")
-fiveselect_vol[[3]] <-read.csv("C:\\Users\\tnkocis\\Google Drive\\Manuscripts\\unshared\\Thesis_tables\\five_select\\11383500.csv")
-fiveselect_vol[[4]] <-read.csv("C:\\Users\\tnkocis\\Google Drive\\Manuscripts\\unshared\\Thesis_tables\\five_select\\11266500.csv")
-fiveselect_vol[[5]] <-read.csv("C:\\Users\\tnkocis\\Google Drive\\Manuscripts\\unshared\\Thesis_tables\\five_select\\11202001.csv")
+fiveselect_vol[[1]] <-read.csv("C:\\Users\\tiffn_000\\Google Drive\\Manuscripts\\unshared\\Thesis_tables\\five_select\\11447650.csv")
+fiveselect_vol[[2]] <-read.csv("C:\\Users\\tiffn_000\\Google Drive\\Manuscripts\\unshared\\Thesis_tables\\five_select\\11303500.csv")
+fiveselect_vol[[3]] <-read.csv("C:\\Users\\tiffn_000\\Google Drive\\Manuscripts\\unshared\\Thesis_tables\\five_select\\11383500.csv")
+fiveselect_vol[[4]] <-read.csv("C:\\Users\\tiffn_000\\Google Drive\\Manuscripts\\unshared\\Thesis_tables\\five_select\\11266500.csv")
+fiveselect_vol[[5]] <-read.csv("C:\\Users\\tiffn_000\\Google Drive\\Manuscripts\\unshared\\Thesis_tables\\five_select\\11202001.csv")
 
 fiveselect_vol_all <- vector("list",5)
 for(i in 1:5){
@@ -709,21 +709,39 @@ for(i in 1:5){
  
 	fiveselect_vol[[i]]$yeartype <- factor(fiveselect_vol[[i]]$yeartype, levels=c("Critical", "Dry",
 			"Below Normal","Above Normal","Wet"," ","All") )
-	fiveselect_vol[[i]]$ymin <- fiveselect_vol[[i]]$avg-fiveselect_vol[[1]]$sd
-	fiveselect_vol[[i]]$ymax <- fiveselect_vol[[i]]$avg+fiveselect_vol[[1]]$sd
+	fiveselect_vol[[i]]$ymin <- fiveselect_vol[[i]]$avg-fiveselect_vol[[i]]$sd
+	fiveselect_vol[[i]]$ymax <- fiveselect_vol[[i]]$avg+fiveselect_vol[[i]]$sd
 	
 }
 ggplot(fiveselect_vol_all[[1]], aes(x=period, y=avg/1000)) +geom_bar(fill="dodgerblue4",stat="identity", color="black")+
 		geom_errorbar(aes(ymin=))
-ggplot(fiveselect_vol[[1]][which(fiveselect_vol[[1]]$period=="November"|
-								fiveselect_vol[[1]]$period=="December"|
-								fiveselect_vol[[1]]$period=="January"|
-								fiveselect_vol[[1]]$period=="February"|
-								fiveselect_vol[[1]]$period=="March"|
-								fiveselect_vol[[1]]$period=="April"),], aes(x=yeartype, y=avg/1000)) +
-			facet_wrap(~period) + 
-			geom_bar(stat="identity", color="black")+
-			geom_errorbar(aes(ymin=(avg/1000),ymax=ymax/1000), width=0.1)
+ggplot(fiveselect_vol[[5]][which(fiveselect_vol[[5]]$period=="November"|
+								fiveselect_vol[[5]]$period=="December"|
+								fiveselect_vol[[5]]$period=="January"|
+								fiveselect_vol[[5]]$period=="February"|
+								fiveselect_vol[[5]]$period=="March"|
+								fiveselect_vol[[5]]$period=="April"),], aes(x=yeartype, y=avg/1000)) +
+			geom_bar(aes(fill=yeartype),stat="identity", color="black")+
+			scale_fill_manual(values=c("Critical"="lightcoral","Dry"="lemonchiffon","Below Normal"="mediumaquamarine",
+							"Above Normal"="dodgerblue3","Wet"="darkblue"," "="white","All"="chartreuse4"))+#values=c("red","blue3","orange","green3","purple","yellow"))+
+			scale_x_discrete(labels=c("C", "D", "BN", "AN","W"," ","All"), drop=FALSE)+
+			labs(title=expression(atop("Average Volume Above 90th Percentile", 
+									atop("Monthly (November to April)", atop("By Year Type", 
+													atop(italic("Full Record of Available Data, Zero-Deflated")))))), 
+					y=" Volume Above 90th Percentile (TAF)\n", x="\nYear Type")+
+			scale_color_manual(values=c("gauge"="black"))+
+			geom_errorbar(aes(ymin=(avg/1000),ymax=ymax/1000), width=0.1)+
+			facet_wrap(~period, nrow=1) + 
+			theme(axis.text.x=element_text(color="black", size=10),
+					axis.text.y=element_text(color="black", size=14),
+					axis.title.x = element_text(color="black", size=16),
+					axis.title.y = element_text(color="black", size=16),
+					title = element_text(color="black", size=rel(2)),
+					legend.position = "right",
+					legend.text= element_text(color="black", size=16),
+					legend.title=element_blank(),
+					strip.text = element_text(color="black", size=14))
+			
 
 11224500
 11230500
