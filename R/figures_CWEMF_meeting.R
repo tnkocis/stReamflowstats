@@ -351,3 +351,390 @@ barplotdf_yrs_test <- ddply(barplotdf_yrs, .(yeartype),
 		transform, pos = cumsum(Frequency) - (0.5 * Frequency)
 )
 #delta_change$datemax <- delta_change$datemax-1
+locations <- read.csv("C:/Users/tnkocis/Google Drive/Manuscripts/unshared/Thesis_tables/locations.txt")
+locations <- locations[,c(3,5,6)]
+vol_all <- read.csv("C:/Users/tnkocis/Google Drive/Manuscripts/unshared/Thesis_tables/simp_mags_data_vol_90_all.csv")
+locations_vol_all <- merge(locations,vol_all,by.x="site_no",by.y="gauge")
+
+log10_minor_break = function (...){
+	function(x) {
+		minx         = floor(min(log10(x), na.rm=T))-1;
+		maxx         = ceiling(max(log10(x), na.rm=T))+1;
+		n_major      = maxx-minx+1;
+		major_breaks = seq(minx, maxx, by=1)
+		minor_breaks = 
+				rep(log10(seq(1, 9, by=1)), times = n_major)+
+				rep(major_breaks, each = 9)
+		return(10^(minor_breaks))
+	}
+}
+plot_vol_abv_90_all_nov <- ggplot(data=locations_vol_all, aes(x=vol_nov_AF,y=dec_lat_va))+geom_point(aes(color="gauge"),size=3)+
+		scale_x_log10(
+				minor_breaks=log10_minor_break(),
+				breaks = scales::trans_breaks("log10", function(x) 10^x),
+				labels = trans_format("log10", math_format(10^.x)),
+				limits=c(1,1e7)) +
+		annotation_logticks(sides="b", scaled=TRUE)+
+		labs(title=expression(atop("Average Volume Above 90th Percentile", 
+								atop("November", atop("All Year Types", 
+										atop(italic("Full Record of Available Data, Zero-Deflated")))))), 
+				x="\n Volume Above 90th Percentile (acre-feet)", y="Latitude \n")+
+		scale_color_manual(values=c("gauge"="black"))+
+		theme(axis.text.x=element_text(color="black", size=14),
+				axis.text.y=element_text(color="black", size=14),
+				axis.title.x = element_text(color="black", size=16),
+				axis.title.y = element_text(color="black", size=16),
+				title = element_text(color="black", size=rel(2)),
+				legend.position = "bottom",
+				legend.text= element_text(color="black", size=16),
+				legend.title=element_blank(),
+				panel.grid.major = element_line(size = 1))
+
+
+plot_vol_abv_90_all_dec <- ggplot(data=locations_vol_all, aes(x=vol_dec_AF,y=dec_lat_va))+geom_point(aes(color="gauge"),size=3)+
+		scale_x_log10(
+				minor_breaks=log10_minor_break(),
+				breaks = scales::trans_breaks("log10", function(x) 10^x),
+				labels = trans_format("log10", math_format(10^.x)),
+				limits=c(1,1e7)) +
+		annotation_logticks(sides="b", scaled=TRUE)+
+		labs(title=expression(atop("Average Volume Above 90th Percentile", 
+								atop("December", atop("All Year Types", 
+												atop(italic("Full Record of Available Data, Zero-Deflated")))))), 
+				x="\n Volume Above 90th Percentile (acre-feet)", y="Latitude \n")+
+		scale_color_manual(values=c("gauge"="black"))+
+		theme(axis.text.x=element_text(color="black", size=14),
+				axis.text.y=element_text(color="black", size=14),
+				axis.title.x = element_text(color="black", size=16),
+				axis.title.y = element_text(color="black", size=16),
+				title = element_text(color="black", size=rel(2)),
+				legend.position = "bottom",
+				legend.text= element_text(color="black", size=16),
+				legend.title=element_blank(),
+				panel.grid.major = element_line(size = 1))
+
+
+plot_vol_abv_90_all_jan <- ggplot(data=locations_vol_all, aes(x=vol_jan_AF,y=dec_lat_va))+geom_point(aes(color="gauge"),size=3)+
+		scale_x_log10(
+				minor_breaks=log10_minor_break(),
+				breaks = scales::trans_breaks("log10", function(x) 10^x),
+				labels = trans_format("log10", math_format(10^.x)),
+				limits=c(1,1e7)) +
+		annotation_logticks(sides="b", scaled=TRUE)+
+		labs(title=expression(atop("Average Volume Above 90th Percentile", 
+								atop("January", atop("All Year Types", 
+												atop(italic("Full Record of Available Data, Zero-Deflated")))))), 
+				x="\n Volume Above 90th Percentile (acre-feet)", y="Latitude \n")+
+		scale_color_manual(values=c("gauge"="black"))+
+		theme(axis.text.x=element_text(color="black", size=14),
+				axis.text.y=element_text(color="black", size=14),
+				axis.title.x = element_text(color="black", size=16),
+				axis.title.y = element_text(color="black", size=16),
+				title = element_text(color="black", size=rel(2)),
+				legend.position = "bottom",
+				legend.text= element_text(color="black", size=16),
+				legend.title=element_blank(),
+				panel.grid.major = element_line(size = 1))
+
+plot_vol_abv_90_all_feb <- ggplot(data=locations_vol_all, aes(x=vol_feb_AF,y=dec_lat_va))+geom_point(aes(color="gauge"),size=3)+
+		scale_x_log10(
+				minor_breaks=log10_minor_break(),
+				breaks = scales::trans_breaks("log10", function(x) 10^x),
+				labels = trans_format("log10", math_format(10^.x)),
+				limits=c(1,1e7)) +
+		annotation_logticks(sides="b", scaled=TRUE)+
+		labs(title=expression(atop("Average Volume Above 90th Percentile", 
+								atop("February", atop("All Year Types", 
+												atop(italic("Full Record of Available Data, Zero-Deflated")))))), 
+				x="\n Volume Above 90th Percentile (acre-feet)", y="Latitude \n")+
+		scale_color_manual(values=c("gauge"="black"))+
+		theme(axis.text.x=element_text(color="black", size=14),
+				axis.text.y=element_text(color="black", size=14),
+				axis.title.x = element_text(color="black", size=16),
+				axis.title.y = element_text(color="black", size=16),
+				title = element_text(color="black", size=rel(2)),
+				legend.position = "bottom",
+				legend.text= element_text(color="black", size=16),
+				legend.title=element_blank(),
+				panel.grid.major = element_line(size = 1))
+
+plot_vol_abv_90_all_mar <- ggplot(data=locations_vol_all, aes(x=vol_mar_AF,y=dec_lat_va))+geom_point(aes(color="gauge"),size=3)+
+		scale_x_log10(
+				minor_breaks=log10_minor_break(),
+				breaks = scales::trans_breaks("log10", function(x) 10^x),
+				labels = trans_format("log10", math_format(10^.x)),
+				limits=c(1,1e7)) +
+		annotation_logticks(sides="b", scaled=TRUE)+
+		labs(title=expression(atop("Average Volume Above 90th Percentile", 
+								atop("March", atop("All Year Types", 
+												atop(italic("Full Record of Available Data, Zero-Deflated")))))), 
+				x="\n Volume Above 90th Percentile (acre-feet)", y="Latitude \n")+
+		scale_color_manual(values=c("gauge"="black"))+
+		theme(axis.text.x=element_text(color="black", size=14),
+				axis.text.y=element_text(color="black", size=14),
+				axis.title.x = element_text(color="black", size=16),
+				axis.title.y = element_text(color="black", size=16),
+				title = element_text(color="black", size=rel(2)),
+				legend.position = "bottom",
+				legend.text= element_text(color="black", size=16),
+				legend.title=element_blank(),
+				panel.grid.major = element_line(size = 1))
+
+
+plot_vol_abv_90_all_apr <- ggplot(data=locations_vol_all, aes(x=vol_apr_AF,y=dec_lat_va))+geom_point(aes(color="gauge"),size=3)+
+		scale_x_log10(
+				minor_breaks=log10_minor_break(),
+				breaks = scales::trans_breaks("log10", function(x) 10^x),
+				labels = trans_format("log10", math_format(10^.x)),
+				limits=c(1,1e7)) +
+		annotation_logticks(sides="b", scaled=TRUE)+
+		labs(title=expression(atop("Average Volume Above 90th Percentile", 
+								atop("April", atop("All Year Types", 
+												atop(italic("Full Record of Available Data, Zero-Deflated")))))), 
+				x="\n Volume Above 90th Percentile (acre-feet)", y="Latitude \n")+
+		scale_color_manual(values=c("gauge"="black"))+
+		theme(axis.text.x=element_text(color="black", size=14),
+				axis.text.y=element_text(color="black", size=14),
+				axis.title.x = element_text(color="black", size=16),
+				axis.title.y = element_text(color="black", size=16),
+				title = element_text(color="black", size=rel(2)),
+				legend.position = "bottom",
+				legend.text= element_text(color="black", size=16),
+				legend.title=element_blank(),
+				panel.grid.major = element_line(size = 1))
+
+plot_vol_abv_90_all_mon3 <- ggplot(data=locations_vol_all, aes(x=vol_mon3_AF,y=dec_lat_va))+geom_point(aes(color="gauge"),size=3)+
+		scale_x_log10(
+				minor_breaks=log10_minor_break(),
+				breaks = scales::trans_breaks("log10", function(x) 10^x),
+				labels = trans_format("log10", math_format(10^.x)),
+				limits=c(1,1e7)) +
+		annotation_logticks(sides="b", scaled=TRUE)+
+		labs(title=expression(atop("Average Volume Above 90th Percentile", 
+								atop("December to February", atop("All Year Types", 
+												atop(italic("Full Record of Available Data, Zero-Deflated")))))), 
+				x="\n Volume Above 90th Percentile (acre-feet)", y="Latitude \n")+
+		scale_color_manual(values=c("gauge"="black"))+
+		theme(axis.text.x=element_text(color="black", size=14),
+				axis.text.y=element_text(color="black", size=14),
+				axis.title.x = element_text(color="black", size=16),
+				axis.title.y = element_text(color="black", size=16),
+				title = element_text(color="black", size=rel(2)),
+				legend.position = "bottom",
+				legend.text= element_text(color="black", size=16),
+				legend.title=element_blank(),
+				panel.grid.major = element_line(size = 1))
+
+
+plot_vol_abv_90_all_mon6 <- ggplot(data=locations_vol_all, aes(x=vol_mon6_AF,y=dec_lat_va))+geom_point(aes(color="gauge"),size=3)+
+		scale_x_log10(
+				minor_breaks=log10_minor_break(),
+				breaks = scales::trans_breaks("log10", function(x) 10^x),
+				labels = trans_format("log10", math_format(10^.x)),
+				limits=c(1,1e7)) +
+		annotation_logticks(sides="b", scaled=TRUE)+
+		labs(title=expression(atop("Average Volume Above 90th Percentile", 
+								atop("November to April", atop("All Year Types", 
+												atop(italic("Full Record of Available Data, Zero-Deflated")))))), 
+				x="\n Volume Above 90th Percentile (acre-feet)", y="Latitude \n")+
+		scale_color_manual(values=c("gauge"="black"))+
+		theme(axis.text.x=element_text(color="black", size=14),
+				axis.text.y=element_text(color="black", size=14),
+				axis.title.x = element_text(color="black", size=16),
+				axis.title.y = element_text(color="black", size=16),
+				title = element_text(color="black", size=rel(2)),
+				legend.position = "bottom",
+				legend.text= element_text(color="black", size=16),
+				legend.title=element_blank(),
+				panel.grid.major = element_line(size = 1))
+
+
+plot_vol_abv_90_all_hy <- ggplot(data=locations_vol_all, aes(x=vol_hy_AF,y=dec_lat_va))+geom_point(aes(color="gauge"),size=3)+
+		scale_x_log10(
+				minor_breaks=log10_minor_break(),
+				breaks = scales::trans_breaks("log10", function(x) 10^x),
+				labels = trans_format("log10", math_format(10^.x)),
+				limits=c(1,1e7)) +
+		annotation_logticks(sides="b", scaled=TRUE)+
+		labs(title=expression(atop("Average Volume Above 90th Percentile", 
+								atop("Hydrologic Year", atop("All Year Types", 
+												atop(italic("Full Record of Available Data, Zero-Deflated")))))), 
+				x="\n Volume Above 90th Percentile (acre-feet)", y="Latitude \n")+
+		scale_color_manual(values=c("gauge"="black"))+
+		theme(axis.text.x=element_text(color="black", size=14),
+				axis.text.y=element_text(color="black", size=14),
+				axis.title.x = element_text(color="black", size=16),
+				axis.title.y = element_text(color="black", size=16),
+				title = element_text(color="black", size=rel(2)),
+				legend.position = "bottom",
+				legend.text= element_text(color="black", size=16),
+				legend.title=element_blank(),
+				panel.grid.major = element_line(size = 1))
+ggsave(plot_vol_abv_90_all_nov, file="C:\\users\\tnkocis\\Google Drive\\Manuscripts\\unshared\\Thesis_plots\\plot_vol_abv_90_all_nov_full.png", width=8, height=11, units="in")
+
+melt_loc_vol <- melt(locations_vol_all,id.vars=c("dec_lat_va"), measure.vars=5:12)
+ggplot(data=melt_loc_vol, aes(x=value,y=dec_lat_va))+ facet_wrap(~variable, nrow=2, ncol=5)+geom_point(aes(color="gauge"),size=3)+
+		scale_x_log10(
+				minor_breaks=log10_minor_break(),
+				breaks = scales::trans_breaks("log10", function(x) 10^x),
+				labels = trans_format("log10", math_format(10^.x))#,
+#				limits=c(1,1e7)
+				) +
+		annotation_logticks(sides="b", scaled=TRUE)+
+		labs(title=expression(atop("Average Volume Above 90th Percentile", 
+								atop("Hydrologic Year", atop("All Year Types", 
+												atop(italic("Full Record of Available Data, Zero-Deflated")))))), 
+				x="\n Volume Above 90th Percentile (acre-feet)", y="Latitude \n")+
+		scale_color_manual(values=c("gauge"="black"))+
+		theme(axis.text.x=element_text(color="black", size=14),
+				axis.text.y=element_text(color="black", size=14),
+				axis.title.x = element_text(color="black", size=16),
+				axis.title.y = element_text(color="black", size=16),
+				title = element_text(color="black", size=rel(2)),
+				legend.position = "bottom",
+				legend.text= element_text(color="black", size=16),
+				legend.title=element_blank(),
+				panel.grid.major = element_line(size = 1))
+
+
+
+ggplot(data=melt_loc_vol, aes(x=value,y=dec_lat_va))+ facet_wrap(~variable, nrow=2, ncol=5)+geom_histogram(aes(y=..count..,fill="gauge"),size=3)+
+		scale_x_log10(
+				minor_breaks=log10_minor_break(),
+				breaks = scales::trans_breaks("log10", function(x) 10^x),
+				labels = trans_format("log10", math_format(10^.x))#,
+#				limits=c(1,1e7)
+		) +
+		annotation_logticks(sides="b", scaled=TRUE)+
+		labs(title=expression(atop("Average Volume Above 90th Percentile", 
+								atop("Hydrologic Year", atop("All Year Types", 
+												atop(italic("Full Record of Available Data, Zero-Deflated")))))), 
+				x="\n Volume Above 90th Percentile (acre-feet)", y="Latitude \n")+
+		scale_color_manual(values=c("gauge"="black"))+
+		theme(axis.text.x=element_text(color="black", size=14),
+				axis.text.y=element_text(color="black", size=14),
+				axis.title.x = element_text(color="black", size=16),
+				axis.title.y = element_text(color="black", size=16),
+				title = element_text(color="black", size=rel(2)),
+				legend.position = "bottom",
+				legend.text= element_text(color="black", size=16),
+				legend.title=element_blank(),
+				panel.grid.major = element_line(size = 1))
+
+
+
+ggplot(d, aes(x=x, y=y)) + geom_point() +coord_trans(y="log10",x="log10")+ scale_y_continuous(trans = log10_trans(),breaks = trans_breaks("log10", function(x) 10^x),labels = trans_format("log10", math_format(10^.x)))+ scale_x_continuous(trans = log10_trans(),breaks = trans_breaks("log10", function(x) 10^x),labels = trans_format("log10", math_format(10^.x)))
+
+
+ggplot(data=vol_all, aes(x=vol_mar_AF))+geom_bar(stat="bin",size=0.5, color="black", 
+		breaks= c(seq(100,1000,100),seq(2000,10000,1000),seq(20000,100000,10000),seq(200000,1000000,100000),seq(2000000,10000000,1000000)),
+				 fill="dodgerblue4", alpha=0.7
+				)+ coord_trans("log10")+
+		scale_x_continuous(breaks= c(seq(1000,10000,1000),seq(20000,100000,10000),seq(200000,1000000,100000),seq(2000000,10000000,1000000)))+
+		scale_y_continuous(breaks=seq(1,20,1), expand=c(0,0.01))+ 
+		xlim(c(1000,5e6))
+		labs(title="Average Volume Above 90th Percetile\n Full Record of Available Data, Zero-Deflated\n March", 
+				x="\n Volume Above 90th Percentile (acre-feet)", y="Count \n")+
+		theme(axis.text.x=element_text(color="black", size=14),
+				axis.text.y=element_text(color="black", size=14),
+				axis.title.x = element_text(color="black", size=16),
+				axis.title.y = element_text(color="black", size=16),
+				title = element_text(color="black", size=18),
+				legend.position = "bottom",
+				legend.text= element_text(color="black", size=16),
+				legend.title=element_blank())+
+		guides(color=FALSE)
+
+fiveselect <- c(11447650,11303500,11383500,11266500,11202001)
+vol_list <- vector("list",6)
+vol_list[[1]] <- read.csv("C:\\Users\\tnkocis\\Google Drive\\Manuscripts\\unshared\\Thesis_tables\\simp_mags_data_vol_90_all.csv")
+vol_list[[1]]$yeartype <- "All"
+vol_list[[2]] <- read.csv("C:\\Users\\tnkocis\\Google Drive\\Manuscripts\\unshared\\Thesis_tables\\simp_mags_data_vol_90_W.csv")
+vol_list[[2]]$yeartype <- "Wet"
+vol_list[[3]] <- read.csv("C:\\Users\\tnkocis\\Google Drive\\Manuscripts\\unshared\\Thesis_tables\\simp_mags_data_vol_90_AN.csv")
+vol_list[[3]]$yeartype <- "Above Normal"
+vol_list[[4]] <- read.csv("C:\\Users\\tnkocis\\Google Drive\\Manuscripts\\unshared\\Thesis_tables\\simp_mags_data_vol_90_BN.csv")
+vol_list[[4]]$yeartype <- "Below Normal"
+vol_list[[5]] <- read.csv("C:\\Users\\tnkocis\\Google Drive\\Manuscripts\\unshared\\Thesis_tables\\simp_mags_data_vol_90_D.csv")
+vol_list[[5]]$yeartype <- "Dry"
+vol_list[[6]] <- read.csv("C:\\Users\\tnkocis\\Google Drive\\Manuscripts\\unshared\\Thesis_tables\\simp_mags_data_vol_90_C.csv")
+vol_list[[6]]$yeartype <- "Critical"
+vol_list_df <- do.call(rbind.data.frame,vol_list)
+vol_list_df5 <- vol_list_df[which(vol_list_df$gauge%in%fiveselect),]
+
+write.csv(vol_list_df5,"C:\\Users\\tnkocis\\Google Drive\\Manuscripts\\unshared\\Thesis_tables\\five_select_vol_full_record_avg.csv")
+
+vol_list_SD <- vector("list",6)
+vol_list_SD[[1]] <- read.csv("C:\\Users\\tnkocis\\Google Drive\\Manuscripts\\unshared\\Thesis_tables\\simp_SD_data_vol_90_all.csv")
+vol_list_SD[[1]]$yeartype <- "All"                                                                         
+vol_list_SD[[2]] <- read.csv("C:\\Users\\tnkocis\\Google Drive\\Manuscripts\\unshared\\Thesis_tables\\simp_SD_data_vol_90_W.csv")
+vol_list_SD[[2]]$yeartype <- "Wet"                                                                         
+vol_list_SD[[3]] <- read.csv("C:\\Users\\tnkocis\\Google Drive\\Manuscripts\\unshared\\Thesis_tables\\simp_SD_data_vol_90_AN.csv")
+vol_list_SD[[3]]$yeartype <- "Above Normal"                                                                
+vol_list_SD[[4]] <- read.csv("C:\\Users\\tnkocis\\Google Drive\\Manuscripts\\unshared\\Thesis_tables\\simp_SD_data_vol_90_BN.csv")
+vol_list_SD[[4]]$yeartype <- "Below Normal"                                                                
+vol_list_SD[[5]] <- read.csv("C:\\Users\\tnkocis\\Google Drive\\Manuscripts\\unshared\\Thesis_tables\\simp_SD_data_vol_90_D.csv")
+vol_list_SD[[5]]$yeartype <- "Dry"                                                                         
+vol_list_SD[[6]] <- read.csv("C:\\Users\\tnkocis\\Google Drive\\Manuscripts\\unshared\\Thesis_tables\\simp_SD_data_vol_90_C.csv")
+vol_list_SD[[6]]$yeartype <- "Critical"
+vol_list_SD_df <- do.call(rbind.data.frame,vol_list_SD)
+vol_list_SD_df5 <- vol_list_SD_df[which(vol_list_SD_df$gauge%in%fiveselect),]
+
+write.csv(vol_list_SD_df5,"C:\\Users\\tnkocis\\Google Drive\\Manuscripts\\unshared\\Thesis_tables\\five_select_vol_full_record_SD.csv")
+
+fiveselect_vol <- vector("list",5)
+fiveselect_vol[[1]] <-read.csv("C:\\Users\\tnkocis\\Google Drive\\Manuscripts\\unshared\\Thesis_tables\\five_select\\11447650.csv")
+fiveselect_vol[[2]] <-read.csv("C:\\Users\\tnkocis\\Google Drive\\Manuscripts\\unshared\\Thesis_tables\\five_select\\11303500.csv")
+fiveselect_vol[[3]] <-read.csv("C:\\Users\\tnkocis\\Google Drive\\Manuscripts\\unshared\\Thesis_tables\\five_select\\11383500.csv")
+fiveselect_vol[[4]] <-read.csv("C:\\Users\\tnkocis\\Google Drive\\Manuscripts\\unshared\\Thesis_tables\\five_select\\11266500.csv")
+fiveselect_vol[[5]] <-read.csv("C:\\Users\\tnkocis\\Google Drive\\Manuscripts\\unshared\\Thesis_tables\\five_select\\11202001.csv")
+
+fiveselect_vol_all <- vector("list",5)
+for(i in 1:5){
+	fiveselect_vol_all[[i]] <- fiveselect_vol[[i]][which(fiveselect_vol[[i]]$yeartype=="All"),]
+	fiveselect_vol_all[[i]]$period <- factor(fiveselect_vol_all[[i]]$period, levels=c("November",
+					"December","January","February","March","April"," ","December to February","November to April",
+					"Hydrologic Year"))
+	fiveselect_vol_all[[i]][10,] <- NA
+	fiveselect_vol_all[[i]][10,"period"] <- " "
+	
+}
+
+
+
+for(i in 1:5){
+	fiveselect_vol[[i]]$period <- factor(fiveselect_vol[[i]]$period, levels=c("November",
+					"December","January","February","March","April","December to February","November to April",
+					"Hydrologic Year"))
+ 
+	fiveselect_vol[[i]]$yeartype <- factor(fiveselect_vol[[i]]$yeartype, levels=c("Critical", "Dry",
+			"Below Normal","Above Normal","Wet"," ","All") )
+	fiveselect_vol[[i]]$ymin <- fiveselect_vol[[i]]$avg-fiveselect_vol[[1]]$sd
+	fiveselect_vol[[i]]$ymax <- fiveselect_vol[[i]]$avg+fiveselect_vol[[1]]$sd
+	
+}
+ggplot(fiveselect_vol_all[[1]], aes(x=period, y=avg/1000)) +geom_bar(fill="dodgerblue4",stat="identity")+
+		geom_errorbar(aes(ymin=))
+ggplot(fiveselect_vol[[1]][which(fiveselect_vol[[1]]$period=="November"|
+								fiveselect_vol[[1]]$period=="December"|
+								fiveselect_vol[[1]]$period=="January"|
+								fiveselect_vol[[1]]$period=="February"|
+								fiveselect_vol[[1]]$period=="March"|
+								fiveselect_vol[[1]]$period=="April"),], aes(x=yeartype, y=avg/1000)) +
+			facet_wrap(~period) + 
+			geom_bar(stat="identity")+
+			geom_errorbar(aes(ymin=ymin/1000,ymax=ymax/1000), width=0.1)
+
+11224500
+11230500
+11237500
+11264500
+11266500
+11274500
+11274630
+11315000
+11316800
+11381500
+11383500
+11427700
+11202001
