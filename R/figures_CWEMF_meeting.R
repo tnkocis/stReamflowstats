@@ -713,7 +713,7 @@ for(i in 1:5){
 	fiveselect_vol[[i]]$ymax <- fiveselect_vol[[i]]$avg+fiveselect_vol[[1]]$sd
 	
 }
-ggplot(fiveselect_vol_all[[1]], aes(x=period, y=avg/1000)) +geom_bar(fill="dodgerblue4",stat="identity")+
+ggplot(fiveselect_vol_all[[1]], aes(x=period, y=avg/1000)) +geom_bar(fill="dodgerblue4",stat="identity", color="black")+
 		geom_errorbar(aes(ymin=))
 ggplot(fiveselect_vol[[1]][which(fiveselect_vol[[1]]$period=="November"|
 								fiveselect_vol[[1]]$period=="December"|
@@ -722,8 +722,8 @@ ggplot(fiveselect_vol[[1]][which(fiveselect_vol[[1]]$period=="November"|
 								fiveselect_vol[[1]]$period=="March"|
 								fiveselect_vol[[1]]$period=="April"),], aes(x=yeartype, y=avg/1000)) +
 			facet_wrap(~period) + 
-			geom_bar(stat="identity")+
-			geom_errorbar(aes(ymin=ymin/1000,ymax=ymax/1000), width=0.1)
+			geom_bar(stat="identity", color="black")+
+			geom_errorbar(aes(ymin=(avg/1000),ymax=ymax/1000), width=0.1)
 
 11224500
 11230500
