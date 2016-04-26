@@ -75,12 +75,27 @@ trendsfinal2 <- function(input, damyear, gauge, period){
 	
 	yrseq <- seq(inputstartyear,2013,1)
 	results_5_frac$metricname <- "frac_nonzero"
-	testyr2 <- which(rev(yrseq%in%input$sthyyear)==FALSE)
-	if(length(testyr2)==0){
-		testyr2 <- length(yrseq)
-	} 
-	if((sum(!yrseq%in%input$sthyyear, na.rm=TRUE)>5)|(testyr2[[1]]<20)){
-		
+	testyr2 <- cumsum(rev(yrseq%in%input$sthyyear)==FALSE)
+	if(length(which((cumsum(yrseq%in%input$sthyyear)==c(cumsum(yrseq%in%input$sthyyear)[2:length(cumsum(yrseq%in%input$sthyyear))],NA))==FALSE))<3){
+		yrst <- yrseq[[which((cumsum(yrseq%in%input$sthyyear)==c(cumsum(yrseq%in%input$sthyyear)[2:length(cumsum(yrseq%in%input$sthyyear))],NA))==FALSE)[[2]]]]
+	}else{
+		yrst <- yrseq[[which((cumsum(yrseq%in%input$sthyyear)==c(cumsum(yrseq%in%input$sthyyear)[2:length(cumsum(yrseq%in%input$sthyyear))],NA))==FALSE)[[3]]]]
+	}
+	yrstseq <- seq(yrst,2013,1)
+#	if(length(testyr2)==0){
+#		testyr2 <- length(yrseq)
+#	} 
+	if(length(testyr2)<20){
+		testyr220 <- testyr2[[length(testyr2)]]
+	}else{
+		testyr220 <- testyr2[[20]]
+	}
+	if(yrst==1991){
+		yrst<-1989
+	}else if(yrst==1972){
+		yrst <- 1970
+	}
+	if((sum(!yrstseq%in%input$sthyyear, na.rm=TRUE)>7)|(testyr220>10)){
 		results_5_frac$count_trend <- "insufficient data" 
 		results_5_frac$lm_slope[[1]] <- "insufficient data" 
 		results_5_frac$lm_p[[1]] <- "insufficient data" 
@@ -94,7 +109,7 @@ trendsfinal2 <- function(input, damyear, gauge, period){
 		results_5_frac$median[[1]]<- "insufficient data" 
 
 	}else{
-		yrst <- rev(yrseq)[testyr2[[1]]]+1
+#		yrst <- rev(yrseq)[testyr2[[1]]]+1
 		inputnonzero <- input[which(input$sthyyear>=yrst),]
 		inputnonzero$TotVolAbv_acft[inputnonzero$TotVolAbv_acft>0] <- 1
 		yearfrac_5 <- rollapply(inputnonzero$TotVolAbv_acft,5, function(x) sum(x, na.rm=TRUE)/5)		
@@ -111,6 +126,7 @@ trendsfinal2 <- function(input, damyear, gauge, period){
 		results_5_frac$mean[[1]]<- mean(yearfrac_5,na.rm=TRUE)
 		results_5_frac$sd[[1]]<- sd(yearfrac_5,na.rm=TRUE)
 		results_5_frac$median[[1]]<- median(yearfrac_5, na.rm=TRUE)
+		results_5_frac$start_sthyyear <- yrst
 		
 
 	}
@@ -132,6 +148,9 @@ trendsfinal2 <- function(input, damyear, gauge, period){
 	output$lm_sig[which(output$lm_p<=0.05)] <- "significant"
 	output$SN_sig[which(output$SN_ratio<0.2)] <- "insignificant"
 	output$SN_sig[which(output$SN_ratio>=0.2)] <- "significant"
+	output$lm_sig[is.na(output$lm_p)|output$lm_p=="NaN"] <- "insignificant"
+	output$MKT_sig[is.na(output$MKT_p)|output$MKT_p=="NaN"] <- "insignificant"
+	output$SN_sig[is.na(output$SN_ratio)|output$SN_ratio=="NaN"] <- "insignificant"
 	output$SN_sig[which(output$SN_ratio=="insufficient data")] <- "insufficient data"
 	output$lm_sig[which(output$lm_p=="insufficient data")] <- "insufficient data"
 	output$MKT_sig[which(output$MKT_p=="insufficient data")] <- "insufficient data"
@@ -208,11 +227,27 @@ trendsfinal2_1 <- function(input, damyear, gauge, period){
 	
 	yrseq <- seq(inputstartyear,2013,1)
 	results_5_frac$metricname <- "frac_nonzero"
-	testyr2 <- which(rev(yrseq%in%input$sthyyear)==FALSE)
-	if(length(testyr2)==0){
-		testyr2 <- length(yrseq)
-	} 
-	if((sum(!yrseq%in%input$sthyyear, na.rm=TRUE)>5)|(testyr2[[1]]<20)){
+	testyr2 <- cumsum(rev(yrseq%in%input$sthyyear)==FALSE)
+	if(length(which((cumsum(yrseq%in%input$sthyyear)==c(cumsum(yrseq%in%input$sthyyear)[2:length(cumsum(yrseq%in%input$sthyyear))],NA))==FALSE))<3){
+		yrst <- yrseq[[which((cumsum(yrseq%in%input$sthyyear)==c(cumsum(yrseq%in%input$sthyyear)[2:length(cumsum(yrseq%in%input$sthyyear))],NA))==FALSE)[[2]]]]
+	}else{
+	yrst <- yrseq[[which((cumsum(yrseq%in%input$sthyyear)==c(cumsum(yrseq%in%input$sthyyear)[2:length(cumsum(yrseq%in%input$sthyyear))],NA))==FALSE)[[3]]]]
+	}
+	if(yrst==1991){
+		yrst <- 1989
+	}else if(yrst==1972){
+		yrst <- 1970
+	}
+	yrstseq <- seq(yrst,2013,1)
+#	if(length(testyr2)==0){
+#		testyr2 <- length(yrseq)
+#	} 
+	if(length(testyr2)<20){
+		testyr220 <- testyr2[[length(testyr2)]]
+	}else{
+ 		testyr220 <- testyr2[[20]]
+	}
+	if((sum(!yrstseq%in%input$sthyyear, na.rm=TRUE)>7)|(testyr220>10)){
 		
 		results_5_frac$count_trend <- "insufficient data" 
 		results_5_frac$lm_slope[[1]] <- "insufficient data" 
@@ -227,7 +262,7 @@ trendsfinal2_1 <- function(input, damyear, gauge, period){
 		results_5_frac$median[[1]]<- "insufficient data" 
 		
 	}else{
-		yrst <- rev(yrseq)[testyr2[[1]]]+1
+#		yrst <- rev(yrseq)[testyr2[[1]]]+1
 		inputnonzero <- input[which(input$sthyyear>=yrst),]
 		inputnonzero$TotVolAbv_acft[inputnonzero$TotVolAbv_acft>0] <- 1
 		yearfrac_5 <- rollapply(inputnonzero$TotVolAbv_acft,1, function(x) sum(x, na.rm=TRUE)/5)		
@@ -244,6 +279,7 @@ trendsfinal2_1 <- function(input, damyear, gauge, period){
 		results_5_frac$mean[[1]]<- mean(yearfrac_5,na.rm=TRUE)
 		results_5_frac$sd[[1]]<- sd(yearfrac_5,na.rm=TRUE)
 		results_5_frac$median[[1]]<- median(yearfrac_5, na.rm=TRUE)
+		results_5_frac$start_sthyyear <- yrst
 		
 		
 	}
@@ -265,6 +301,9 @@ trendsfinal2_1 <- function(input, damyear, gauge, period){
 	output$lm_sig[which(output$lm_p<=0.05)] <- "significant"
 	output$SN_sig[which(output$SN_ratio<0.2)] <- "insignificant"
 	output$SN_sig[which(output$SN_ratio>=0.2)] <- "significant"
+	output$lm_sig[is.na(output$lm_p)|output$lm_p=="NaN"] <- "insignificant"
+	output$MKT_sig[is.na(output$MKT_p)|output$MKT_p=="NaN"] <- "insignificant"
+	output$SN_sig[is.na(output$SN_ratio)|output$SN_ratio=="NaN"] <- "insignificant"
 	output$SN_sig[which(output$SN_ratio=="insufficient data")] <- "insufficient data"
 	output$lm_sig[which(output$lm_p=="insufficient data")] <- "insufficient data"
 	output$MKT_sig[which(output$MKT_p=="insufficient data")] <- "insufficient data"
@@ -347,6 +386,9 @@ trendsfinalCOM <- function(input, sthyyear, actual_start, damyear, gauge, period
 	output$lm_sig[which(output$lm_p<=0.05)] <- "significant"
 	output$SN_sig[which(output$SN_ratio<0.2)] <- "insignificant"
 	output$SN_sig[which(output$SN_ratio>=0.2)] <- "significant"
+	output$lm_sig[is.na(output$lm_p)|output$lm_p=="NaN"] <- "insignificant"
+	output$MKT_sig[is.na(output$MKT_p)|output$MKT_p=="NaN"] <- "insignificant"
+	output$SN_sig[is.na(output$SN_ratio)|output$SN_ratio=="NaN"] <- "insignificant"
 	output$SN_sig[which(output$SN_ratio=="insufficient data")] <- "insufficient data"
 	output$lm_sig[which(output$lm_p=="insufficient data")] <- "insufficient data"
 	output$MKT_sig[which(output$MKT_p=="insufficient data")] <- "insufficient data"
@@ -429,6 +471,9 @@ trendsfinalCOM_1 <- function(input, sthyyear, actual_start, damyear, gauge, peri
 	output$lm_sig[which(output$lm_p<=0.05)] <- "significant"
 	output$SN_sig[which(output$SN_ratio<0.2)] <- "insignificant"
 	output$SN_sig[which(output$SN_ratio>=0.2)] <- "significant"
+	output$lm_sig[is.na(output$lm_p)|output$lm_p=="NaN"] <- "insignificant"
+	output$MKT_sig[is.na(output$MKT_p)|output$MKT_p=="NaN"] <- "insignificant"
+	output$SN_sig[is.na(output$SN_ratio)|output$SN_ratio=="NaN"] <- "insignificant"
 	output$SN_sig[which(output$SN_ratio=="insufficient data")] <- "insufficient data"
 	output$lm_sig[which(output$lm_p=="insufficient data")] <- "insufficient data"
 	output$MKT_sig[which(output$MKT_p=="insufficient data")] <- "insufficient data"

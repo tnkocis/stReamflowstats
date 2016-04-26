@@ -486,7 +486,7 @@ for(i in 1:length(simp_mags_data)){
 		simp_mags_trends2[[i]][[k]] <- vector("list",length(c(1,2,3,5,6,7,8,9,10)))
 		for(j in 1:9){
 			vec<- c(1,2,3,5,6,7,8,9,10)
-			simp_mags_trends2[[i]][[k]][[j]] <- trendsfinal2(simp_mags_data[[i]][[k]][[1]][[vec[[j]]]],1800,
+			simp_mags_trends2[[i]][[k]][[j]] <- trendsfinal2_1(simp_mags_data[[i]][[k]][[1]][[vec[[j]]]],1800,
 					names(simp_mags_data[[i]])[[k]],names(simp_mags_data[[i]][[k]][[1]])[[vec[[j]]]])
 		}
 	}
@@ -495,7 +495,7 @@ simp_mags_trends2_unlist <- unlist(simp_mags_trends2, recursive=FALSE)
 simp_mags_trends2_unlist2 <- unlist(simp_mags_trends2_unlist, recursive=FALSE)
 simp_mags_trends2_df <- do.call("rbind.data.frame",simp_mags_trends2_unlist2)
 
-write.csv(simp_mags_trends2_df, file="C:\\Users\\tiffn_000\\Google Drive\\Manuscripts\\unshared\\Thesis_tables\\trends_full.csv")
+write.csv(simp_mags_trends2_df, file="C:\\Users\\tiffn_000\\Google Drive\\Manuscripts\\unshared\\Thesis_tables\\2_trends_full_1.csv")
 
 
 simp_mags_trendsimp <- vector("list",7)
@@ -507,10 +507,10 @@ for(i in 1:length(simp_mags_data)){
 		for(j in 1:9){
 			vec<- c(1,2,3,5,6,7,8,9,10)
 			if(names(simp_mags_data[[i]])[[k]]%in%SacV_gauges$site_no){
-				simp_mags_trendsimp[[i]][[k]][[j]] <- trendsfinal2_1(simp_mags_data[[i]][[k]][[1]][[vec[[j]]]],1970,
+				simp_mags_trendsimp[[i]][[k]][[j]] <- trendsfinal2(simp_mags_data[[i]][[k]][[1]][[vec[[j]]]],1970,
 						names(simp_mags_data[[i]])[[k]],names(simp_mags_data[[i]][[k]][[1]])[[vec[[j]]]])
 			}else if(names(simp_mags_data[[i]])[[k]]%in%SJV_gauges$site_no){
-				simp_mags_trendsimp[[i]][[k]][[j]] <- trendsfinal2_1(simp_mags_data[[i]][[k]][[1]][[vec[[j]]]],1989,
+				simp_mags_trendsimp[[i]][[k]][[j]] <- trendsfinal2(simp_mags_data[[i]][[k]][[1]][[vec[[j]]]],1989,
 						names(simp_mags_data[[i]])[[k]],names(simp_mags_data[[i]][[k]][[1]])[[vec[[j]]]])	
 			}
 		}
@@ -520,7 +520,7 @@ simp_mags_trendsimp_unlist <- unlist(simp_mags_trendsimp, recursive=FALSE)
 simp_mags_trendsimp_unlist2 <- unlist(simp_mags_trendsimp_unlist, recursive=FALSE)
 simp_mags_trendsimp_df <- do.call("rbind.data.frame",simp_mags_trendsimp_unlist2)
 
-write.csv(simp_mags_trendsimp_df, file="C:\\Users\\tiffn_000\\Google Drive\\Manuscripts\\unshared\\Thesis_tables\\trends_imp_1.csv")
+write.csv(simp_mags_trendsimp_df, file="C:\\Users\\tiffn_000\\Google Drive\\Manuscripts\\unshared\\Thesis_tables\\2_trends_imp.csv")
 dohy <- data.frame(DOHY= seq(1,365,1),DOY=seq.Date(as.Date("10-01-2000",format="%m-%d-%Y"),as.Date("09-30-2001",format="%m-%d-%Y"),by="day"))
 
 simp_mags_data_unlist <- unlist(simp_mags_data, recursive=FALSE)
@@ -533,7 +533,7 @@ for(i in 1:93){
 }
 COM90_full_trenddf <- do.call(rbind.data.frame,COM90_full_trend)
 
-write.csv(COM90_full_trenddf, file="C:\\Users\\tiffn_000\\Google Drive\\Manuscripts\\unshared\\Thesis_tables\\trend_COM_full_5.csv")
+write.csv(COM90_full_trenddf, file="C:\\Users\\tiffn_000\\Google Drive\\Manuscripts\\unshared\\Thesis_tables\\2_trend_COM_full_5.csv")
 
 COM90_full_trend1 <- vector("list",93)
 actual_start <- rep(NA,93)
@@ -542,7 +542,7 @@ for(i in 1:93){
 	COM90_full_trend1[[i]] <- trendsfinalCOM_1(COM90_full_df[[i+1]], COM90_full_df[[1]],actual_start[[i]],1800, gauge_COM90[[i]], period="hy")
 }
 COM90_full_trend1df <- do.call(rbind.data.frame,COM90_full_trend1)
-write.csv(COM90_full_trend1df, file="C:\\Users\\tiffn_000\\Google Drive\\Manuscripts\\unshared\\Thesis_tables\\trend_COM_full_1.csv")
+write.csv(COM90_full_trend1df, file="C:\\Users\\tiffn_000\\Google Drive\\Manuscripts\\unshared\\Thesis_tables\\2_trend_COM_full_1.csv")
 
 
 COM90_imp_trend <- vector("list",93)
