@@ -557,7 +557,7 @@ for(i in 1:93){
 }
 COM90_imp_trenddf <- do.call(rbind.data.frame,COM90_imp_trend)
 
-write.csv(COM90_imp_trenddf, file="C:\\Users\\tiffn_000\\Google Drive\\Manuscripts\\unshared\\Thesis_tables\\trend_COM_imp_5.csv")
+write.csv(COM90_imp_trenddf, file="C:\\Users\\tiffn_000\\Google Drive\\Manuscripts\\unshared\\Thesis_tables\\2_trend_COM_imp_5.csv")
 
 COM90_imp_trend1 <- vector("list",93)
 actual_start <- rep(NA,93)
@@ -1373,10 +1373,10 @@ C_sd <- rep(NA,93)
 
 for(i in 1:93){
 	gauge_COM90[[i]] <- strsplit(names(COM90_full_df)[[i+1]],"_")[[1]][[3]]
-	COM90_avg_DOHY[[i]] <- round(mean(COM90_full_df[[i+1]], na.rm=TRUE))
-	COM90_sd_DOHY[[i]] <- round(sd(COM90_full_df[[i+1]], na.rm=TRUE))
 	gauge_COM90[[i]] <- strsplit(names(COM90_full_df)[[i+1]],"_")[[1]][[3]]
 	if(gauge_COM90[[i]]%in%SacV_gauges$site_no){
+		COM90_avg_DOHY[[i]] <- round(mean(COM90_full_df[[i+1]][COM90_full_df$sthyyear>=1970], na.rm=TRUE))
+		COM90_sd_DOHY[[i]] <- round(sd(COM90_full_df[[i+1]][COM90_full_df$sthyyear>=1970], na.rm=TRUE))
 		W_avg[[i]] <- round(mean(COM90_full_df[[i+1]][COM90_full_df$sthyyear%in%yeartype_old$sthyyear[which(yeartype_old$SVI=="5")]&COM90_full_df$sthyyear>=1970],na.rm=TRUE)     )
 		W_sd[[i]] <- round(sd(COM90_full_df[[i+1]][COM90_full_df$sthyyear%in%yeartype_old$sthyyear[which(yeartype_old$SVI=="5")]&COM90_full_df$sthyyear>=1970],na.rm=TRUE)        )
 		AN_avg[[i]] <-round( mean(COM90_full_df[[i+1]][COM90_full_df$sthyyear%in%yeartype_old$sthyyear[which(yeartype_old$SVI=="4")]&COM90_full_df$sthyyear>=1970],na.rm=TRUE)    )
@@ -1388,7 +1388,9 @@ for(i in 1:93){
 		C_avg[[i]] <-round( mean(COM90_full_df[[i+1]][COM90_full_df$sthyyear%in%yeartype_old$sthyyear[which(yeartype_old$SVI=="1")]&COM90_full_df$sthyyear>=1970],na.rm=TRUE)     )
 		C_sd[[i]] <- round(sd(COM90_full_df[[i+1]][COM90_full_df$sthyyear%in%yeartype_old$sthyyear[which(yeartype_old$SVI=="1")]&COM90_full_df$sthyyear>=1970],na.rm=TRUE)        )
 		
-	} else if(gauge_COM90[[i]]%in%SJV_gauges$site_no){                                                                                              
+	} else if(gauge_COM90[[i]]%in%SJV_gauges$site_no){   
+		COM90_avg_DOHY[[i]] <- round(mean(COM90_full_df[[i+1]][COM90_full_df$sthyyear>=1989], na.rm=TRUE))
+		COM90_sd_DOHY[[i]] <- round(sd(COM90_full_df[[i+1]][COM90_full_df$sthyyear>=1989], na.rm=TRUE))
 		W_avg[[i]] <- round(mean(COM90_full_df[[i+1]][COM90_full_df$sthyyear%in%yeartype_old$sthyyear[which(yeartype_old$SJI=="5")]&COM90_full_df$sthyyear>=1989],na.rm=TRUE) )
 		W_sd[[i]] <- round(sd(COM90_full_df[[i+1]][COM90_full_df$sthyyear%in%yeartype_old$sthyyear[which(yeartype_old$SJI=="5")]&COM90_full_df$sthyyear>=1989],na.rm=TRUE)    )
 		AN_avg[[i]] <- round(mean(COM90_full_df[[i+1]][COM90_full_df$sthyyear%in%yeartype_old$sthyyear[which(yeartype_old$SJI=="4")]&COM90_full_df$sthyyear>=1989],na.rm=TRUE))
@@ -1414,4 +1416,4 @@ COM90_magsd_imp <- data.frame(gauge =gauge_COM90, avg_DOHY=COM90_avg_DOHY, sd_DO
 		C_avg   =  C_avg   ,
 		C_sd    =  C_sd    )
 
-write.csv(COM90_magsd_imp, file="C:\\Users\\tiffn_000\\Google Drive\\Manuscripts\\unshared\\Thesis_tables\\COM90_mag_sd_imp.csv")
+write.csv(COM90_magsd_imp, file="C:\\Users\\tiffn_000\\Google Drive\\Manuscripts\\unshared\\Thesis_tables\\COM90_mag_sd_imp_updated.csv")

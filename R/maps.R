@@ -88,7 +88,7 @@ library(raster)
 
 cv_huc <- readOGR(dsn = "C:/Users/tiffn_000/Google Drive/Manuscripts/unshared/Thesis_Maps", layer = "CV_huc")
 cv_huc <- fortify(cv_huc)
-cv_streams <- readOGR(dsn = "C:/Users/tiffn_000/Google Drive/Manuscripts/unshared/Thesis_Maps", layer = "CV_streams")
+cv_streams <- readOGR(dsn = "C:/Users/tiffn_000/Google Drive/Manuscripts/unshared/Thesis_Maps", layer = "CV_streamsmerge")
 cv_streams <- fortify(cv_streams)
 unimp_sites <- readOGR(dsn = "C:/Users/tiffn_000/Google Drive/Manuscripts/unshared/Thesis_Maps", layer = "unimpaired_final_thesis")
 unimp_sites<- as.data.frame(unimp_sites)
@@ -118,12 +118,12 @@ test <- vol_all_merge
 test$vol_hy_TAF <- cut(test$vol_hy_AF/1000, pretty(test$vol_hy_AF/1000,6, min.n=6))
 breaks_hy_vol <- pretty(test$vol_hy_AF/1000,6, min.n=6)
 maptest <- ggmap(cal2)+	
-		geom_polygon(data=CP, aes(x=long, y=lat), alpha=0.6, fill="white")+
-		geom_polygon(data=leftover, aes(x=long, y=lat), fill="white")+
-		geom_polygon(data=cv_huc, aes(x=long, y=lat, group=group, fill=group), alpha=0.2)+
-		geom_line(data=cv_streams, aes(x=long, y=lat, group=group), size=0.2,color="blue", alpha=0.2)+
-#		geom_point(data=unimp_sites, aes(x=dec_long_v, y=dec_lat_va))+
-		geom_point(data=test, aes(x=dec_long_v, y=dec_lat_va,size=vol_hy_TAF, color=vol_hy_TAF, shape=status))+
+#		geom_polygon(data=CP, aes(x=long, y=lat), alpha=0.6, fill="white")+
+#		geom_polygon(data=leftover, aes(x=long, y=lat), fill="white")+
+#		geom_polygon(data=cv_huc, aes(x=long, y=lat, group=group, fill=group), alpha=0.2)+
+#		geom_line(data=cv_streams, aes(x=long, y=lat, group=group), size=0.2,color="blue", alpha=0.2)+
+##		geom_point(data=unimp_sites, aes(x=dec_long_v, y=dec_lat_va))+
+		geom_point(data=test, aes(x=dec_long_v, y=dec_lat_va,size=vol_hy_TAF, fill=vol_hy_TAF, shape=status))+
 		scale_color_brewer(palette = "YlGnBu", direction=1,drop=FALSE) +
 		scale_size_discrete(drop=FALSE)+
 		geom_polygon(data=cal_outline2, aes(x=long, y=lat), alpha=0, color="black", size=0.2)+
