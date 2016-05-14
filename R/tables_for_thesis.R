@@ -400,10 +400,11 @@ for(q in 1:7){
 	COM_90_df[COM_90_df==1] <- NA
 	COM90_full[[q]] <- COM_90_df
 }
-load("C:\\Users\\tiffn_000\\Documents\\workspaces\\apr_14_activesites.RData")
-COM90_full_df <- COM90_full[[1]]
+COM90_2 <- COM90_full
+load("C:\\Users\\tiffn_000\\Documents\\workspaces\\may_13_activesites.RData")
+COM90_full_df <- COM90_2[[1]]
 for(i in 2:7){
-	COM90_full_df <- merge(COM90_full_df,COM90_full[[i]],by="sthyyear")
+	COM90_full_df <- merge(COM90_full_df,COM90_2[[i]],by="sthyyear")
 }
 
 for(i in 2:length(COM90_full_df)){
@@ -1417,3 +1418,165 @@ COM90_magsd_imp <- data.frame(gauge =gauge_COM90, avg_DOHY=COM90_avg_DOHY, sd_DO
 		C_sd    =  C_sd    )
 
 write.csv(COM90_magsd_imp, file="C:\\Users\\tiffn_000\\Google Drive\\Manuscripts\\unshared\\Thesis_tables\\COM90_mag_sd_imp_updated.csv")
+
+
+
+
+##############
+##############
+###############
+
+
+simp_mags_trends2mod <- vector("list",7)
+for(i in 1:length(simp_mags_data)){
+	simp_mags_trends2mod[[i]] <- vector("list",length(simp_mags_data[[i]]))
+	names(simp_mags_trends2mod[[i]]) <- names(simp_mags_data[[i]])
+	for(k in 1:length(simp_mags_data[[i]])){
+		simp_mags_trends2mod[[i]][[k]] <- vector("list",length(c(1,2,3,5,6,7,8,9,10)))
+		for(j in 1:9){
+			vec<- c(1,2,3,5,6,7,8,9,10)
+			simp_mags_trends2mod[[i]][[k]][[j]] <- mtrendsfinal2(simp_mags_data[[i]][[k]][[1]][[vec[[j]]]],1800,
+					names(simp_mags_data[[i]])[[k]],names(simp_mags_data[[i]][[k]][[1]])[[vec[[j]]]])
+		}
+	}
+}
+simp_mags_trends2mod_unlist <- unlist(simp_mags_trends2mod, recursive=FALSE)
+simp_mags_trends2mod_unlist2 <- unlist(simp_mags_trends2mod_unlist, recursive=FALSE)
+simp_mags_trends2mod_df <- do.call("rbind.data.frame",simp_mags_trends2mod_unlist2)
+
+write.csv(simp_mags_trends2mod_df, file="C:\\Users\\tiffn_000\\Google Drive\\Manuscripts\\unshared\\Thesis_tables\\2_trends_fullMOD.csv")
+
+
+simp_mags_trendsimpmod <- vector("list",7)
+for(i in 1:length(simp_mags_data)){
+	simp_mags_trendsimpmod[[i]] <- vector("list",length(simp_mags_data[[i]]))
+	names(simp_mags_trendsimpmod[[i]]) <- names(simp_mags_data[[i]])
+	for(k in 1:length(simp_mags_data[[i]])){
+		simp_mags_trendsimpmod[[i]][[k]] <- vector("list",length(c(1,2,3,5,6,7,8,9,10)))
+		for(j in 1:9){
+			vec<- c(1,2,3,5,6,7,8,9,10)
+			if(names(simp_mags_data[[i]])[[k]]%in%SacV_gauges$site_no){
+				simp_mags_trendsimpmod[[i]][[k]][[j]] <- mtrendsfinal2(simp_mags_data[[i]][[k]][[1]][[vec[[j]]]],1970,
+						names(simp_mags_data[[i]])[[k]],names(simp_mags_data[[i]][[k]][[1]])[[vec[[j]]]])
+			}else if(names(simp_mags_data[[i]])[[k]]%in%SJV_gauges$site_no){
+				simp_mags_trendsimpmod[[i]][[k]][[j]] <- mtrendsfinal2(simp_mags_data[[i]][[k]][[1]][[vec[[j]]]],1989,
+						names(simp_mags_data[[i]])[[k]],names(simp_mags_data[[i]][[k]][[1]])[[vec[[j]]]])	
+			}
+		}
+	}
+}
+simp_mags_trendsimpmod_unlist <- unlist(simp_mags_trendsimpmod, recursive=FALSE)
+simp_mags_trendsimpmod_unlist2 <- unlist(simp_mags_trendsimpmod_unlist, recursive=FALSE)
+simp_mags_trendsimpmod_df <- do.call("rbind.data.frame",simp_mags_trendsimpmod_unlist2)
+
+write.csv(simp_mags_trendsimpmod_df, file="C:\\Users\\tiffn_000\\Google Drive\\Manuscripts\\unshared\\Thesis_tables\\2_trends_impMOD.csv")
+dohy <- data.frame(DOHY= seq(1,365,1),DOY=seq.Date(as.Date("10-01-2000",format="%m-%d-%Y"),as.Date("09-30-2001",format="%m-%d-%Y"),by="day"))
+
+simp_mags_data_unlist <- unlist(simp_mags_data, recursive=FALSE)
+
+COM90_full_trendmod <- vector("list",93)
+actual_start <- rep(NA,93)
+for(i in 1:93){ 
+	actual_start[[i]] <- simp_mags_data_unlist[[i]]$all$hy$sthyyear[[1]]
+	COM90_full_trendmod[[i]] <- mtrendsfinalCOM(COM90_full_df[[i+1]], COM90_full_df[[1]],actual_start[[i]],1800, gauge_COM90[[i]], period="hy")
+}
+COM90_full_trendmoddf <- do.call(rbind.data.frame,COM90_full_trendmod)
+
+write.csv(COM90_full_trendmoddf, file="C:\\Users\\tiffn_000\\Google Drive\\Manuscripts\\unshared\\Thesis_tables\\2_trend_COM_full_5MOD.csv")
+
+
+COM90_imp_trendmod <- vector("list",93)
+actual_start <- rep(NA,93)
+for(i in 1:93){ 
+	actual_start[[i]] <- simp_mags_data_unlist[[i]]$all$hy$sthyyear[[1]]
+	if(gauge_COM90[[i]]%in%SacV_gauges$site_no){
+		COM90_imp_trendmod[[i]] <- mtrendsfinalCOM(COM90_full_df[[i+1]], COM90_full_df[[1]],actual_start[[i]],1970, gauge_COM90[[i]], period="hy")
+	}else if(gauge_COM90[[i]]%in%SJV_gauges$site_no){
+		COM90_imp_trendmod[[i]] <- mtrendsfinalCOM(COM90_full_df[[i+1]], COM90_full_df[[1]],actual_start[[i]],1989, gauge_COM90[[i]], period="hy")
+	}
+}
+COM90_imp_trendmoddf <- do.call(rbind.data.frame,COM90_imp_trendmod)
+
+write.csv(COM90_imp_trendmoddf, file="C:\\Users\\tiffn_000\\Google Drive\\Manuscripts\\unshared\\Thesis_tables\\2_trend_COM_imp_5MOD.csv")
+
+
+
+
+dwt(lm(rollmean(simp_mags_data[[1]][[2]][[1]][[1]]$TotVolAbv_acft[which(simp_mags_data[[1]][[2]][[1]][[1]]$TotVolAbv_acft!=0)],5)~index(rollmean(simp_mags_data[[1]][[2]][[1]][[1]]$TotVolAbv_acft[which(simp_mags_data[[1]][[2]][[1]][[1]]$TotVolAbv_acft!=0)],5))), max.lag=5)
+
+blah <- dwt(lm(simp_mags_data[[1]][[2]][[1]][[1]]$TotVolAbv_acft[which(simp_mags_data[[1]][[2]][[1]][[1]]$TotVolAbv_acft!=0)]~index(simp_mags_data[[1]][[2]][[1]][[1]]$TotVolAbv_acft[which(simp_mags_data[[1]][[2]][[1]][[1]]$TotVolAbv_acft!=0)])),max.lag=5)
+
+#####################################
+simp_mags_trends_1mod <- vector("list",7)
+for(i in 1:length(simp_mags_data)){
+	simp_mags_trends_1mod[[i]] <- vector("list",length(simp_mags_data[[i]]))
+	names(simp_mags_trends_1mod[[i]]) <- names(simp_mags_data[[i]])
+	for(k in 1:length(simp_mags_data[[i]])){
+		simp_mags_trends_1mod[[i]][[k]] <- vector("list",length(c(1,2,3,5,6,7,8,9,10)))
+		for(j in 1:9){
+			vec<- c(1,2,3,5,6,7,8,9,10)
+			simp_mags_trends_1mod[[i]][[k]][[j]] <- mtrendsfinal2(simp_mags_data[[i]][[k]][[1]][[vec[[j]]]],1800,
+					names(simp_mags_data[[i]])[[k]],names(simp_mags_data[[i]][[k]][[1]])[[vec[[j]]]])
+		}
+	}
+}
+simp_mags_trends_1mod_unlist <- unlist(simp_mags_trends_1mod, recursive=FALSE)
+simp_mags_trends_1mod_unlist2 <- unlist(simp_mags_trends_1mod_unlist, recursive=FALSE)
+simp_mags_trends_1mod_df <- do.call("rbind.data.frame",simp_mags_trends_1mod_unlist2)
+
+write.csv(simp_mags_trends_1mod_df, file="C:\\Users\\tiffn_000\\Google Drive\\Manuscripts\\unshared\\Thesis_tables\\2_trends_full_5dwtMOD.csv")
+
+
+
+simp_mags_trendsimpmod <- vector("list",7)
+for(i in 1:length(simp_mags_data)){
+	simp_mags_trendsimpmod[[i]] <- vector("list",length(simp_mags_data[[i]]))
+	names(simp_mags_trendsimpmod[[i]]) <- names(simp_mags_data[[i]])
+	for(k in 1:length(simp_mags_data[[i]])){
+		simp_mags_trendsimpmod[[i]][[k]] <- vector("list",length(c(1,2,3,5,6,7,8,9,10)))
+		for(j in 1:9){
+			vec<- c(1,2,3,5,6,7,8,9,10)
+			if(names(simp_mags_data[[i]])[[k]]%in%SacV_gauges$site_no){
+				simp_mags_trendsimpmod[[i]][[k]][[j]] <- mtrendsfinal2(simp_mags_data[[i]][[k]][[1]][[vec[[j]]]],1970,
+						names(simp_mags_data[[i]])[[k]],names(simp_mags_data[[i]][[k]][[1]])[[vec[[j]]]])
+			}else if(names(simp_mags_data[[i]])[[k]]%in%SJV_gauges$site_no){
+				simp_mags_trendsimpmod[[i]][[k]][[j]] <- mtrendsfinal2(simp_mags_data[[i]][[k]][[1]][[vec[[j]]]],1989,
+						names(simp_mags_data[[i]])[[k]],names(simp_mags_data[[i]][[k]][[1]])[[vec[[j]]]])	
+			}
+		}
+	}
+}
+simp_mags_trendsimpmod_unlist <- unlist(simp_mags_trendsimpmod, recursive=FALSE)
+simp_mags_trendsimpmod_unlist2 <- unlist(simp_mags_trendsimpmod_unlist, recursive=FALSE)
+simp_mags_trendsimpmod_df <- do.call("rbind.data.frame",simp_mags_trendsimpmod_unlist2)
+
+write.csv(simp_mags_trendsimpmod_df, file="C:\\Users\\tiffn_000\\Google Drive\\Manuscripts\\unshared\\Thesis_tables\\2_trends_impdwtMOD.csv")
+dohy <- data.frame(DOHY= seq(1,365,1),DOY=seq.Date(as.Date("10-01-2000",format="%m-%d-%Y"),as.Date("09-30-2001",format="%m-%d-%Y"),by="day"))
+
+simp_mags_data_unlist <- unlist(simp_mags_data, recursive=FALSE)
+
+COM90_full_trendmod <- vector("list",93)
+actual_start <- rep(NA,93)
+for(i in 1:93){ 
+	actual_start[[i]] <- simp_mags_data_unlist[[i]]$all$hy$sthyyear[[1]]
+	COM90_full_trendmod[[i]] <- mtrendsfinal2COM(COM90_full_df[[i+1]], COM90_full_df[[1]],actual_start[[i]],1800, gauge_COM90[[i]], period="hy")
+}
+COM90_full_trendmoddf <- do.call(rbind.data.frame,COM90_full_trendmod)
+
+write.csv(COM90_full_trendmoddf, file="C:\\Users\\tiffn_000\\Google Drive\\Manuscripts\\unshared\\Thesis_tables\\2_trend_COM_full_5dwtMOD.csv")
+
+
+COM90_imp_trendmod <- vector("list",93)
+actual_start <- rep(NA,93)
+for(i in 1:93){ 
+	actual_start[[i]] <- simp_mags_data_unlist[[i]]$all$hy$sthyyear[[1]]
+	if(gauge_COM90[[i]]%in%SacV_gauges$site_no){
+		COM90_imp_trendmod[[i]] <- mtrendsfinal2COM(COM90_full_df[[i+1]], COM90_full_df[[1]],actual_start[[i]],1970, gauge_COM90[[i]], period="hy")
+	}else if(gauge_COM90[[i]]%in%SJV_gauges$site_no){
+		COM90_imp_trendmod[[i]] <- mtrendsfinal2COM(COM90_full_df[[i+1]], COM90_full_df[[1]],actual_start[[i]],1989, gauge_COM90[[i]], period="hy")
+	}
+}
+COM90_imp_trendmoddf <- do.call(rbind.data.frame,COM90_imp_trendmod)
+
+write.csv(COM90_imp_trendmoddf, file="C:\\Users\\tiffn_000\\Google Drive\\Manuscripts\\unshared\\Thesis_tables\\2_trend_COM_imp_5dwtMOD.csv")
+
