@@ -20,6 +20,19 @@ sites <- unlist(strsplit(unlist(strsplit(sites,".csv")),"g"))
 ######################
 spall <- sites[sites != ""]
 
+cleanupHYfrom6MON <- function(inputhy, input6mon){
+	if (missing(inputhy))
+		stop("Input data to clean is required.")
+	if (missing(input6mon))
+		stop("Input data to clean is required.")
+	for(i in length(inputhy$Data):1){
+		if(sum(input6mon$Data[[i]]$Available, na.rm=TRUE)<165){
+			inputhy$Data[[i]] <- NULL
+		}
+	}	
+	return(inputhy)
+}
+
 for(i in 1:1){
 	batchnum <- i
 	spbatch <- spall[(15*i-14):(15*i)]
@@ -58,7 +71,7 @@ for(i in 1:1){
 			spbatch[[z]]$Winter_6mon <- Split6Winter(spbatch[[z]]$prep, spbatch[[z]]$Index, spbatch[[z]]$thresholds_maf)
 			spbatch[[z]]$Winter_monthly <- SplitWinterMonthly(spbatch[[z]]$prep, spbatch[[z]]$Index, spbatch[[z]]$thresholds_maf)
 			spbatch[[z]]$HydroYear <- SplitHydroYear(spbatch[[z]]$prep, spbatch[[z]]$Index, spbatch[[z]]$thresholds_maf)	
-			spbatch[[z]]$HydroYear <- cleanupHY(spbatch[[z]]$HydroYear)
+			spbatch[[z]]$HydroYear <- cleanupHYfrom6MON(spbatch[[z]]$HydroYear,spbatch[[z]]$Winter_6mon)
 			spbatch[[z]]$Winter_6mon <- cleanup6MON(spbatch[[z]]$Winter_6mon)
 			spbatch[[z]]$Winter_3mon <- cleanup3MON(spbatch[[z]]$Winter_3mon)			
 		}
@@ -187,3 +200,33 @@ for(w in 1:length(thresholdsvect)){
 names(gwmodel_data)<- thresholdsvect
 save(gwmodel_data, file="C:/Users/tiffn_000/Google Drive/Kaweah/vol_data_for_kaweah_gwmodel.RData")
 
+load("C:/Users/tiffn_000/Google Drive/Kaweah/vol_data_for_kaweah_gwmodel.RData")
+baseyear <- data.frame(sthyyear=seq(1900,2016,1))
+final_data <- vector("list",10)
+for(i in 1:length(final_data)){
+	final_data[[i]] <- vector("list",6)
+	for(j in 1:length(final_data[[i]])){
+		final_kw_all <- merge(baseyear,gwmodel_data[[i]]$kw_final$all[[j+4]][,c("TotVolAbv_acft","sthyyear")],by.x="sthyyear",by.y="sthyyear",all.x=TRUE)
+		final_kw_all$TotVolAbv_acft[is.na(final_kw_all$TotVolAbv_acft)] <- 0
+		final_11211300_all <- merge(baseyear,gwmodel_data[[i]]$`11211300`$all[[j+4]][,c("TotVolAbv_acft","sthyyear")],by.x="sthyyear",by.y="sthyyear",all.x=TRUE)
+		final_11211300_all$TotVolAbv_acft[is.na(final_11211300_all$TotVolAbv_acft)] <- 0
+		final_11211790_all <- merge(baseyear,gwmodel_data[[i]]$`11211790`$all[[j+4]][,c("TotVolAbv_acft","sthyyear")],by.x="sthyyear",by.y="sthyyear",all.x=TRUE)
+		final_11211790_all$TotVolAbv_acft[is.na(final_11211790_all$TotVolAbv_acft)] <- 0
+		final_tul_all <- merge(baseyear,gwmodel_data[[i]]$tul_final$all[[j+4]][,c("TotVolAbv_acft","sthyyear")],by.x="sthyyear",by.y="sthyyear",all.x=TRUE)
+		final_tul_all$TotVolAbv_acft[is.na(final_tul_all$TotVolAbv_acft)] <- 0
+		
+		final_data[[i]][[j]] <- data.frame(IRV420_acft=(final_kw_all$TotVolAbv_acft+final_11211300_all$TotVolAbv_acft),
+										IRV421_acft=final_11211790_all$TotVolAbv_acft,
+										IRV10_acft=final_tul_all$TotVolAbv_acft,
+										sthyyear=baseyear$sthyyear)
+	}
+	names(final_data[[i]]) <- c("nov","dec","jan","feb","mar","apr")
+}
+names(final_data) <- names(gwmodel_data)
+
+for(i in 1:length(final_data)){
+	for(j in 1:length(final_data[[i]])){
+		final_data[[i]][[j]]$endhyyear <- final_data[[i]][[j]]$sthyyear+1
+		write.csv(final_data[[i]][[j]],file=paste("C:/Users/tiffn_000/Google Drive/Kaweah/",names(final_data)[[i]],names(final_data[[i]])[[j]],".csv",sep=""))
+	}
+}
