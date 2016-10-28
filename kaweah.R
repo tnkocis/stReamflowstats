@@ -20,6 +20,9 @@ sites <- unlist(strsplit(unlist(strsplit(sites,".csv")),"g"))
 ######################
 spall <- sites[sites != ""]
 
+
+load( "C:\\Users\\tiffn_000\\Documents\\workspaces\\REDO_base.RData")
+
 cleanupHYfrom6MON <- function(inputhy, input6mon){
 	if (missing(inputhy))
 		stop("Input data to clean is required.")
@@ -32,6 +35,7 @@ cleanupHYfrom6MON <- function(inputhy, input6mon){
 	}	
 	return(inputhy)
 }
+
 
 for(i in 1:1){
 	batchnum <- i
@@ -81,12 +85,15 @@ for(i in 1:1){
 }
 
 for(y in 90:99){	
+	threshchoice <- y
 	for(z in 1:1){
 			batchnum <- z
 			load(paste("C:\\Users\\tiffn_000\\Documents\\workspaces\\kaweah_full_record_spbatch_",batchnum,".RData", sep=""))
+			load( "C:\\Users\\tiffn_000\\Documents\\workspaces\\REDO_base.RData")
+			
 	#		load(paste("C:\\Users\\tiffn_000\\Documents\\workspaces\\functions_5_13_16",".RData", sep=""))
 			
-		thresholdchoice <- y
+		thresholdchoice <- threshchoice
 		thresholdtext <- paste(thresholdchoice,"%",sep="")
 		
 	#		for(k in 1:length(spbatch)){
@@ -103,7 +110,7 @@ for(y in 90:99){
 				names(test_peakflows[[k]]) <- c("peakflows")
 				test_peakflows[[k]]$peakflows <- vector("list", length=length(spbatch[[k]]$HydroYear$Data))
 				for(i in 1:length(spbatch[[k]]$HydroYear$Data)){
-					test_peakflows[[k]]$peakflows[[i]] <- simplified_peakanalysis(input=spbatch[[k]]$HydroYear$Data[[i]],
+					test_peakflows[[k]]$peakflows[[i]] <- edit_simplified_peakanalysis(input=spbatch[[k]]$HydroYear$Data[[i]],
 							width=3, threshold=(eval(parse(text=paste("spbatch[[k]]$thresholds_maf$P",thresholdchoice,"maf/(86400*2.29568411e-5*1e-6)",sep="")))), 
 							thresholdname=thresholdtext, mastertime="hy", Index=spbatch[[k]]$Index)
 
@@ -185,34 +192,34 @@ for(y in 90:99){
 	#		}
 	#		
 	
-			save.image(paste("C:\\Users\\tiffn_000\\Documents\\workspaces\\kaweah_percentile_",thresholdchoice,"_spbatch_",batchnum,".RData", sep=""))
+			save.image(paste("C:\\Users\\tiffn_000\\Documents\\workspaces\\kaweahREDO_percentile_",thresholdchoice,"_spbatch_",batchnum,".RData", sep=""))
 		
 	}	
 }
 		
 thresholdsvect <- c(90:99)	
-gwmodel_data <- vector("list", length(thresholdsvect))
-for(w in 1:length(thresholdsvect)){
-	percnum <- w
-	load(paste("C:\\Users\\tiffn_000\\Documents\\workspaces\\kaweah_percentile_",thresholdsvect[[percnum]],"_spbatch_",1,".RData", sep=""))
-	gwmodel_data[[percnum]] <- test_split
+gwmodel_data2 <- vector("list", length(thresholdsvect))
+for(r in 1:length(thresholdsvect)){
+	percnum2 <- r
+	load(paste("C:\\Users\\tiffn_000\\Documents\\workspaces\\kaweahREDO_percentile_",thresholdsvect[[percnum2]],"_spbatch_",1,".RData", sep=""))
+	gwmodel_data2[[percnum2]] <- test_split
 }
-names(gwmodel_data)<- thresholdsvect
-save(gwmodel_data, file="C:/Users/tiffn_000/Google Drive/Kaweah/vol_data_for_kaweah_gwmodel.RData")
+names(gwmodel_data2)<- thresholdsvect
+save(gwmodel_data2, file="C:/Users/tiffn_000/Google Drive/KaweahREDO/vol_data_for_kaweah_gwmodel.RData")
 
-load("C:/Users/tiffn_000/Google Drive/Kaweah/vol_data_for_kaweah_gwmodel.RData")
+load("C:/Users/tiffn_000/Google Drive/KaweahREDO/vol_data_for_kaweah_gwmodel.RData")
 baseyear <- data.frame(sthyyear=seq(1900,2016,1))
 final_data <- vector("list",10)
 for(i in 1:length(final_data)){
 	final_data[[i]] <- vector("list",6)
 	for(j in 1:length(final_data[[i]])){
-		final_kw_all <- merge(baseyear,gwmodel_data[[i]]$kw_final$all[[j+4]][,c("TotVolAbv_acft","sthyyear")],by.x="sthyyear",by.y="sthyyear",all.x=TRUE)
+		final_kw_all <- merge(baseyear,gwmodel_data2[[i]]$kw_final$all[[j+4]][,c("TotVolAbv_acft","sthyyear")],by.x="sthyyear",by.y="sthyyear",all.x=TRUE)
 		final_kw_all$TotVolAbv_acft[is.na(final_kw_all$TotVolAbv_acft)] <- 0
-		final_11211300_all <- merge(baseyear,gwmodel_data[[i]]$`11211300`$all[[j+4]][,c("TotVolAbv_acft","sthyyear")],by.x="sthyyear",by.y="sthyyear",all.x=TRUE)
+		final_11211300_all <- merge(baseyear,gwmodel_data2[[i]]$`11211300`$all[[j+4]][,c("TotVolAbv_acft","sthyyear")],by.x="sthyyear",by.y="sthyyear",all.x=TRUE)
 		final_11211300_all$TotVolAbv_acft[is.na(final_11211300_all$TotVolAbv_acft)] <- 0
-		final_11211790_all <- merge(baseyear,gwmodel_data[[i]]$`11211790`$all[[j+4]][,c("TotVolAbv_acft","sthyyear")],by.x="sthyyear",by.y="sthyyear",all.x=TRUE)
+		final_11211790_all <- merge(baseyear,gwmodel_data2[[i]]$`11211790`$all[[j+4]][,c("TotVolAbv_acft","sthyyear")],by.x="sthyyear",by.y="sthyyear",all.x=TRUE)
 		final_11211790_all$TotVolAbv_acft[is.na(final_11211790_all$TotVolAbv_acft)] <- 0
-		final_tul_all <- merge(baseyear,gwmodel_data[[i]]$tul_final$all[[j+4]][,c("TotVolAbv_acft","sthyyear")],by.x="sthyyear",by.y="sthyyear",all.x=TRUE)
+		final_tul_all <- merge(baseyear,gwmodel_data2[[i]]$tul_final$all[[j+4]][,c("TotVolAbv_acft","sthyyear")],by.x="sthyyear",by.y="sthyyear",all.x=TRUE)
 		final_tul_all$TotVolAbv_acft[is.na(final_tul_all$TotVolAbv_acft)] <- 0
 		
 		final_data[[i]][[j]] <- data.frame(IRV420_acft=(final_kw_all$TotVolAbv_acft+final_11211300_all$TotVolAbv_acft),
@@ -222,11 +229,11 @@ for(i in 1:length(final_data)){
 	}
 	names(final_data[[i]]) <- c("nov","dec","jan","feb","mar","apr")
 }
-names(final_data) <- names(gwmodel_data)
+names(final_data) <- names(gwmodel_data2)
 
 for(i in 1:length(final_data)){
 	for(j in 1:length(final_data[[i]])){
 		final_data[[i]][[j]]$endhyyear <- final_data[[i]][[j]]$sthyyear+1
-		write.csv(final_data[[i]][[j]],file=paste("C:/Users/tiffn_000/Google Drive/Kaweah/",names(final_data)[[i]],names(final_data[[i]])[[j]],".csv",sep=""))
+		write.csv(final_data[[i]][[j]],file=paste("C:/Users/tiffn_000/Google Drive/KaweahREDO/",names(final_data)[[i]],names(final_data[[i]])[[j]],".csv",sep=""))
 	}
 }
