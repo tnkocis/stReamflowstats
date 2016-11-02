@@ -157,7 +157,9 @@ edit_simplified_peakanalysis <- function(input, width, threshold,thresholdname, 
 				if(all(is.na(threshlog))){
 					totalvolabv <- NA
 				}else{ 
-					totalvolabv <- sum(dischrange[threshloghy], na.rm=TRUE)*86400*2.29568411e-5
+					volshy <- dischrange[thresmonloghy]
+					volsabvhy <- volshy - threshold
+					totalvolabv <-sum(volsabvhy,na.rm=TRUE)*86400*2.29568411e-5
 				}
 				if(all(is.na(peakflow))){
 					avgpeakflow <-0
@@ -383,6 +385,30 @@ for(y in 90:90){
 				for(l in 1:15){
 					test_peakflowmags_full_bind[[i]][[l]] <- rbind.data.frame(test_peakflowmags_full_bind[[i]][[l]],
 							test_peakflowmags_full[[k]][[i]][[l]])
+				}
+			}
+		}
+		
+		
+		test_peakflowmags_postimp <- vector("list", length(spbatch))
+		for(k in 1:length(spbatch)){
+			#change here for post-imp period?
+			if(names(test_split)[[k]]%in%SacV_gauges$site_no){
+				postimpyear <- 1969
+			}else{
+				postimpyear <- 1988
+			}
+			test_peakflowmags_postimp[[k]] <- simplified_peakflowmags(test_split[[k]],names(test_split)[[k]],postimpyear)
+			
+		}
+		names(test_peakflowmags_postimp) <- names(spbatch)
+		
+		test_peakflowmags_postimp_bind <- test_peakflowmags_postimp[[1]]
+		for(k in 2:length(spbatch)){
+			for(i in 1:6){
+				for(l in 1:15){
+					test_peakflowmags_postimp_bind[[i]][[l]] <- rbind.data.frame(test_peakflowmags_postimp_bind[[i]][[l]],
+							test_peakflowmags_postimp[[k]][[i]][[l]])
 				}
 			}
 		}
