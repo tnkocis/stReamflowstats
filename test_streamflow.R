@@ -1,7 +1,8 @@
 # TODO: Add comment
 # 
 # Author: tnkocis
-###############################################################################
+#################################################################################
+# DO NOT USE PEAKFLOW SUMMARY WITHOUT RERUNNING
 
 edit_simplified_peakanalysis <- function(input, width, threshold,thresholdname, mastertime, Index){
 	if(!require(zoo)){
@@ -372,25 +373,62 @@ for(y in 90:90){
 		}
 		names(test_split)<- names(spbatch)	
 		
-		test_peakflowmags_full <- vector("list", length(spbatch))
+		
+		edit_simplified_peakflowmags <- function(pfstatsdf, gauge, year){
+			top <- vector("list", 6)
+			for(i in 1:6){
+				for(k in 1:15){
+					mean_totvol_TAF <- mean(pfstatsdf[[i]][[k]]$TotVolAbv_acft[which(pfstatsdf[[i]][[k]]$TotVolAbv_acft!=0&pfstatsdf[[i]][[k]]$sthyyear>year)])/1000
+					mean_totdays <- mean(pfstatsdf[[i]][[k]]$TotDaysAbv[which(pfstatsdf[[i]][[k]]$TotDaysAbv!=0&pfstatsdf[[i]][[k]]$sthyyear>year)])
+					mean_numpeaks <- mean(pfstatsdf[[i]][[k]]$numpeaks[which(pfstatsdf[[i]][[k]]$numpeaks!=0&pfstatsdf[[i]][[k]]$sthyyear>year)])
+					frac_zero <- length(which(pfstatsdf[[i]][[k]]$numpeaks==0&pfstatsdf[[i]][[k]]$sthyyear>year))/length(pfstatsdf[[i]][[k]]$numpeaks[which(pfstatsdf[[i]][[k]]$sthyyear>year)])
+					frac_nonzero <- 1-frac_zero
+					num_zero <-length(which(pfstatsdf[[i]][[k]]$numpeaks==0&pfstatsdf[[i]][[k]]$sthyyear>year))
+					num_nonzero <-length(which(pfstatsdf[[i]][[k]]$numpeaks!=0&pfstatsdf[[i]][[k]]$sthyyear>year))
+					sd_totvol_TAF <- sd(pfstatsdf[[i]][[k]]$TotVolAbv_acft[which(pfstatsdf[[i]][[k]]$TotVolAbv_acft!=0&pfstatsdf[[i]][[k]]$sthyyear>year)])/1000
+					sd_totdays <- sd(pfstatsdf[[i]][[k]]$TotDaysAbv[which(pfstatsdf[[i]][[k]]$TotDaysAbv!=0&pfstatsdf[[i]][[k]]$sthyyear>year)])
+					sd_numpeaks <- sd(pfstatsdf[[i]][[k]]$numpeaks[which(pfstatsdf[[i]][[k]]$numpeaks!=0&pfstatsdf[[i]][[k]]$sthyyear>year)])
+					
+					meandf <- data.frame(mean_totvol_TAF =mean_totvol_TAF ,sd_totvol_TAF =sd_totvol_TAF ,
+							mean_totdays=mean_totdays,sd_totdays=sd_totdays,
+							mean_numpeaks=mean_numpeaks,sd_numpeaks=sd_numpeaks,
+							frac_zero=frac_zero,
+							frac_nonzero=frac_nonzero,
+							num_zero=num_zero,
+							num_nonzero=num_nonzero,
+							gauge=gauge,
+							styear=year)
+					
+					top[[i]][[k]] <- meandf	
+				}
+				names(top[[i]]) <- names(pfstatsdf[[i]])
+			}
+			names(top)<- names(pfstatsdf)
+			return(top)
+		}
+		
+		test_peakflowmags_full_edit <- vector("list", length(spbatch))
 		for(k in 1:length(spbatch)){
-			test_peakflowmags_full[[k]] <- simplified_peakflowmags(test_split[[k]],names(test_split)[[k]],1800)
+			test_peakflowmags_full_edit[[k]] <- edit_simplified_peakflowmags(test_split[[k]],names(test_split)[[k]],1800)
 			
 		}
-		names(test_peakflowmags_full) <- names(spbatch)
+		names(test_peakflowmags_full_edit) <- names(spbatch)
 		
-		test_peakflowmags_full_bind <- test_peakflowmags_full[[1]]
+		
+		
+	
+		test_peakflowmags_full_bind_edit <- test_peakflowmags_full_edit[[1]]
 		for(k in 2:length(spbatch)){
 			for(i in 1:6){
 				for(l in 1:15){
-					test_peakflowmags_full_bind[[i]][[l]] <- rbind.data.frame(test_peakflowmags_full_bind[[i]][[l]],
-							test_peakflowmags_full[[k]][[i]][[l]])
+					test_peakflowmags_full_bind_edit[[i]][[l]] <- rbind.data.frame(test_peakflowmags_full_bind_edit[[i]][[l]],
+							test_peakflowmags_full_edit[[k]][[i]][[l]])
 				}
 			}
 		}
 		
 		
-		test_peakflowmags_postimp <- vector("list", length(spbatch))
+		test_peakflowmags_postimp_edit <- vector("list", length(spbatch))
 		for(k in 1:length(spbatch)){
 			#change here for post-imp period?
 			if(names(test_split)[[k]]%in%SacV_gauges$site_no){
@@ -398,22 +436,140 @@ for(y in 90:90){
 			}else{
 				postimpyear <- 1988
 			}
-			test_peakflowmags_postimp[[k]] <- simplified_peakflowmags(test_split[[k]],names(test_split)[[k]],postimpyear)
+			test_peakflowmags_postimp_edit[[k]] <- edit_simplified_peakflowmags(test_split[[k]],names(test_split)[[k]],postimpyear)
 			
 		}
-		names(test_peakflowmags_postimp) <- names(spbatch)
+		names(test_peakflowmags_postimp_edit) <- names(spbatch)
 		
-		test_peakflowmags_postimp_bind <- test_peakflowmags_postimp[[1]]
+		test_peakflowmags_postimp_bind_edit <- test_peakflowmags_postimp_edit[[1]]
 		for(k in 2:length(spbatch)){
 			for(i in 1:6){
 				for(l in 1:15){
-					test_peakflowmags_postimp_bind[[i]][[l]] <- rbind.data.frame(test_peakflowmags_postimp_bind[[i]][[l]],
-							test_peakflowmags_postimp[[k]][[i]][[l]])
+					test_peakflowmags_postimp_bind_edit[[i]][[l]] <- rbind.data.frame(test_peakflowmags_postimp_bind_edit[[i]][[l]],
+							test_peakflowmags_postimp_edit[[k]][[i]][[l]])
 				}
 			}
 		}
 		
+		write.csv(test_peakflowmags_full_bind_edit$all$hy,"C:/Users/tiffn_000/Google Drive/Manuscripts/redo_numbers/full_all_hy.csv")
+		write.csv(test_peakflowmags_full_bind_edit$all$mon6,"C:/Users/tiffn_000/Google Drive/Manuscripts/redo_numbers/full_all_mon6.csv")
+		write.csv(test_peakflowmags_full_bind_edit$all$mon3,"C:/Users/tiffn_000/Google Drive/Manuscripts/redo_numbers/full_all_mon3.csv")
+		write.csv(test_peakflowmags_full_bind_edit$all$nov,"C:/Users/tiffn_000/Google Drive/Manuscripts/redo_numbers/full_all_nov.csv")
+		write.csv(test_peakflowmags_full_bind_edit$all$dec,"C:/Users/tiffn_000/Google Drive/Manuscripts/redo_numbers/full_all_dec.csv")
+		write.csv(test_peakflowmags_full_bind_edit$all$jan,"C:/Users/tiffn_000/Google Drive/Manuscripts/redo_numbers/full_all_jan.csv")
+		write.csv(test_peakflowmags_full_bind_edit$all$feb,"C:/Users/tiffn_000/Google Drive/Manuscripts/redo_numbers/full_all_feb.csv")
+		write.csv(test_peakflowmags_full_bind_edit$all$mar,"C:/Users/tiffn_000/Google Drive/Manuscripts/redo_numbers/full_all_mar.csv")
+		write.csv(test_peakflowmags_full_bind_edit$all$apr,"C:/Users/tiffn_000/Google Drive/Manuscripts/redo_numbers/full_all_apr.csv")
 		
+		write.csv(test_peakflowmags_postimp_bind_edit$all$hy,"C:/Users/tiffn_000/Google Drive/Manuscripts/redo_numbers/postimp_all_hy.csv")
+		write.csv(test_peakflowmags_postimp_bind_edit$all$mon6,"C:/Users/tiffn_000/Google Drive/Manuscripts/redo_numbers/postimp_all_mon6.csv")
+		write.csv(test_peakflowmags_postimp_bind_edit$all$mon3,"C:/Users/tiffn_000/Google Drive/Manuscripts/redo_numbers/postimp_all_mon3.csv")
+		write.csv(test_peakflowmags_postimp_bind_edit$all$nov,"C:/Users/tiffn_000/Google Drive/Manuscripts/redo_numbers/postimp_all_nov.csv")
+		write.csv(test_peakflowmags_postimp_bind_edit$all$dec,"C:/Users/tiffn_000/Google Drive/Manuscripts/redo_numbers/postimp_all_dec.csv")
+		write.csv(test_peakflowmags_postimp_bind_edit$all$jan,"C:/Users/tiffn_000/Google Drive/Manuscripts/redo_numbers/postimp_all_jan.csv")
+		write.csv(test_peakflowmags_postimp_bind_edit$all$feb,"C:/Users/tiffn_000/Google Drive/Manuscripts/redo_numbers/postimp_all_feb.csv")
+		write.csv(test_peakflowmags_postimp_bind_edit$all$mar,"C:/Users/tiffn_000/Google Drive/Manuscripts/redo_numbers/postimp_all_mar.csv")
+		write.csv(test_peakflowmags_postimp_bind_edit$all$apr,"C:/Users/tiffn_000/Google Drive/Manuscripts/redo_numbers/postimp_all_apr.csv")
+
+		write.csv(test_peakflowmags_full_bind_edit$W$hy,"C:/Users/tiffn_000/Google Drive/Manuscripts/redo_numbers/full_W_hy.csv")
+		write.csv(test_peakflowmags_full_bind_edit$W$mon6,"C:/Users/tiffn_000/Google Drive/Manuscripts/redo_numbers/full_W_mon6.csv")
+		write.csv(test_peakflowmags_full_bind_edit$W$mon3,"C:/Users/tiffn_000/Google Drive/Manuscripts/redo_numbers/full_W_mon3.csv")
+		write.csv(test_peakflowmags_full_bind_edit$W$nov,"C:/Users/tiffn_000/Google Drive/Manuscripts/redo_numbers/full_W_nov.csv")
+		write.csv(test_peakflowmags_full_bind_edit$W$dec,"C:/Users/tiffn_000/Google Drive/Manuscripts/redo_numbers/full_W_dec.csv")
+		write.csv(test_peakflowmags_full_bind_edit$W$jan,"C:/Users/tiffn_000/Google Drive/Manuscripts/redo_numbers/full_W_jan.csv")
+		write.csv(test_peakflowmags_full_bind_edit$W$feb,"C:/Users/tiffn_000/Google Drive/Manuscripts/redo_numbers/full_W_feb.csv")
+		write.csv(test_peakflowmags_full_bind_edit$W$mar,"C:/Users/tiffn_000/Google Drive/Manuscripts/redo_numbers/full_W_mar.csv")
+		write.csv(test_peakflowmags_full_bind_edit$W$apr,"C:/Users/tiffn_000/Google Drive/Manuscripts/redo_numbers/full_W_apr.csv")
+		
+		write.csv(test_peakflowmags_postimp_bind_edit$W$hy,"C:/Users/tiffn_000/Google Drive/Manuscripts/redo_numbers/postimp_W_hy.csv")
+		write.csv(test_peakflowmags_postimp_bind_edit$W$mon6,"C:/Users/tiffn_000/Google Drive/Manuscripts/redo_numbers/postimp_W_mon6.csv")
+		write.csv(test_peakflowmags_postimp_bind_edit$W$mon3,"C:/Users/tiffn_000/Google Drive/Manuscripts/redo_numbers/postimp_W_mon3.csv")
+		write.csv(test_peakflowmags_postimp_bind_edit$W$nov,"C:/Users/tiffn_000/Google Drive/Manuscripts/redo_numbers/postimp_W_nov.csv")
+		write.csv(test_peakflowmags_postimp_bind_edit$W$dec,"C:/Users/tiffn_000/Google Drive/Manuscripts/redo_numbers/postimp_W_dec.csv")
+		write.csv(test_peakflowmags_postimp_bind_edit$W$jan,"C:/Users/tiffn_000/Google Drive/Manuscripts/redo_numbers/postimp_W_jan.csv")
+		write.csv(test_peakflowmags_postimp_bind_edit$W$feb,"C:/Users/tiffn_000/Google Drive/Manuscripts/redo_numbers/postimp_W_feb.csv")
+		write.csv(test_peakflowmags_postimp_bind_edit$W$mar,"C:/Users/tiffn_000/Google Drive/Manuscripts/redo_numbers/postimp_W_mar.csv")
+		write.csv(test_peakflowmags_postimp_bind_edit$W$apr,"C:/Users/tiffn_000/Google Drive/Manuscripts/redo_numbers/postimp_W_apr.csv")
+
+		write.csv(test_peakflowmags_full_bind_edit$AN$hy,"C:/Users/tiffn_000/Google Drive/Manuscripts/redo_numbers/full_AN_hy.csv")
+		write.csv(test_peakflowmags_full_bind_edit$AN$mon6,"C:/Users/tiffn_000/Google Drive/Manuscripts/redo_numbers/full_AN_mon6.csv")
+		write.csv(test_peakflowmags_full_bind_edit$AN$mon3,"C:/Users/tiffn_000/Google Drive/Manuscripts/redo_numbers/full_AN_mon3.csv")
+		write.csv(test_peakflowmags_full_bind_edit$AN$nov,"C:/Users/tiffn_000/Google Drive/Manuscripts/redo_numbers/full_AN_nov.csv")
+		write.csv(test_peakflowmags_full_bind_edit$AN$dec,"C:/Users/tiffn_000/Google Drive/Manuscripts/redo_numbers/full_AN_dec.csv")
+		write.csv(test_peakflowmags_full_bind_edit$AN$jan,"C:/Users/tiffn_000/Google Drive/Manuscripts/redo_numbers/full_AN_jan.csv")
+		write.csv(test_peakflowmags_full_bind_edit$AN$feb,"C:/Users/tiffn_000/Google Drive/Manuscripts/redo_numbers/full_AN_feb.csv")
+		write.csv(test_peakflowmags_full_bind_edit$AN$mar,"C:/Users/tiffn_000/Google Drive/Manuscripts/redo_numbers/full_AN_mar.csv")
+		write.csv(test_peakflowmags_full_bind_edit$AN$apr,"C:/Users/tiffn_000/Google Drive/Manuscripts/redo_numbers/full_AN_apr.csv")
+		
+		write.csv(test_peakflowmags_postimp_bind_edit$AN$hy,"C:/Users/tiffn_000/Google Drive/Manuscripts/redo_numbers/postimp_AN_hy.csv")
+		write.csv(test_peakflowmags_postimp_bind_edit$AN$mon6,"C:/Users/tiffn_000/Google Drive/Manuscripts/redo_numbers/postimp_AN_mon6.csv")
+		write.csv(test_peakflowmags_postimp_bind_edit$AN$mon3,"C:/Users/tiffn_000/Google Drive/Manuscripts/redo_numbers/postimp_AN_mon3.csv")
+		write.csv(test_peakflowmags_postimp_bind_edit$AN$nov,"C:/Users/tiffn_000/Google Drive/Manuscripts/redo_numbers/postimp_AN_nov.csv")
+		write.csv(test_peakflowmags_postimp_bind_edit$AN$dec,"C:/Users/tiffn_000/Google Drive/Manuscripts/redo_numbers/postimp_AN_dec.csv")
+		write.csv(test_peakflowmags_postimp_bind_edit$AN$jan,"C:/Users/tiffn_000/Google Drive/Manuscripts/redo_numbers/postimp_AN_jan.csv")
+		write.csv(test_peakflowmags_postimp_bind_edit$AN$feb,"C:/Users/tiffn_000/Google Drive/Manuscripts/redo_numbers/postimp_AN_feb.csv")
+		write.csv(test_peakflowmags_postimp_bind_edit$AN$mar,"C:/Users/tiffn_000/Google Drive/Manuscripts/redo_numbers/postimp_AN_mar.csv")
+		write.csv(test_peakflowmags_postimp_bind_edit$AN$apr,"C:/Users/tiffn_000/Google Drive/Manuscripts/redo_numbers/postimp_AN_apr.csv")
+		
+		write.csv(test_peakflowmags_full_bind_edit$BN$hy,"C:/Users/tiffn_000/Google Drive/Manuscripts/redo_numbers/full_BN_hy.csv")
+		write.csv(test_peakflowmags_full_bind_edit$BN$mon6,"C:/Users/tiffn_000/Google Drive/Manuscripts/redo_numbers/full_BN_mon6.csv")
+		write.csv(test_peakflowmags_full_bind_edit$BN$mon3,"C:/Users/tiffn_000/Google Drive/Manuscripts/redo_numbers/full_BN_mon3.csv")
+		write.csv(test_peakflowmags_full_bind_edit$BN$nov,"C:/Users/tiffn_000/Google Drive/Manuscripts/redo_numbers/full_BN_nov.csv")
+		write.csv(test_peakflowmags_full_bind_edit$BN$dec,"C:/Users/tiffn_000/Google Drive/Manuscripts/redo_numbers/full_BN_dec.csv")
+		write.csv(test_peakflowmags_full_bind_edit$BN$jan,"C:/Users/tiffn_000/Google Drive/Manuscripts/redo_numbers/full_BN_jan.csv")
+		write.csv(test_peakflowmags_full_bind_edit$BN$feb,"C:/Users/tiffn_000/Google Drive/Manuscripts/redo_numbers/full_BN_feb.csv")
+		write.csv(test_peakflowmags_full_bind_edit$BN$mar,"C:/Users/tiffn_000/Google Drive/Manuscripts/redo_numbers/full_BN_mar.csv")
+		write.csv(test_peakflowmags_full_bind_edit$BN$apr,"C:/Users/tiffn_000/Google Drive/Manuscripts/redo_numbers/full_BN_apr.csv")
+		
+		write.csv(test_peakflowmags_postimp_bind_edit$BN$hy,"C:/Users/tiffn_000/Google Drive/Manuscripts/redo_numbers/postimp_BN_hy.csv")
+		write.csv(test_peakflowmags_postimp_bind_edit$BN$mon6,"C:/Users/tiffn_000/Google Drive/Manuscripts/redo_numbers/postimp_BN_mon6.csv")
+		write.csv(test_peakflowmags_postimp_bind_edit$BN$mon3,"C:/Users/tiffn_000/Google Drive/Manuscripts/redo_numbers/postimp_BN_mon3.csv")
+		write.csv(test_peakflowmags_postimp_bind_edit$BN$nov,"C:/Users/tiffn_000/Google Drive/Manuscripts/redo_numbers/postimp_BN_nov.csv")
+		write.csv(test_peakflowmags_postimp_bind_edit$BN$dec,"C:/Users/tiffn_000/Google Drive/Manuscripts/redo_numbers/postimp_BN_dec.csv")
+		write.csv(test_peakflowmags_postimp_bind_edit$BN$jan,"C:/Users/tiffn_000/Google Drive/Manuscripts/redo_numbers/postimp_BN_jan.csv")
+		write.csv(test_peakflowmags_postimp_bind_edit$BN$feb,"C:/Users/tiffn_000/Google Drive/Manuscripts/redo_numbers/postimp_BN_feb.csv")
+		write.csv(test_peakflowmags_postimp_bind_edit$BN$mar,"C:/Users/tiffn_000/Google Drive/Manuscripts/redo_numbers/postimp_BN_mar.csv")
+		write.csv(test_peakflowmags_postimp_bind_edit$BN$apr,"C:/Users/tiffn_000/Google Drive/Manuscripts/redo_numbers/postimp_BN_apr.csv")
+		
+		write.csv(test_peakflowmags_full_bind_edit$D$hy,"C:/Users/tiffn_000/Google Drive/Manuscripts/redo_numbers/full_D_hy.csv")
+		write.csv(test_peakflowmags_full_bind_edit$D$mon6,"C:/Users/tiffn_000/Google Drive/Manuscripts/redo_numbers/full_D_mon6.csv")
+		write.csv(test_peakflowmags_full_bind_edit$D$mon3,"C:/Users/tiffn_000/Google Drive/Manuscripts/redo_numbers/full_D_mon3.csv")
+		write.csv(test_peakflowmags_full_bind_edit$D$nov,"C:/Users/tiffn_000/Google Drive/Manuscripts/redo_numbers/full_D_nov.csv")
+		write.csv(test_peakflowmags_full_bind_edit$D$dec,"C:/Users/tiffn_000/Google Drive/Manuscripts/redo_numbers/full_D_dec.csv")
+		write.csv(test_peakflowmags_full_bind_edit$D$jan,"C:/Users/tiffn_000/Google Drive/Manuscripts/redo_numbers/full_D_jan.csv")
+		write.csv(test_peakflowmags_full_bind_edit$D$feb,"C:/Users/tiffn_000/Google Drive/Manuscripts/redo_numbers/full_D_feb.csv")
+		write.csv(test_peakflowmags_full_bind_edit$D$mar,"C:/Users/tiffn_000/Google Drive/Manuscripts/redo_numbers/full_D_mar.csv")
+		write.csv(test_peakflowmags_full_bind_edit$D$apr,"C:/Users/tiffn_000/Google Drive/Manuscripts/redo_numbers/full_D_apr.csv")
+		
+		write.csv(test_peakflowmags_postimp_bind_edit$D$hy,"C:/Users/tiffn_000/Google Drive/Manuscripts/redo_numbers/postimp_D_hy.csv")
+		write.csv(test_peakflowmags_postimp_bind_edit$D$mon6,"C:/Users/tiffn_000/Google Drive/Manuscripts/redo_numbers/postimp_D_mon6.csv")
+		write.csv(test_peakflowmags_postimp_bind_edit$D$mon3,"C:/Users/tiffn_000/Google Drive/Manuscripts/redo_numbers/postimp_D_mon3.csv")
+		write.csv(test_peakflowmags_postimp_bind_edit$D$nov,"C:/Users/tiffn_000/Google Drive/Manuscripts/redo_numbers/postimp_D_nov.csv")
+		write.csv(test_peakflowmags_postimp_bind_edit$D$dec,"C:/Users/tiffn_000/Google Drive/Manuscripts/redo_numbers/postimp_D_dec.csv")
+		write.csv(test_peakflowmags_postimp_bind_edit$D$jan,"C:/Users/tiffn_000/Google Drive/Manuscripts/redo_numbers/postimp_D_jan.csv")
+		write.csv(test_peakflowmags_postimp_bind_edit$D$feb,"C:/Users/tiffn_000/Google Drive/Manuscripts/redo_numbers/postimp_D_feb.csv")
+		write.csv(test_peakflowmags_postimp_bind_edit$D$mar,"C:/Users/tiffn_000/Google Drive/Manuscripts/redo_numbers/postimp_D_mar.csv")
+		write.csv(test_peakflowmags_postimp_bind_edit$D$apr,"C:/Users/tiffn_000/Google Drive/Manuscripts/redo_numbers/postimp_D_apr.csv")
+		
+		write.csv(test_peakflowmags_full_bind_edit$C$hy,"C:/Users/tiffn_000/Google Drive/Manuscripts/redo_numbers/full_C_hy.csv")
+		write.csv(test_peakflowmags_full_bind_edit$C$mon6,"C:/Users/tiffn_000/Google Drive/Manuscripts/redo_numbers/full_C_mon6.csv")
+		write.csv(test_peakflowmags_full_bind_edit$C$mon3,"C:/Users/tiffn_000/Google Drive/Manuscripts/redo_numbers/full_C_mon3.csv")
+		write.csv(test_peakflowmags_full_bind_edit$C$nov,"C:/Users/tiffn_000/Google Drive/Manuscripts/redo_numbers/full_C_nov.csv")
+		write.csv(test_peakflowmags_full_bind_edit$C$dec,"C:/Users/tiffn_000/Google Drive/Manuscripts/redo_numbers/full_C_dec.csv")
+		write.csv(test_peakflowmags_full_bind_edit$C$jan,"C:/Users/tiffn_000/Google Drive/Manuscripts/redo_numbers/full_C_jan.csv")
+		write.csv(test_peakflowmags_full_bind_edit$C$feb,"C:/Users/tiffn_000/Google Drive/Manuscripts/redo_numbers/full_C_feb.csv")
+		write.csv(test_peakflowmags_full_bind_edit$C$mar,"C:/Users/tiffn_000/Google Drive/Manuscripts/redo_numbers/full_C_mar.csv")
+		write.csv(test_peakflowmags_full_bind_edit$C$apr,"C:/Users/tiffn_000/Google Drive/Manuscripts/redo_numbers/full_C_apr.csv")
+		
+		write.csv(test_peakflowmags_postimp_bind_edit$C$hy,"C:/Users/tiffn_000/Google Drive/Manuscripts/redo_numbers/postimp_C_hy.csv")
+		write.csv(test_peakflowmags_postimp_bind_edit$C$mon6,"C:/Users/tiffn_000/Google Drive/Manuscripts/redo_numbers/postimp_C_mon6.csv")
+		write.csv(test_peakflowmags_postimp_bind_edit$C$mon3,"C:/Users/tiffn_000/Google Drive/Manuscripts/redo_numbers/postimp_C_mon3.csv")
+		write.csv(test_peakflowmags_postimp_bind_edit$C$nov,"C:/Users/tiffn_000/Google Drive/Manuscripts/redo_numbers/postimp_C_nov.csv")
+		write.csv(test_peakflowmags_postimp_bind_edit$C$dec,"C:/Users/tiffn_000/Google Drive/Manuscripts/redo_numbers/postimp_C_dec.csv")
+		write.csv(test_peakflowmags_postimp_bind_edit$C$jan,"C:/Users/tiffn_000/Google Drive/Manuscripts/redo_numbers/postimp_C_jan.csv")
+		write.csv(test_peakflowmags_postimp_bind_edit$C$feb,"C:/Users/tiffn_000/Google Drive/Manuscripts/redo_numbers/postimp_C_feb.csv")
+		write.csv(test_peakflowmags_postimp_bind_edit$C$mar,"C:/Users/tiffn_000/Google Drive/Manuscripts/redo_numbers/postimp_C_mar.csv")
+		write.csv(test_peakflowmags_postimp_bind_edit$C$apr,"C:/Users/tiffn_000/Google Drive/Manuscripts/redo_numbers/postimp_C_apr.csv")
 		#		for(i in 1:15){
 		#			write.csv(test_peakflowmags_full_bind$all[[i]], file=paste("C:\\Users\\tiffn_000\\Documents\\percentile_99\\peakflow_mags\\full\\all\\batch_",batchnum,"_",
 		#							names(test_peakflowmags_full_bind$all)[[i]],".csv", sep=""))
@@ -480,3 +636,187 @@ for(y in 90:90){
 #		write.csv(final_data[[i]][[j]],file=paste("C:/Users/tiffn_000/Documents/",names(final_data)[[i]],names(final_data[[i]])[[j]],".csv",sep=""))
 #	}
 #}
+
+
+
+
+
+COM90_full <- vector("list",1)
+for(q in 1:1){
+	batchnum <- q
+	load(paste("C:\\Users\\tiffn_000\\Documents\\workspaces\\REDO_spbatch93_percentile_",90,".RData", sep=""))
+	COM90_full <- vector("list",1)
+	COM_90 <- vector("list",length(spbatch))
+	for(k in 1:length(spbatch)){
+		blahday <- rep(NA,length(spbatch[[k]]$HydroYear$Data))
+		blahyear <- rep(NA,length(spbatch[[k]]$HydroYear$Data))
+		for(i in 1:length(spbatch[[k]]$HydroYear$Data)){
+			blah <- spbatch[[k]]$HydroYear$Data[[i]]$Discharge_acft_day
+			blah[blah<(spbatch[[k]]$thresholds_maf$P90maf*1e6)] <- 0
+			blahday[[i]] <- which(cumsum(blah)>=(sum(blah,na.rm=TRUE)/2))[[1]]
+			blahyear[[i]] <- as.numeric(format(spbatch[[k]]$HydroYear$Data[[i]]$Date[[1]],"%Y"))
+		}
+		COM_90[[k]] <- data.frame(COMday=blahday,sthyyear=blahyear)
+	}
+	
+	COM_90_df <- data.frame(sthyyear=seq(1900,2015,1))
+	for(i in 1:length(COM_90)){
+		COM_90_df <- merge(COM_90_df,COM_90[[i]], by.x="sthyyear",by.y="sthyyear", all.x=TRUE)
+	}
+	names(COM_90_df) <- c("sthyyear",paste(as.numeric(names(spbatch)),sep=""))
+	COM_90_df[COM_90_df==1] <- NA
+	COM90_full[[q]] <- COM_90_df
+}
+COM90_2 <- COM90_full
+#load("C:\\Users\\tiffn_000\\Documents\\workspaces\\may_13_activesites.RData")
+COM90_full_df <- COM90_2[[1]]
+#for(i in 2:7){
+#	COM90_full_df <- merge(COM90_full_df,COM90_2[[i]],by="sthyyear")
+#}
+
+for(i in 2:length(COM90_full_df)){
+	COM90_full_df[[i]][which(COM90_full_df[[i]]==365)] <- NA	
+}
+names(COM90_full_df) <- c("sthyyear", paste("COM_90_",names(COM90_full_df)[2:length(COM90_full_df)], sep=""))
+
+yeartype_old$Year <- as.character(yeartype_old$Year)
+for(i in 1:length(yeartype_old$Year)){
+	yeartype_old$sthyyear[[i]] <- strsplit(yeartype_old$Year[[i]]," - ")[[1]][[1]]
+}
+
+
+COM90_avg_DOHY <- rep(NA, 93)
+COM90_sd_DOHY <- rep(NA, 93)
+gauge_COM90 <- rep(NA,93)
+W_avg <- rep(NA,93)
+W_sd <- rep(NA,93)
+AN_avg <- rep(NA,93)
+AN_sd <- rep(NA,93)
+BN_avg <- rep(NA,93)
+BN_sd <- rep(NA,93)
+D_avg <- rep(NA,93)
+D_sd <- rep(NA,93)
+C_avg <- rep(NA,93)
+C_sd <- rep(NA,93)
+
+for(i in 1:93){
+	gauge_COM90[[i]] <- strsplit(names(COM90_full_df)[[i+1]],"_")[[1]][[3]]
+	COM90_avg_DOHY[[i]] <- round(mean(COM90_full_df[[i+1]], na.rm=TRUE))
+	COM90_sd_DOHY[[i]] <- round(sd(COM90_full_df[[i+1]], na.rm=TRUE))
+	gauge_COM90[[i]] <- strsplit(names(COM90_full_df)[[i+1]],"_")[[1]][[3]]
+	if(gauge_COM90[[i]]%in%SacV_gauges$site_no){
+		W_avg[[i]] <- round(mean(COM90_full_df[[i+1]][COM90_full_df$sthyyear%in%yeartype_old$sthyyear[which(yeartype_old$SVI=="5")]],na.rm=TRUE)     )
+		W_sd[[i]] <- round(sd(COM90_full_df[[i+1]][COM90_full_df$sthyyear%in%yeartype_old$sthyyear[which(yeartype_old$SVI=="5")]],na.rm=TRUE)        )
+		AN_avg[[i]] <-round( mean(COM90_full_df[[i+1]][COM90_full_df$sthyyear%in%yeartype_old$sthyyear[which(yeartype_old$SVI=="4")]],na.rm=TRUE)    )
+		AN_sd[[i]] <- round(sd(COM90_full_df[[i+1]][COM90_full_df$sthyyear%in%yeartype_old$sthyyear[which(yeartype_old$SVI=="4")]],na.rm=TRUE)       )
+		BN_avg[[i]] <-round( mean(COM90_full_df[[i+1]][COM90_full_df$sthyyear%in%yeartype_old$sthyyear[which(yeartype_old$SVI=="3")]],na.rm=TRUE)    )
+		BN_sd[[i]] <- round(sd(COM90_full_df[[i+1]][COM90_full_df$sthyyear%in%yeartype_old$sthyyear[which(yeartype_old$SVI=="3")]],na.rm=TRUE)       )
+		D_avg[[i]] <- round(mean(COM90_full_df[[i+1]][COM90_full_df$sthyyear%in%yeartype_old$sthyyear[which(yeartype_old$SVI=="2")]],na.rm=TRUE)     )
+		D_sd[[i]] <- round(sd(COM90_full_df[[i+1]][COM90_full_df$sthyyear%in%yeartype_old$sthyyear[which(yeartype_old$SVI=="2")]],na.rm=TRUE)        )
+		C_avg[[i]] <-round( mean(COM90_full_df[[i+1]][COM90_full_df$sthyyear%in%yeartype_old$sthyyear[which(yeartype_old$SVI=="1")]],na.rm=TRUE)     )
+		C_sd[[i]] <- round(sd(COM90_full_df[[i+1]][COM90_full_df$sthyyear%in%yeartype_old$sthyyear[which(yeartype_old$SVI=="1")]],na.rm=TRUE)        )
+		
+	} else if(gauge_COM90[[i]]%in%SJV_gauges$site_no){                                                                                              
+		W_avg[[i]] <- round(mean(COM90_full_df[[i+1]][COM90_full_df$sthyyear%in%yeartype_old$sthyyear[which(yeartype_old$SJI=="5")]],na.rm=TRUE) )
+		W_sd[[i]] <- round(sd(COM90_full_df[[i+1]][COM90_full_df$sthyyear%in%yeartype_old$sthyyear[which(yeartype_old$SJI=="5")]],na.rm=TRUE)    )
+		AN_avg[[i]] <- round(mean(COM90_full_df[[i+1]][COM90_full_df$sthyyear%in%yeartype_old$sthyyear[which(yeartype_old$SJI=="4")]],na.rm=TRUE))
+		AN_sd[[i]] <- round(sd(COM90_full_df[[i+1]][COM90_full_df$sthyyear%in%yeartype_old$sthyyear[which(yeartype_old$SJI=="4")]],na.rm=TRUE)   )
+		BN_avg[[i]] <- round(mean(COM90_full_df[[i+1]][COM90_full_df$sthyyear%in%yeartype_old$sthyyear[which(yeartype_old$SJI=="3")]],na.rm=TRUE))
+		BN_sd[[i]] <- round(sd(COM90_full_df[[i+1]][COM90_full_df$sthyyear%in%yeartype_old$sthyyear[which(yeartype_old$SJI=="3")]],na.rm=TRUE)   )
+		D_avg[[i]] <-round( mean(COM90_full_df[[i+1]][COM90_full_df$sthyyear%in%yeartype_old$sthyyear[which(yeartype_old$SJI=="2")]],na.rm=TRUE) )
+		D_sd[[i]] <- round(sd(COM90_full_df[[i+1]][COM90_full_df$sthyyear%in%yeartype_old$sthyyear[which(yeartype_old$SJI=="2")]],na.rm=TRUE)    )
+		C_avg[[i]] <-round( mean(COM90_full_df[[i+1]][COM90_full_df$sthyyear%in%yeartype_old$sthyyear[which(yeartype_old$SJI=="1")]],na.rm=TRUE) )
+		C_sd[[i]] <- round(sd(COM90_full_df[[i+1]][COM90_full_df$sthyyear%in%yeartype_old$sthyyear[which(yeartype_old$SJI=="1")]],na.rm=TRUE)    )
+		
+	}
+}
+COM90_mag <- data.frame(gauge =gauge_COM90, avg_DOHY=COM90_avg_DOHY, sd_DOHY= COM90_sd_DOHY,
+		W_avg = W_avg,
+		W_sd    =  W_sd    ,
+		AN_avg  =  AN_avg  ,
+		AN_sd   =  AN_sd   ,
+		BN_avg  =  BN_avg  ,
+		BN_sd   =  BN_sd   ,
+		D_avg   =  D_avg   ,
+		D_sd    =  D_sd    ,
+		C_avg   =  C_avg   ,
+		C_sd    =  C_sd    )
+dayseq <- seq.Date(as.Date("10-1-2014",format="%m-%d-%Y"),as.Date("9-30-2015",format="%m-%d-%Y"),by="day")
+dayseq <- format(dayseq,"%m-%d")
+dohyconv <- data.frame(date=as.character(dayseq),dohy=NA)
+dohyconv$date <- as.character(dayseq)
+dohyconv$dohy <- seq(1,length(dohyconv$date),1)
+COM90_mag_date <- COM90_mag
+for(i in c(2,4,6,8,10,12)){
+	COM90_mag_date[[i]] <-	dohyconv$date[match(COM90_mag_date[[i]], dohyconv$dohy)]
+}
+write.csv(COM90_mag, file="C:\\Users\\tiffn_000\\Google Drive\\Manuscripts\\redo_numbers\\redo_COM90_mag_sd_full.csv")
+write.csv(COM90_mag_date, file="C:\\Users\\tiffn_000\\Google Drive\\Manuscripts\\redo_numbers\\redo_COM90_mag_date_sd_full.csv")
+
+
+COM90_avg_DOHY <- rep(NA, 93)
+COM90_sd_DOHY <- rep(NA, 93)
+gauge_COM90 <- rep(NA,93)
+W_avg <- rep(NA,93)
+W_sd <- rep(NA,93)
+AN_avg <- rep(NA,93)
+AN_sd <- rep(NA,93)
+BN_avg <- rep(NA,93)
+BN_sd <- rep(NA,93)
+D_avg <- rep(NA,93)
+D_sd <- rep(NA,93)
+C_avg <- rep(NA,93)
+C_sd <- rep(NA,93)
+
+for(i in 1:93){
+	gauge_COM90[[i]] <- strsplit(names(COM90_full_df)[[i+1]],"_")[[1]][[3]]
+	gauge_COM90[[i]] <- strsplit(names(COM90_full_df)[[i+1]],"_")[[1]][[3]]
+	if(gauge_COM90[[i]]%in%SacV_gauges$site_no){
+		COM90_avg_DOHY[[i]] <- round(mean(COM90_full_df[[i+1]][COM90_full_df$sthyyear>=1970], na.rm=TRUE))
+		COM90_sd_DOHY[[i]] <- round(sd(COM90_full_df[[i+1]][COM90_full_df$sthyyear>=1970], na.rm=TRUE))
+		W_avg[[i]] <- round(mean(COM90_full_df[[i+1]][COM90_full_df$sthyyear%in%yeartype_old$sthyyear[which(yeartype_old$SVI=="5")]&COM90_full_df$sthyyear>=1970],na.rm=TRUE)     )
+		W_sd[[i]] <- round(sd(COM90_full_df[[i+1]][COM90_full_df$sthyyear%in%yeartype_old$sthyyear[which(yeartype_old$SVI=="5")]&COM90_full_df$sthyyear>=1970],na.rm=TRUE)        )
+		AN_avg[[i]] <-round( mean(COM90_full_df[[i+1]][COM90_full_df$sthyyear%in%yeartype_old$sthyyear[which(yeartype_old$SVI=="4")]&COM90_full_df$sthyyear>=1970],na.rm=TRUE)    )
+		AN_sd[[i]] <- round(sd(COM90_full_df[[i+1]][COM90_full_df$sthyyear%in%yeartype_old$sthyyear[which(yeartype_old$SVI=="4")]&COM90_full_df$sthyyear>=1970],na.rm=TRUE)       )
+		BN_avg[[i]] <-round( mean(COM90_full_df[[i+1]][COM90_full_df$sthyyear%in%yeartype_old$sthyyear[which(yeartype_old$SVI=="3")]&COM90_full_df$sthyyear>=1970],na.rm=TRUE)    )
+		BN_sd[[i]] <- round(sd(COM90_full_df[[i+1]][COM90_full_df$sthyyear%in%yeartype_old$sthyyear[which(yeartype_old$SVI=="3")]&COM90_full_df$sthyyear>=1970],na.rm=TRUE)       )
+		D_avg[[i]] <- round(mean(COM90_full_df[[i+1]][COM90_full_df$sthyyear%in%yeartype_old$sthyyear[which(yeartype_old$SVI=="2")]&COM90_full_df$sthyyear>=1970],na.rm=TRUE)     )
+		D_sd[[i]] <- round(sd(COM90_full_df[[i+1]][COM90_full_df$sthyyear%in%yeartype_old$sthyyear[which(yeartype_old$SVI=="2")]&COM90_full_df$sthyyear>=1970],na.rm=TRUE)        )
+		C_avg[[i]] <-round( mean(COM90_full_df[[i+1]][COM90_full_df$sthyyear%in%yeartype_old$sthyyear[which(yeartype_old$SVI=="1")]&COM90_full_df$sthyyear>=1970],na.rm=TRUE)     )
+		C_sd[[i]] <- round(sd(COM90_full_df[[i+1]][COM90_full_df$sthyyear%in%yeartype_old$sthyyear[which(yeartype_old$SVI=="1")]&COM90_full_df$sthyyear>=1970],na.rm=TRUE)        )
+		
+	} else if(gauge_COM90[[i]]%in%SJV_gauges$site_no){   
+		COM90_avg_DOHY[[i]] <- round(mean(COM90_full_df[[i+1]][COM90_full_df$sthyyear>=1989], na.rm=TRUE))
+		COM90_sd_DOHY[[i]] <- round(sd(COM90_full_df[[i+1]][COM90_full_df$sthyyear>=1989], na.rm=TRUE))
+		W_avg[[i]] <- round(mean(COM90_full_df[[i+1]][COM90_full_df$sthyyear%in%yeartype_old$sthyyear[which(yeartype_old$SJI=="5")]&COM90_full_df$sthyyear>=1989],na.rm=TRUE) )
+		W_sd[[i]] <- round(sd(COM90_full_df[[i+1]][COM90_full_df$sthyyear%in%yeartype_old$sthyyear[which(yeartype_old$SJI=="5")]&COM90_full_df$sthyyear>=1989],na.rm=TRUE)    )
+		AN_avg[[i]] <- round(mean(COM90_full_df[[i+1]][COM90_full_df$sthyyear%in%yeartype_old$sthyyear[which(yeartype_old$SJI=="4")]&COM90_full_df$sthyyear>=1989],na.rm=TRUE))
+		AN_sd[[i]] <- round(sd(COM90_full_df[[i+1]][COM90_full_df$sthyyear%in%yeartype_old$sthyyear[which(yeartype_old$SJI=="4")]&COM90_full_df$sthyyear>=1989],na.rm=TRUE)   )
+		BN_avg[[i]] <- round(mean(COM90_full_df[[i+1]][COM90_full_df$sthyyear%in%yeartype_old$sthyyear[which(yeartype_old$SJI=="3")]&COM90_full_df$sthyyear>=1989],na.rm=TRUE))
+		BN_sd[[i]] <- round(sd(COM90_full_df[[i+1]][COM90_full_df$sthyyear%in%yeartype_old$sthyyear[which(yeartype_old$SJI=="3")]&COM90_full_df$sthyyear>=1989],na.rm=TRUE)   )
+		D_avg[[i]] <-round( mean(COM90_full_df[[i+1]][COM90_full_df$sthyyear%in%yeartype_old$sthyyear[which(yeartype_old$SJI=="2")]&COM90_full_df$sthyyear>=1989],na.rm=TRUE) )
+		D_sd[[i]] <- round(sd(COM90_full_df[[i+1]][COM90_full_df$sthyyear%in%yeartype_old$sthyyear[which(yeartype_old$SJI=="2")]&COM90_full_df$sthyyear>=1989],na.rm=TRUE)    )
+		C_avg[[i]] <-round( mean(COM90_full_df[[i+1]][COM90_full_df$sthyyear%in%yeartype_old$sthyyear[which(yeartype_old$SJI=="1")]&COM90_full_df$sthyyear>=1989],na.rm=TRUE) )
+		C_sd[[i]] <- round(sd(COM90_full_df[[i+1]][COM90_full_df$sthyyear%in%yeartype_old$sthyyear[which(yeartype_old$SJI=="1")]&COM90_full_df$sthyyear>=1989],na.rm=TRUE)    )
+		
+	}
+}
+COM90_magsd_imp <- data.frame(gauge =gauge_COM90, avg_DOHY=COM90_avg_DOHY, sd_DOHY= COM90_sd_DOHY,
+		W_avg = W_avg,
+		W_sd    =  W_sd    ,
+		AN_avg  =  AN_avg  ,
+		AN_sd   =  AN_sd   ,
+		BN_avg  =  BN_avg  ,
+		BN_sd   =  BN_sd   ,
+		D_avg   =  D_avg   ,
+		D_sd    =  D_sd    ,
+		C_avg   =  C_avg   ,
+		C_sd    =  C_sd    )
+COM90_magsd_imp_date <- COM90_magsd_imp
+for(i in c(2,4,6,8,10,12)){
+	COM90_magsd_imp_date[[i]] <-	dohyconv$date[match(COM90_magsd_imp_date[[i]], dohyconv$dohy)]
+}
+write.csv(COM90_magsd_imp, file="C:\\Users\\tiffn_000\\Google Drive\\Manuscripts\\redo_numbers\\redo_COM90_mag_sd_imp_updated.csv")
+write.csv(COM90_magsd_imp_date, file="C:\\Users\\tiffn_000\\Google Drive\\Manuscripts\\redo_numbers\\redo_COM90_mag_sd_date_imp_updated.csv")
+
+
