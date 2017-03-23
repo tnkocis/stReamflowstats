@@ -820,3 +820,18 @@ write.csv(COM90_magsd_imp, file="C:\\Users\\tiffn_000\\Google Drive\\Manuscripts
 write.csv(COM90_magsd_imp_date, file="C:\\Users\\tiffn_000\\Google Drive\\Manuscripts\\redo_numbers\\redo_COM90_mag_sd_date_imp_updated.csv")
 
 
+
+###total flow annual
+
+totalhydroyear <- data.frame(station=names(spbatch), avg_totalflow_hydroyear_acft=NA)
+for(i in 1:length(spbatch)){
+	hydroyear <- rep(NA, length(spbatch[[i]]$HydroYear$Data))
+	for(j in 1:length(hydroyear)){
+		hydroyear[[j]] <- sum(spbatch[[i]]$HydroYear$Data[[j]]$Discharge_acft_day,na.rm=TRUE)
+	}
+	frachydroyear <- test_split[[i]]$all$hy$TotVolAbv_acft/hydroyear
+	totalhydroyear$avg_totalflow_hydroyear_acft[[i]] <- mean(frachydroyear, na.rm=TRUE)
+}
+
+write.csv(totalhydroyear,"C:\\Users\\tiffn_000\\Google Drive\\Manuscripts\\redo_numbers\\totalhydroyear.csv")
+
